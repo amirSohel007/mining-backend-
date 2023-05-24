@@ -39,7 +39,7 @@ app.get('/check-health', (req, res) => {
 connectDB();
 
 // initilizating routing
-// require('./routing').route(app);
+require('./routing').route(app);
 
 // creating server
 app.listen(port);
