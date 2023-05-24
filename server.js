@@ -38,8 +38,8 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.get('/check-health', (req, res) => {
-    res.send('success');
+app.get('/', (req, res) => {
+    res.send('API IS UP AND RUNNING');
 });
 
 // connect mongodb
