@@ -38,15 +38,17 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.get('/', (req, res) => {
-    res.send('API IS UP AND RUNNING');
-});
+
 
 // connect mongodb
 connectDB();
 
 // initilizating routing
 require('./routing').route(app);
+
+app.get("/", (req, res) => {
+  res.send("API IS UP AND RUNNING");
+});
 
 // creating server
 app.listen(port);
