@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const config = require('./config').config();
 
 // defining port, if one is not available then port will be 3000
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 //  pasrse body to json and add body to request
 app.use(bodyParser.urlencoded({ extended: false }));
