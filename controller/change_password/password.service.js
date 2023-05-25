@@ -5,9 +5,9 @@ async function changePassword (user_id, old_password, new_password) {
         const res = await userSchema.findOneAndUpdate({ _id: user_id, password: old_password }, { password: new_password }, { returnOriginal: false });
         return { message: 'password updated' };
     } catch(error) {
-        console.error(error)
+        console.log('CHANGE_PASSWORD : ', error)
         return {
-            status: 400,
+            status: error.status || 400,
             message: error
         }
     }

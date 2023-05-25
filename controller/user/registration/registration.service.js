@@ -31,7 +31,7 @@ async function createUser (data) {
     } catch(error) {
         console.log('CREAT_USER : ', error)
         throw {
-            status: 500,
+            status: error.status || 500,
             message: error
         }
     }

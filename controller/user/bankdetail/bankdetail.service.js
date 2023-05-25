@@ -12,7 +12,7 @@ async function createOrUpdateBankDetail (data) {
     } catch(error) {
         console.error('CREATE_OR_UPDATE_BANK_DETAIL_ERROR : ', error);
         throw {
-            status: 500,
+            status: error.status || 500,
             message: error
         };
     }
