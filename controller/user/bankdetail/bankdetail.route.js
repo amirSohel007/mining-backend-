@@ -1,24 +1,20 @@
 const express = require('express');
 const app = express();
-const { addBankDetail, updateBankDetail } = require('./bankdetail.service');
+const { createOrUpdateBankDetail } = require('./bankdetail.service');
 const responseService = require('../../../response/response.handler');
 
 app.post('/', async (req, res) => {
     console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
     try {
-        const result = await addBankDetail(req.body);
-        responseService.response(req, null, result, res);
+        const data = req.body;
+        if (data && data.user_id && data.user_id !== null && data.user_id !== '') {
+            const result = await createOrUpdateBankDetail(req.body);
+            responseService.response(req, null, result, res);
+        } else {
+            responseService.response(req, { status: 400, message: 'user id is missing' }, null, res);
+        }
     } catch (error) {
-        responseService.response(req, error, null, res);
-    }
-});
-
-app.put('/', async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
-    try {
-        const result = await updateBankDetail(req.body);
-        responseService.response(req, null, result, res);
-    } catch (error) {
+        console.log('BANK_DETAIL_ERROR : ', error);
         responseService.response(req, error, null, res);
     }
 });

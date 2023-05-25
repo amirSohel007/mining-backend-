@@ -6,7 +6,7 @@ async function getUserDetails (user_id) {
         .populate({ path: 'bankdetail', strictPopulate: false });
         return res;
     } catch(error) {
-        console.error(error)
+        console.log('GET_USER_DETAILS : ', error);
         return {
             status: 401,
             message: error
@@ -14,12 +14,12 @@ async function getUserDetails (user_id) {
     }
 }
 
-async function updateUserDeatils (user_id, data) {
+async function updateUserDetails (user_id, data) {
     try {
         const res = await userSchema.findOneAndUpdate({ _id: user_id }, data, { returnOriginal: false });
         return res;
     } catch(error) {
-        console.error(error)
+        console.log('UPDATE_USER_DETAILS : ', error);
         return {
             status: 401,
             message: error
@@ -27,4 +27,4 @@ async function updateUserDeatils (user_id, data) {
     }
 }
 
-module.exports = { getUserDetails, updateUserDeatils };
+module.exports = { getUserDetails, updateUserDetails };

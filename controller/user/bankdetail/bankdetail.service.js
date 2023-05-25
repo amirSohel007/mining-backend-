@@ -1,45 +1,21 @@
 const bankDetailSchema = require('./bankdetail.model');
-const { updateUserDeatils } = require('../user.service');
+const { updateUserDetails } = require('../user.service');
 
-async function addBankDetail (data) {
+async function createOrUpdateBankDetail (data) {
     try {
-        if (data && data.user_id !== null && data.user_id !== '') {
-            const res = await bankDetailSchema.create(data);
-            await updateUserDeatils(data.user_id, { bank_detail: res._id });
-            return res;
-        } else {
-            return {
-                status: 400,
-                message: 'user id is missing'
-            }    
+        let res = await bankDetailSchema.findOneAndUpdate({ user_id: data.user_id }, data, { returnOriginal: false });
+        if (res == null) {
+            res = await bankDetailSchema.create(data);
         }
+        await updateUserDetails(data.user_id, { bank_detail: res._id.toString() });
+        return res;
     } catch(error) {
-        console.error(error)
-        return {
-            status: 400,
+        console.error('CREATE_OR_UPDATE_BANK_DETAIL_ERROR : ', error);
+        throw {
+            status: 500,
             message: error
-        }
+        };
     }
 }
 
-async function updateBankDetail (data) {
-    try {
-        if (data && data.user_id !== null && data.user_id !== '') {
-            const res = await bankDetailSchema.findOneAndUpdate({ user_id: data.user_id }, data, { returnOriginal: false });
-            return res;
-        } else {
-            return {
-                status: 400,
-                message: 'user id is missing'
-            }    
-        }
-    } catch(error) {
-        console.error(error)
-        return {
-            status: 400,
-            message: error
-        }
-    }
-}
-
-module.exports = { addBankDetail, updateBankDetail };
+module.exports = { createOrUpdateBankDetail };
