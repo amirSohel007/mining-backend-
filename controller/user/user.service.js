@@ -7,8 +7,8 @@ async function getUserDetails (user_id) {
         return res;
     } catch(error) {
         console.log('GET_USER_DETAILS : ', error);
-        return {
-            status: 401,
+        throw {
+            status: 500,
             message: error
         }
     }
@@ -20,8 +20,8 @@ async function updateUserDetails (user_id, data) {
         return res;
     } catch(error) {
         console.log('UPDATE_USER_DETAILS : ', error);
-        return {
-            status: 401,
+        throw {
+            status: 500,
             message: error
         }
     }

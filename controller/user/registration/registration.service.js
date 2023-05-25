@@ -1,9 +1,18 @@
 const userSchema = require('../user.model');
 const crypto = require("crypto");
+const jwt = require('jsonwebtoken');
 
 async function createUser (data) {
     try {
         if (data && data.full_name) {
+            const existingUser = await userSchema.findOne({ email: data.email });
+            if (existingUser) {
+                throw {
+                    status: 409,
+                    message: 'user already exist'
+                }
+            }
+
             let myRefferCode = ''
             if (data.full_name) {
                 let randomNumber = crypto.randomInt(0, 1000000);
@@ -13,13 +22,16 @@ async function createUser (data) {
                 myRefferCode = `${name}${randomNumber}`;
                 data['my_reffer_code'] = myRefferCode;
             }
-            const res = await userSchema.create(data);
-            return res;
+            const user = await userSchema.create(data);
+            const token = jwt.sign({ user_id: user._id }, 'thisissecretkey', { expiresIn: '1m' });
+            user.token = token;
+            user.save();
+            return user;
         }
     } catch(error) {
-        console.error(error)
-        return {
-            status: 400,
+        console.log('CREAT_USER : ', error)
+        throw {
+            status: 500,
             message: error
         }
     }
