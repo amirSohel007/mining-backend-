@@ -21,12 +21,12 @@ async function loginUser (email, password) {
         
         throw {
             status: 401,
-            message: error
+            message: 'invalid credential'
         }
     } catch(error) {
         console.log('LOGIN_ERROR : ', error);
         throw {
-            status: 500,
+            status: error.status || 500,
             message: error
         }
     }

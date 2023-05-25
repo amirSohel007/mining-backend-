@@ -8,7 +8,7 @@ async function getUserDetails (user_id) {
     } catch(error) {
         console.log('GET_USER_DETAILS : ', error);
         throw {
-            status: 500,
+            status: error.status || 500,
             message: error
         }
     }
@@ -21,7 +21,7 @@ async function updateUserDetails (user_id, data) {
     } catch(error) {
         console.log('UPDATE_USER_DETAILS : ', error);
         throw {
-            status: 500,
+            status: error.status || 500,
             message: error
         }
     }
