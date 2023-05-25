@@ -9,7 +9,7 @@ const BankDetailSchema = new Schema({
     ifsc_code: {type: String, require: true },
     account_holder_name: {type: String, require: true },
     branch: {type: String, require: true },
-    user_id: {type: Schema.Types.ObjectId, require: true}
+    user_id: {type: Schema.Types.ObjectId, require: true, ref: 'user'}
 });
 
 BankDetailSchema.index({ user_id: 1, _id: 1 }, { unique: true })

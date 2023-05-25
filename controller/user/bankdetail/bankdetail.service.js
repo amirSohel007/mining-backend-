@@ -1,9 +1,11 @@
 const bankDetailSchema = require('./bankdetail.model');
+const { updateUserDeatils } = require('../user.service');
 
 async function addBankDetail (data) {
     try {
         if (data && data.user_id !== null && data.user_id !== '') {
             const res = await bankDetailSchema.create(data);
+            await updateUserDeatils(data.user_id, { bank_detail: res._id });
             return res;
         } else {
             return {

@@ -2,7 +2,8 @@ const userSchema = require('../user/user.model');
 
 async function loginUser (email, password) {
     try {
-        const res = await userSchema.find({ email: email, password: password });
+        const res = await userSchema.findOne({ email: email, password: password })
+        .populate({ path: 'bank_detail' });
         return res;
     } catch(error) {
         console.error(error)
