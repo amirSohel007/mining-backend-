@@ -2,11 +2,24 @@ const userSchema = require('../user/user.model');
 
 async function changePassword (user_id, old_password, new_password) {
     try {
-        const res = await userSchema.findOneAndUpdate({ _id: user_id, password: old_password }, { password: new_password }, { returnOriginal: false });
-        return { message: 'password updated' };
+        const userDetail = await userSchema.findOne({ _id: user_id });
+        if (userDetail) {
+            if (userDetail.password === old_password) {
+                userDetail.password = new_password;
+                userDetail.save();
+                return { message: 'password updated' };
+            }
+            throw {
+                status: 400,
+                message: 'old password is not matching'
+            }
+        }
+        return {
+            message: 'user not found, unable to update'
+        }
     } catch(error) {
         console.log('CHANGE_PASSWORD : ', error)
-        return {
+        throw {
             status: error.status || 400,
             message: error
         }
