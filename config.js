@@ -1,6 +1,6 @@
 const local = require('./config/config.local');
-const development = require('./config/config.local');
-const production = require('./config/config.local');
+const development = require('./config/config.development');
+const production = require('./config/config.production');
 
 let config = {
     local: local,

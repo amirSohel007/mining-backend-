@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const config = require('../config').config()
 
 const verifyToken = (req, res, next) => {
     const token = req.headers.token;
@@ -8,7 +9,7 @@ const verifyToken = (req, res, next) => {
     }
 
     try {
-        const decode = jwt.verify(token, 'thisissecretkey');
+        const decode = jwt.verify(token, config.jwtSecretKey);
         req.user = decode;
     } catch (error) {
         console.log('INVALID TOKEN');

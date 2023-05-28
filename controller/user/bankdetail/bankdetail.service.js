@@ -18,4 +18,20 @@ async function createOrUpdateBankDetail (data) {
     }
 }
 
-module.exports = { createOrUpdateBankDetail };
+async function getBankDetail (user_id) {
+    try {
+        let bankDetail = await bankDetailSchema.findOne({ user_id })
+        if (bankDetail) {
+            return bankDetail;
+        }
+        return { message: 'record not found'};
+    } catch (error) {
+        console.error('GET_BANK_DETAIL_ERROR : ', error);
+        throw {
+            status: error.status || 500,
+            message: error
+        };
+    }
+}
+
+module.exports = { createOrUpdateBankDetail, getBankDetail };
