@@ -1,5 +1,6 @@
 const userSchema = require('../user/user.model');
 const jwt = require('jsonwebtoken');
+const config = require('../../config').config();
 
 async function loginUser (email, password) {
     try {
@@ -13,7 +14,7 @@ async function loginUser (email, password) {
         .populate({ path: 'bank_detail' });
 
         if (user && user.password === password) {
-            const token = jwt.sign({ user_id: user._id }, 'thisissecretkey', { expiresIn: '1m' });
+            const token = jwt.sign({ user_id: user._id }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
             user.token = token;
             user.save();
             return user;

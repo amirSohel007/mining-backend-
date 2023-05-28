@@ -1,6 +1,7 @@
 const userSchema = require('../user.model');
 const crypto = require("crypto");
 const jwt = require('jsonwebtoken');
+const config = require('../../../config').config();
 
 async function createUser (data) {
     try {
@@ -23,7 +24,7 @@ async function createUser (data) {
                 data['my_reffer_code'] = myRefferCode;
             }
             const user = await userSchema.create(data);
-            const token = jwt.sign({ user_id: user._id }, 'thisissecretkey', { expiresIn: '1m' });
+            const token = jwt.sign({ user_id: user._id }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
             user.token = token;
             user.save();
             return user;

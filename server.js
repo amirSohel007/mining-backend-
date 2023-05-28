@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const connectDB = require('./connection/connection')
 const bodyParser = require('body-parser');
-const config = require('./config').config();
 
 // defining port, if one is not available then port will be 3000
 const port = process.env.PORT || 3001;
