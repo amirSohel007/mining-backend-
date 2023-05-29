@@ -6,6 +6,7 @@ const config = require('../../../config').config();
 async function createUser (data) {
     try {
         if (data && data.full_name) {
+            // check if user exist in db
             const existingUser = await userSchema.findOne({ email: data.email });
             if (existingUser) {
                 throw {
@@ -14,6 +15,7 @@ async function createUser (data) {
                 }
             }
 
+            // generate refer code
             let myRefferCode = ''
             if (data.full_name) {
                 let randomNumber = crypto.randomInt(0, 1000000);
@@ -23,7 +25,27 @@ async function createUser (data) {
                 myRefferCode = `${name}${randomNumber}`;
                 data['my_reffer_code'] = myRefferCode;
             }
-            const user = await userSchema.create(data);
+
+            // adding user to his parent user based on sponser id
+            let user;
+            if (data.sponser_id) {
+                const sponser_user = await userSchema.findOne({ my_reffer_code: data.sponser_id });
+                if (sponser_user) {
+                    user = await userSchema.create(data);
+                    sponser_user.downline_team.push(user._id);
+                    sponser_user.save();
+                } else {
+                    console.log('SPONSER_ID_NOT FOUND : ', data.sponser_id);
+                    throw {
+                        status: 400,
+                        message: 'invalid sponser id'
+                    }
+                }
+            } else {
+                user = await userSchema.create(data);
+            }
+
+            // adding token 
             const token = jwt.sign({ user_id: user._id }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
             user.token = token;
             user.save();

@@ -7,7 +7,7 @@ async function createOrUpdateBankDetail (data) {
         if (res == null) {
             res = await bankDetailSchema.create(data);
         }
-        await updateUserDetails(data.user_id, { bank_detail: res._id.toString() });
+        await updateUserDetails({ _id: data.user_id }, { bank_detail: res._id.toString() });
         return res;
     } catch(error) {
         console.error('CREATE_OR_UPDATE_BANK_DETAIL_ERROR : ', error);
