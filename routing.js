@@ -6,4 +6,5 @@ module.exports.route = (app) => {
     app.use('/api/change-password', require('./controller/change_password/password.route').changePassword);
     app.use('/api/user/bank-details', verifyToken, require('./controller/user/bankdetail/bankdetail.route').bankdetail);
     app.use('/api/user/user-info', verifyToken, require('./controller/user/userdetail/userdetail.route').userdetail);
+    app.use('/api/user/fund', verifyToken, require('./controller/fund/fund.route').fund);
 }
