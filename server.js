@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const connectDB = require('./connection/connection')
 const bodyParser = require('body-parser');
+const config = require('./config').config();
 
 // defining port, if one is not available then port will be 3000
 const port = process.env.PORT || 3001;
@@ -13,9 +14,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(function (req, res, next) {
-  res.set("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "*");
   if (config.allowedOrigins.indexOf(req.headers.origin) > -1) {
-    res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
+    // res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
   }
 
   // allowed http methods

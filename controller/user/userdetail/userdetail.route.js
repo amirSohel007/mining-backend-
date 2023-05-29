@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { getUserInfo } = require('../user.service');
+const { getUserInfo, updateUserDetails } = require('../user.service');
 const responseService = require('../../../response/response.handler');
 
 app.get('/', async (req, res) => {
@@ -11,10 +11,26 @@ app.get('/', async (req, res) => {
             const result = await getUserInfo(user_id);
             responseService.response(req, null, result, res);
         } else {
-            responseService.response(req, { status: 400, message: 'user id is missing' }, null, res);
+            responseService.response(req, { status: 400, message: { status: 400, message: 'user id is missing' } }, null, res);
         }
     } catch (error) {
-        console.log('USER_DETAIL_ERROR : ', error);
+        console.log('GET_USER_DETAIL_ERROR : ', error);
+        responseService.response(req, error, null, res);
+    }
+});
+
+app.post('/', async (req, res) => {
+    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
+    try {
+        const { user_id } = req.query;
+        if (user_id && user_id !== null && user_id !== '') {
+            const result = await updateUserDetails({ _id: user_id }, req.body);
+            responseService.response(req, null, result, res);
+        } else {
+            responseService.response(req, { status: 400, message: { status: 400, message: 'user id is missing' } }, null, res);
+        }
+    } catch (error) {
+        console.log('UPDATE_USER_DETAIL_ERROR : ', error);
         responseService.response(req, error, null, res);
     }
 });
