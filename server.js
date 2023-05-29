@@ -12,28 +12,27 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-// Add headers
 app.use(function (req, res, next) {
-  // Website you wish to allow to connect
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  if (config.allowedOrigins.indexOf(req.headers.origin) > -1) {
+    res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
+  }
 
-  // Request methods you wish to allow
+  // allowed http methods
   res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+    "Access-Control-Allow-Origin",
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
   );
 
-  // Request headers you wish to allow
+  // allowed request headers
   res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type"
+    "Access-Control-Allow-Origin",
+    "content-type, Authorization, X-Requested-With"
   );
 
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
-  res.setHeader("Access-Control-Allow-Credentials", true);
+  // headers security
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-XSS-Protection", "1, mode=block");
 
-  // Pass to next layer of middleware
   next();
 });
 
