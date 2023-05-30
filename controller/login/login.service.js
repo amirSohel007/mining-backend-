@@ -10,9 +10,8 @@ async function loginUser (email, password) {
                 message: 'email and password is required'
             }
         }
-        const user = await userSchema.findOne({ email: email, password: password })
-        .populate({ path: 'bank_detail' });
-
+        const user = await userSchema.findOne({ email: email, password: password });
+ 
         if (user && user.password === password) {
             const token = jwt.sign({ user_id: user._id }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
             user.token = token;

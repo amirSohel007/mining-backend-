@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { addFund, getUserFund, sendFund } = require('./fund.service');
+const { addFund, getUserFund, sendFund, getUserFundTransaction } = require('./fund.service');
 const { getUserInfo } = require('../user/user.service');
 const responseService = require('../../response/response.handler');
 
@@ -35,6 +35,22 @@ app.get('/', async (req, res) => {
         const { user_id } = req.query;
         if (user_id && user_id !== null && user_id !== '') {
             const result = await getUserFund(user_id);
+            responseService.response(req, null, result, res);
+        } else {
+            responseService.response(req, { status: 400, message: { status: 400, message: 'user id is missing' } }, null, res);
+        }
+    } catch (error) {
+        console.log('GET_FUND_ERROR : ', error);
+        responseService.response(req, error, null, res);
+    }
+});
+
+app.get('/history', async (req, res) => {
+    console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}`);
+    try {
+        const { user_id, fund_request_type } = req.query;
+        if (user_id && user_id !== null && user_id !== '') {
+            const result = await getUserFundTransaction(user_id, fund_request_type);
             responseService.response(req, null, result, res);
         } else {
             responseService.response(req, { status: 400, message: { status: 400, message: 'user id is missing' } }, null, res);
