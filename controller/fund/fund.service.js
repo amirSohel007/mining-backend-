@@ -53,9 +53,14 @@ async function getUserFund (user_id) {
     }
 }
 
-async function getUserFundTransaction (user_id) {
+async function getUserFundTransaction (user_id, fund_request_type) {
     try {
-        let transaction = await fundTransactionSchema.findOne({ user_id })
+        let query = { user_id };
+        if (fund_request_type) {
+            query['transaction_type'] = fund_request_type;
+        }
+        console.log('FUND_TRANSACTION : ', query);
+        let transaction = await fundTransactionSchema.findOne(query);
         if (transaction) {
             return transaction;
         }
