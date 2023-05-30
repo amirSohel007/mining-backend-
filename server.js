@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const connectDB = require('./connection/connection')
 const bodyParser = require('body-parser');
-const config = require('./config').config();
+const cors = require("cors");
 
 // defining port, if one is not available then port will be 3000
 const port = process.env.PORT || 3001;
@@ -12,13 +12,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  if (config.allowedOrigins.indexOf(req.headers.origin) > -1) {
-    // res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
-  }
-
   // allowed http methods
   res.setHeader(
     "Access-Control-Allow-Origin",
@@ -34,7 +31,6 @@ app.use(function (req, res, next) {
   // headers security
   res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("X-XSS-Protection", "1, mode=block");
-
   next();
 });
 
