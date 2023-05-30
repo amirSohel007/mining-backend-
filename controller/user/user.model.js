@@ -13,7 +13,8 @@ const UserSchema = new Schema({
     phone_no: { type: String, require: true },
     token: { type: String },
     bank_detail: { type: Schema.Types.ObjectId, ref: 'bankdetail' },
-    downline_team: [{ type: Schema.Types.ObjectId, ref: 'user' }]
+    downline_team: [{ type: Schema.Types.ObjectId, ref: 'user' }],
+    income: { type: Schema.Types.ObjectId, ref: 'userincome' }
 });
 
 UserSchema.index({ my_reffer_code: 1, _id: 1 }, { unique: true });
