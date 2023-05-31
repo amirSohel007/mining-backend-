@@ -54,12 +54,12 @@ app.get('/', async (req, res) => {
 app.get('/history', async (req, res) => {
     console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
     try {
-        let { user_id, amount } = req.query;
-        if (user_id && user_id != null && user_id != '' && amount && amount > 0) {
+        let { user_id } = req.query;
+        if (user_id && user_id != null && user_id != '') {
             const result = await getIncomeTransaction(user_id);
             responseService.response(req, null, result, res);
         } else {
-            let error = { status: 400, message: "user id or amount is required" }
+            let error = { status: 400, message: "user id is required" }
             responseService.response(req, error, null, res);    
         }
     } catch (error) {
