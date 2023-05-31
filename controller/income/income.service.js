@@ -1,10 +1,10 @@
 const userIncomeSchema = require('./income.module');
 const incomeTransactionSchema = require('./transaction/incometransaction.model');
-const { getUserInfo } = require('../user/user.service');
+const userSchema = require('../user/user.model');
 
 async function creditIncome (user_id, amount) {
     try {
-        let user = await getUserInfo(user_id);
+        let user = await userSchema.findOne({ _id: user_id });
         if (user && !user.message) {
             let userIncome = await userIncomeSchema.findOne({ user_id });
             if (!userIncome) {
@@ -18,8 +18,9 @@ async function creditIncome (user_id, amount) {
             userIncome.balance += amount;
             userIncome.transaction.push(newTransaction._id);
             userIncome.save();
-            user.income.push(userIncome._id);
+            user.income = userIncome._id;
             user.save();
+            return userIncome;
         } else {
             throw {
                 status: 400,
