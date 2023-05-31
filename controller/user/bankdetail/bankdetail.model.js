@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 
 // define user schema
 const BankDetailSchema = new Schema({
+    bank_name: { type: String, require: true },
     account_number: {type: String, require: true },
     ifsc_code: {type: String, require: true },
     account_holder_name: {type: String, require: true },

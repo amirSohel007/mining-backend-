@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const { addFund, getUserFund, sendFund, getUserFundTransaction } = require('./fund.service');
-const { getUserInfo } = require('../user/user.service');
+const { getUserInfo, getUser } = require('../user/user.service');
 const responseService = require('../../response/response.handler');
 
 app.post('/', async (req, res) => {
@@ -67,14 +67,14 @@ app.post('/send', async (req, res) => {
         const { user_id, receiver_id, amount = 0 } = req.body;
         if (user_id && user_id !== null && user_id !== '' && receiver_id) {
             if (amount > 0) {
-                const receiver = await getUserInfo(receiver_id);
-                const sender = await getUserInfo(user_id);
+                const receiver = await getUser({ my_reffer_code: receiver_id });
+                const sender = await getUser({ _id: user_id });
                 if (receiver && receiver.message) {
                     responseService.response(req, { status: 400, message: { status: 400, message: "fund receiver is not exists" } }, null, res);    
                 } else if (sender && sender.message) {
                     responseService.response(req, { status: 400, message: { status: 400, message: "fund sender is not exists" } }, null, res);    
                 } else {
-                    const result = await sendFund(user_id, receiver_id, amount);
+                    const result = await sendFund(user_id, receiver._id, amount);
                     responseService.response(req, null, result, res);
                 }
             } else {
