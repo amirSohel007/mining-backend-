@@ -38,7 +38,7 @@ app.post('/credit', async (req, res) => {
 app.get('/', async (req, res) => {
     console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
     try {
-        let { user_id, amount } = req.body;
+        let { user_id, amount } = req.query;
         if (user_id && user_id != null && user_id != '' && amount && amount > 0) {
             const result = await getIncome(user_id);
             responseService.response(req, null, result, res);
@@ -51,10 +51,10 @@ app.get('/', async (req, res) => {
     }
 });
 
-app.post('/history', async (req, res) => {
+app.get('/history', async (req, res) => {
     console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
     try {
-        let { user_id, amount } = req.body;
+        let { user_id, amount } = req.query;
         if (user_id && user_id != null && user_id != '' && amount && amount > 0) {
             const result = await getIncomeTransaction(user_id);
             responseService.response(req, null, result, res);
