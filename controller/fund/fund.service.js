@@ -60,7 +60,7 @@ async function getUserFundTransaction (user_id, fund_request_type) {
             query['transaction_type'] = fund_request_type;
         }
         console.log('FUND_TRANSACTION : ', query);
-        let transaction = await fundTransactionSchema.findOne(query);
+        let transaction = await fundTransactionSchema.find(query);
         if (transaction) {
             return transaction;
         }
@@ -76,49 +76,39 @@ async function getUserFundTransaction (user_id, fund_request_type) {
 
 async function sendFund (user_id, to_user_id, amount) {
     try {
+        // check sender has fund or not
+        let fromUserFund = await userFundSchema.findOne({ user_id });
+        // check requested amount is available or not
+        if (fromUserFund && fromUserFund.fund_balance && fromUserFund.fund_balance >= amount) {
+            
+            // add fund to receiver account
+            let transfer = await addFund(to_user_id, { amount, received_from: user_id }, 'FUND_RECEIVED');
+            if (transfer) {
 
-        // check receiver is exist
-        const toUserFund = await getUserInfo(to_user_id);
-        if (toUserFund) {
+                // create transaction history
+                let transaction = await fundTransactionSchema.create({
+                    user_id: user_id,
+                    amount: amount,
+                    transaction_type: 'FUND_SENT',
+                    sent_to: to_user_id,
+                    status: 'PENDING',
+                    user_fund: fromUserFund._id
+                });
 
-            // check sender has fund or not
-            let fromUserFund = await userFundSchema.findOne({ user_id });
-            // check requested amount is available or not
-            if (fromUserFund && fromUserFund.fund_balance && fromUserFund.fund_balance >= amount) {
-                
-                // add fund to receiver account
-                let transfer = await addFund(to_user_id, { amount, received_from: user_id }, 'FUND_RECEIVED');
-                if (transfer) {
-
-                    // create transaction history
-                    let transaction = await fundTransactionSchema.create({
-                        user_id: user_id,
-                        amount: amount,
-                        transaction_type: 'FUND_SENT',
-                        sent_to: to_user_id,
-                        status: 'PENDING',
-                        user_fund: fromUserFund._id
-                    });
-
-                    // update sender account
-                    fromUserFund.fund_balance -= amount;
-                    fromUserFund.fund_transaction.push(transaction._id);
-                    fromUserFund.save();
-                    return fromUserFund;
-                }
-                throw {
-                    status: 500,
-                    message: 'error in transferring balance to receiver'
-                }
+                // update sender account
+                fromUserFund.fund_balance -= amount;
+                fromUserFund.fund_transaction.push(transaction._id);
+                fromUserFund.save();
+                return fromUserFund;
             }
             throw {
-                status: 400,
-                message: 'insufficient fund'
+                status: 500,
+                message: 'error in transferring balance to receiver'
             }
         }
         throw {
             status: 400,
-            message: 'there is no such user to receive fund'
+            message: 'insufficient fund'
         }
     } catch (error) {
         console.error('SEND_FUND_ERROR : ', error);
