@@ -1,7 +1,7 @@
 const Status = {
-    All : 'All',
-    Active : 'Active',
-    InActive : 'InActive'
+    All : 'ALL',
+    Active : 'ACTIVE',
+    InActive : 'INACTIVE'
 }
 
 
