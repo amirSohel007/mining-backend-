@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const { Status } = require('../../commonHelper');
 // define a schema
 const Schema = mongoose.Schema;
 
@@ -15,10 +15,10 @@ const UserSchema = new Schema({
     bank_detail: { type: Schema.Types.ObjectId, ref: 'bankdetail' },
     downline_team: [{ type: Schema.Types.ObjectId, ref: 'user' }],
     income: { type: Schema.Types.ObjectId, ref: 'userincome' },
-    joining_date : {type: Date,require: true},
-    status : {type: String,require: true},
-    created_at : {type: Date,require: true},
-    updated_at : {type: Date,require: true},
+    joining_date : {type: Date,require: true, default : Date.now()},
+    status : {type: String,require: true,default : Status.INACTIVE},
+    created_at : {type: Date,require: true,default : Date.now()},
+    updated_at : {type: Date,require: true,default : Date.now()},
 
 });
 

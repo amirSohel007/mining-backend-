@@ -10,4 +10,6 @@ module.exports.route = (app) => {
     app.use('/api/user/team', verifyToken, require('./controller/user/team/team.route').userteam);
     app.use('/api/income', verifyToken, require('./controller/income/income.route').income);
     app.use('/api/admin',require('./admin/contoller/user/user.route').user);
+    app.use('/api/admin',require('./admin/contoller/fund/fund.route').fund);
+    app.use('/api/admin',require('./admin/contoller/income/income.route').income);
 }
