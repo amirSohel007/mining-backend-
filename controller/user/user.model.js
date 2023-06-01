@@ -10,7 +10,7 @@ const UserSchema = new Schema({
     email: { type: String, require: true, unique: true },
     password: { type: String, require: true },
     sponser_id: { type: String, require: false },
-    phone_no: { type: String, require: true },
+    phone: { type: String, require: true },
     token: { type: String },
     bank_detail: { type: Schema.Types.ObjectId, ref: 'bankdetail' },
     downline_team: [{ type: Schema.Types.ObjectId, ref: 'user' }],

@@ -3,8 +3,35 @@ const app = express();
 const { addFund, getUserFund, sendFund, getUserFundTransaction } = require('./fund.service');
 const { getUserInfo, getUser } = require('../user/user.service');
 const responseService = require('../../response/response.handler');
+const multer = require('multer');
+const fs = require('fs');
 
-app.post('/', async (req, res) => {
+//Configuration for Multer
+const multerStorage = multer.diskStorage({ 
+    destination: (req, file, cb) => {
+        cb(null, 'uploads');
+    },
+    filename: (req, file, cb) => {
+        const ext = file.mimetype.split('/')[1];
+        cb(null, `payment-receipt-image/${req.user.user_id}_${Date.now()}.${ext}`);
+    } 
+});
+
+// Multer Filter
+const multerFilter = (req, file, cb) => {
+    if (file.mimetype.split("/")[1] === "jpg") {
+      cb(null, true);
+    } else {
+      cb(new Error("Not a JPG File!!"), false);
+    }
+};
+
+//Calling the "multer" Function
+const upload = multer({
+    storage: multerStorage
+});
+
+app.post('/', upload.single('image'), async (req, res) => {
     console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}`);
     try {
         const data = req.body;
