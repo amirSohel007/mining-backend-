@@ -34,7 +34,6 @@ const upload = multer({
 app.post('/', upload.single('image'), async (req, res) => {
     console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}`);
     try {
-        console.log('FILES : ', req.file);
         const data = req.body;
         if (data && data.user_id && data.user_id !== null && data.user_id !== '') {
             if (data.amount && data.amount > 0) {
