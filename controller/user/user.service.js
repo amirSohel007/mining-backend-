@@ -161,7 +161,9 @@ function convertNestedArrayToLinearArray (arr = [], linearArray = []) {
             full_name: arr[i].full_name,
             my_reffer_code: arr[i].my_reffer_code,
             sponser_id: arr[i].sponser_id,
-            level: arr[i].level
+            level: arr[i].level,
+            joining_date: arr[i].joining_date, 
+            status: arr[i].status
         });
         convertNestedArrayToLinearArray(arr[i].downline_team, linearArray);
     }
