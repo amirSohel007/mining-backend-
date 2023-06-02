@@ -8,7 +8,6 @@ app.post('/', async (req, res) => {
     try {
         const { old_password, new_password } = req.body;
         const { user_id } = req.user;
-        console.log('BANK : ', user_id);
         if (user_id && old_password !== null && old_password !== '' && new_password !== null && new_password !== '') {
             const result = await changePassword(user_id, old_password, new_password);
             console.log('BANK : ', result);
