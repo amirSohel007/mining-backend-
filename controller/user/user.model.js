@@ -10,11 +10,16 @@ const UserSchema = new Schema({
     email: { type: String, require: true, unique: true },
     password: { type: String, require: true },
     sponser_id: { type: String, require: false },
-    phone_no: { type: String, require: true },
+    phone: { type: String, require: true },
     token: { type: String },
     bank_detail: { type: Schema.Types.ObjectId, ref: 'bankdetail' },
     downline_team: [{ type: Schema.Types.ObjectId, ref: 'user' }],
-    income: { type: Schema.Types.ObjectId, ref: 'userincome' }
+    income: { type: Schema.Types.ObjectId, ref: 'userincome' },
+    joining_date : {type: Date,require: true},
+    status : {type: String,require: true},
+    created_at : {type: Date,require: true},
+    updated_at : {type: Date,require: true},
+
 });
 
 UserSchema.index({ my_reffer_code: 1, _id: 1 }, { unique: true });
