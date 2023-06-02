@@ -4,10 +4,11 @@ const { withdrawlIncome, creditIncome, getIncome, getIncomeTransaction } = requi
 const responseService = require('../../response/response.handler');
 
 app.post('/withdrawal', async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
+    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        let { user_id, amount } = req.body;
-        if (user_id && user_id != null && user_id != '' && amount && amount > 0) {
+        let { amount } = req.body;
+        const { user_id } = req.user;
+        if (user_id && amount && amount > 0) {
             const result = await withdrawlIncome(user_id, amount);
             responseService.response(req, null, result, res);
         } else {
@@ -20,10 +21,11 @@ app.post('/withdrawal', async (req, res) => {
 });
 
 app.post('/credit', async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
+    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        let { user_id, amount } = req.body;
-        if (user_id && user_id != null && user_id != '' && amount && amount > 0) {
+        let { amount } = req.body;
+        const { user_id } = req.user;
+        if (user_id && amount && amount > 0) {
             const result = await creditIncome(user_id, amount);
             responseService.response(req, null, result, res);
         } else {
@@ -36,10 +38,11 @@ app.post('/credit', async (req, res) => {
 });
 
 app.get('/', async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
+    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        let { user_id, amount } = req.query;
-        if (user_id && user_id != null && user_id != '' && amount && amount > 0) {
+        let { amount } = req.query;
+        const { user_id } = req.user;
+        if (user_id && amount > 0) {
             const result = await getIncome(user_id);
             responseService.response(req, null, result, res);
         } else {
@@ -52,10 +55,10 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/history', async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
+    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        let { user_id } = req.query;
-        if (user_id && user_id != null && user_id != '') {
+        const { user_id } = req.user;
+        if (user_id) {
             const result = await getIncomeTransaction(user_id);
             responseService.response(req, null, result, res);
         } else {

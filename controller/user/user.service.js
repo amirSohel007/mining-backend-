@@ -16,6 +16,7 @@ async function getUserDetailsWithPopulatedData (user_id, table_name) {
 
 async function updateUserDetails (query, data) {
     try {
+        data['updated_at'] = Date.now();
         const res = await userSchema.findOneAndUpdate(query, data, { returnOriginal: false });
         return res;
     } catch(error) {
@@ -29,9 +30,29 @@ async function updateUserDetails (query, data) {
 
 async function getUserInfo (user_id) {
     try {
-        const result = await userSchema.findOne({ _id: user_id }, { token: 0 });
-        if (result) {
-            return result;
+        const user = await userSchema.findOne({ _id: user_id }, { token: 0, password: 0 }).lean().exec();
+        // const user = await userSchema.aggregate([
+        //     { $match: { "_id": user_id } },
+        //     {
+        //         $project: {
+        //             count: {
+        //                 $size: {
+        //                     input: "$downline_team"
+        //                 }
+        //             }
+        //         }
+        //     },
+        //     {
+        //         $group: {
+        //             count: { $sum: '$count' }
+        //         }
+        //     }
+        // ]);
+        if (user) {
+            user['direct_user_count'] = user.downline_team.length;
+            user['down_user_count'] = getTeamMemberCount(user.downline_team, 0);
+            console.log('USER : ', user);
+            return user;
         }
         return { 
             message: 'record not found'
@@ -48,9 +69,9 @@ async function getUserInfo (user_id) {
 async function getUser (query) {
     if (query) {
         try {
-            const result = await userSchema.findOne(query, { token: 0, password: 0 });
-            if (result) {
-                return result;
+            const user = await userSchema.findOne(query, { token: 0, password: 0 });
+            if (user) {
+                return user;
             }
             return { 
                 message: 'record not found'
@@ -69,15 +90,15 @@ async function getUser (query) {
 
 async function getUserAndDownlineTeam (user_id) {
     try {
-        let user = await userSchema.findOne({ _id: user_id }, '_id full_name my_reffer_code email')
+        let user = await userSchema.findOne({ _id: user_id }, '-_id full_name my_reffer_code sponser_id joining_date status')
         .populate({ 
-            path: 'downline_team', model: 'user', select: '_id full_name my_reffer_code sponser_id', populate: {
-                path: 'downline_team', model: 'user', select: '_id full_name my_reffer_code sponser_id', populate: {
-                    path: 'downline_team', model: 'user', select: '_id full_name my_reffer_code sponser_id', populate: {
-                        path: 'downline_team', model: 'user', select: '_id full_name my_reffer_code sponser_id', populate: {
-                            path: 'downline_team', model: 'user', select: '_id full_name my_reffer_codesponser_id', populate: {
-                                path: 'downline_team', model: 'user', select: '_id full_name my_reffer_code sponser_id', populate: {
-                                    path: 'downline_team', model: 'user'
+            path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                    path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                        path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                            path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_codesponser_id joining_date status', populate: {
+                                path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                                    path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status'
                                 }
                             }
                         }
@@ -104,9 +125,9 @@ async function getUserAndDownlineTeam (user_id) {
 
 async function getUserAndDirectTeam (user_id) {
     try {
-        let user = await userSchema.findOne({ _id: user_id }, '_id full_name my_reffer_code email')
+        let user = await userSchema.findOne({ _id: user_id }, '-_id full_name my_reffer_code sponser_id joining_date status')
         .populate({ 
-            path: 'downline_team', model: 'user', select: '_id full_name' 
+            path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status' 
         }).lean().exec();
 
         if (user) {
@@ -136,8 +157,7 @@ function getLevel (arr, level = 1) {
 
 function convertNestedArrayToLinearArray (arr = [], linearArray = []) {
     for (let i = 0; i < arr.length; i++) {
-        linearArray.push({ 
-            _id: arr[i]._id,
+        linearArray.push({
             full_name: arr[i].full_name,
             my_reffer_code: arr[i].my_reffer_code,
             sponser_id: arr[i].sponser_id,
@@ -146,6 +166,16 @@ function convertNestedArrayToLinearArray (arr = [], linearArray = []) {
         convertNestedArrayToLinearArray(arr[i].downline_team, linearArray);
     }
     return linearArray;
+}
+
+function getTeamMemberCount (arr, count = 0) {
+    if (arr && arr.length > 0) {
+        for (let i = 0; i < arr.length; i++) {
+            count += arr.length;
+            getTeamMemberCount(arr[i].downline_team, count);
+        }
+    }
+    return count;
 }
 
 module.exports = { 

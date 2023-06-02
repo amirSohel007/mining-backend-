@@ -39,7 +39,7 @@ async function addFund (user_id, data, transaction_type) {
 
 async function getUserFund (user_id) {
     try {
-        let userFund = await userFundSchema.findOne({ user_id })
+        let userFund = await userFundSchema.findOne({ user_id }, '-_id')
         .populate({ path: 'fund_transaction' });
         if (userFund) {
             return userFund;
@@ -61,7 +61,7 @@ async function getUserFundTransaction (user_id, fund_request_type) {
             query['transaction_type'] = fund_request_type;
         }
         console.log('FUND_TRANSACTION : ', query);
-        let transaction = await fundTransactionSchema.find(query);
+        let transaction = await fundTransactionSchema.find(query, '-_id -user_id');
         if (transaction) {
             return transaction;
         }

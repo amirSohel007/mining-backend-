@@ -4,5 +4,5 @@ module.exports = {
     },
     allowedOrigins: ['*'],
     jwtSecretKey: 'ITo7zN@7WBD7QmLprJudmE#4!M6*NI',
-    jwtExpiresIn: '1h'
+    jwtExpiresIn: '8h'
 }

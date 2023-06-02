@@ -4,15 +4,15 @@ const { getUserAndDownlineTeam, getUserAndDirectTeam } = require('../user.servic
 const responseService = require('../../../response/response.handler');
 
 app.get('/', async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}`);
+    console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        const { user_id, team_type = 'DIRECT' } = req.query;
-        if (user_id && user_id !== null && user_id !== '') {
+        const { team_type = 'DIRECT' } = req.query;
+        if (req.user.user_id) {
             let result; 
             if (team_type === 'DOWN') {
-                result = await getUserAndDownlineTeam(user_id);
+                result = await getUserAndDownlineTeam(req.user.user_id);
             } else {
-                result = await getUserAndDirectTeam(user_id);
+                result = await getUserAndDirectTeam(req.user.user_id);
             }
             responseService.response(req, null, result, res);
         } else {
