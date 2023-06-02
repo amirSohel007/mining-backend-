@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const { Status } = require('../../commonHelper');
+const { Status, UserRole } = require('../../commonHelper');
+
 // define a schema
 const Schema = mongoose.Schema;
 
@@ -13,16 +14,23 @@ const UserSchema = new Schema({
     phone: { type: String, require: true },
     token: { type: String },
     bank_detail: { type: Schema.Types.ObjectId, ref: 'bankdetail' },
-    downline_team: [{ type: Schema.Types.ObjectId, ref: 'user' }],
+    downline_team: [{ type: Schema.Types.ObjectId, ref: 'user', default: [] }],
     income: { type: Schema.Types.ObjectId, ref: 'userincome' },
-    joining_date : {type: Date,require: true, default : Date.now()},
-    status : {type: String,require: true,default : Status.INACTIVE},
-    created_at : {type: Date,require: true,default : Date.now()},
-    updated_at : {type: Date,require: true,default : Date.now()},
-
+    joining_date : { type: Date, require: true, default: Date.now() },
+    status : { type: String, require: true, default: Status.INACTIVE },
+    role: { type: number, require: true, default: UserRole.USER },
+    created_at : { type: Date, require: true, default: Date.now() },
+    updated_at : { type: Date, require: true, default: Date.now() }
 });
 
 UserSchema.index({ my_reffer_code: 1, _id: 1 }, { unique: true });
+UserSchema.virtual('direct_user_count').get(function() {
+    return this.downline_team.length;
+});
+UserSchema.virtual('down_user_count').get(function() {
+    return this.downline_team.length;
+});
+
 
 const userSchema = mongoose.model('user', UserSchema)
 module.exports = userSchema;

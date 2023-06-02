@@ -13,7 +13,9 @@ const FundTransactionSchema = new Schema({
     received_from: { type: Schema.Types.ObjectId, ref: 'user' },
     sent_to: { type: Schema.Types.ObjectId, ref: 'user' },
     status: { type: String, required: true },
-    user_fund: { type: Schema.Types.ObjectId, require: true, ref: 'userfund'}
+    user_fund: { type: Schema.Types.ObjectId, require: true, ref: 'userfund'},
+    created_at: { type: Date, require: true, default: Date.now() },
+    updated_at: { type: Date, require: true, default: Date.now() }
 });
 
 FundTransactionSchema.index({ user_id: 1, _id: 1, user_fund: 1 }, { unique: true })
