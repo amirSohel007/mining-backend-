@@ -32,14 +32,15 @@ const upload = multer({
 });
 
 app.post('/', upload.single('image'), async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}`);
+    console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
         const data = req.body;
-        if (data && data.user_id && data.user_id !== null && data.user_id !== '') {
+        const { user_id } = req.user;
+        if (data && user_id && data.user_id !== '') {
             if (data.amount && data.amount > 0) {
-                let user = await getUserInfo(data.user_id);
+                let user = await getUserInfo(user_id);
                 if (user && !user.message) {
-                    const result = await addFund(data.user_id, data, 'FUND_ADD');
+                    const result = await addFund(user_id, data, 'FUND_ADD');
                     responseService.response(req, null, result, res);
                 } else {
                     responseService.response(req, { status: 400, message: { status: 400, message: "sender dose not exist" } }, null, res);
@@ -57,10 +58,10 @@ app.post('/', upload.single('image'), async (req, res) => {
 });
 
 app.get('/', async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}`);
+    console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        const { user_id } = req.query;
-        if (user_id && user_id !== null && user_id !== '') {
+        const { user_id } = req.user;
+        if (user_id) {
             const result = await getUserFund(user_id);
             responseService.response(req, null, result, res);
         } else {
@@ -73,10 +74,11 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/history', async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}`);
+    console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        const { user_id, fund_request_type } = req.query;
-        if (user_id && user_id !== null && user_id !== '') {
+        const { fund_request_type } = req.query;
+        const { user_id } = req.user;
+        if (user_id) {
             const result = await getUserFundTransaction(user_id, fund_request_type);
             responseService.response(req, null, result, res);
         } else {
@@ -89,10 +91,11 @@ app.get('/history', async (req, res) => {
 });
 
 app.post('/send', async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}`);
+    console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        const { user_id, receiver_id, amount = 0 } = req.body;
-        if (user_id && user_id !== null && user_id !== '' && receiver_id) {
+        const { receiver_id, amount = 0 } = req.body;
+        const { user_id } = req.user;
+        if (user_id && receiver_id) {
             if (amount > 0) {
                 const receiver = await getUser({ my_reffer_code: receiver_id });
                 const sender = await getUser({ _id: user_id });

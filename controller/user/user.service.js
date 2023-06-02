@@ -90,15 +90,15 @@ async function getUser (query) {
 
 async function getUserAndDownlineTeam (user_id) {
     try {
-        let user = await userSchema.findOne({ _id: user_id }, '_id full_name my_reffer_code email')
+        let user = await userSchema.findOne({ _id: user_id }, '-_id full_name my_reffer_code sponser_id joining_date status')
         .populate({ 
-            path: 'downline_team', model: 'user', select: '_id full_name my_reffer_code sponser_id', populate: {
-                path: 'downline_team', model: 'user', select: '_id full_name my_reffer_code sponser_id', populate: {
-                    path: 'downline_team', model: 'user', select: '_id full_name my_reffer_code sponser_id', populate: {
-                        path: 'downline_team', model: 'user', select: '_id full_name my_reffer_code sponser_id', populate: {
-                            path: 'downline_team', model: 'user', select: '_id full_name my_reffer_codesponser_id', populate: {
-                                path: 'downline_team', model: 'user', select: '_id full_name my_reffer_code sponser_id', populate: {
-                                    path: 'downline_team', model: 'user', select: '_id full_name my_reffer_code sponser_id'
+            path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                    path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                        path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                            path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_codesponser_id joining_date status', populate: {
+                                path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                                    path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status'
                                 }
                             }
                         }
@@ -125,9 +125,9 @@ async function getUserAndDownlineTeam (user_id) {
 
 async function getUserAndDirectTeam (user_id) {
     try {
-        let user = await userSchema.findOne({ _id: user_id }, '_id full_name my_reffer_code email')
+        let user = await userSchema.findOne({ _id: user_id }, '-_id full_name my_reffer_code sponser_id joining_date status')
         .populate({ 
-            path: 'downline_team', model: 'user', select: '_id full_name' 
+            path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status' 
         }).lean().exec();
 
         if (user) {
@@ -157,8 +157,7 @@ function getLevel (arr, level = 1) {
 
 function convertNestedArrayToLinearArray (arr = [], linearArray = []) {
     for (let i = 0; i < arr.length; i++) {
-        linearArray.push({ 
-            _id: arr[i]._id,
+        linearArray.push({
             full_name: arr[i].full_name,
             my_reffer_code: arr[i].my_reffer_code,
             sponser_id: arr[i].sponser_id,
