@@ -4,11 +4,13 @@ const { changePassword } = require('./password.service');
 const responseService = require('../../response/response.handler');
 
 app.post('/', async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
+    console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        const { user_id, old_password, new_password } = req.body;
-        if (user_id !== null && user_id !== '' && old_password !== null && old_password !== '' && new_password !== null && new_password !== '') {
+        const { old_password, new_password } = req.body;
+        const { user_id } = req.user;
+        if (user_id && old_password !== null && old_password !== '' && new_password !== null && new_password !== '') {
             const result = await changePassword(user_id, old_password, new_password);
+            console.log('BANK : ', result);
             responseService.response(req, null, result, res);
         } else {
             let error = { status: 400, message: "required field is missing" }

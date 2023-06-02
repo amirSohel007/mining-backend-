@@ -4,10 +4,11 @@ const { createOrUpdateBankDetail, getBankDetail } = require('./bankdetail.servic
 const responseService = require('../../../response/response.handler');
 
 app.post('/', async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
+    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
         const data = req.body;
-        if (data && data.user_id && data.user_id !== null && data.user_id !== '') {
+        if (req.user.user_id) {
+            data.user_id = req.user.user_id;
             const result = await createOrUpdateBankDetail(req.body);
             responseService.response(req, null, result, res);
         } else {
@@ -20,10 +21,10 @@ app.post('/', async (req, res) => {
 });
 
 app.get('/', async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
+    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        const { user_id } = req.query;
-        if (user_id && user_id !== null && user_id !== '') {
+        const { user_id } = req.user;
+        if (user_id) {
             const result = await getBankDetail(user_id);
             responseService.response(req, null, result, res);
         } else {
