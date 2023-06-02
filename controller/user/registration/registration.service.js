@@ -46,7 +46,7 @@ async function createUser (data) {
             }
 
             // adding token 
-            const token = jwt.sign({ user_id: user._id }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
+            const token = jwt.sign({ user_id: user._id, my_reffer_code: user.my_reffer_code }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
             user.token = token;
             user.save();
             return user;

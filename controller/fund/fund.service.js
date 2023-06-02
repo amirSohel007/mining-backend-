@@ -61,7 +61,8 @@ async function getUserFundTransaction (user_id, fund_request_type) {
             query['transaction_type'] = fund_request_type;
         }
         console.log('FUND_TRANSACTION : ', query);
-        let transaction = await fundTransactionSchema.find(query, '-_id -user_id');
+        let transaction = await fundTransactionSchema.find(query, '-_id -user_id')
+        .populate({ path: 'sent_to', model: 'user', select: '-_id my_reffer_code full_name' });
         if (transaction) {
             return transaction;
         }

@@ -13,7 +13,7 @@ async function loginUser (email, password) {
         const user = await userSchema.findOne({ email: email, password: password });
  
         if (user && user.password === password) {
-            const token = jwt.sign({ user_id: user._id }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
+            const token = jwt.sign({ user_id: user._id, my_reffer_code: user.my_reffer_code }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
             user.token = token;
             user.save();
             return user;

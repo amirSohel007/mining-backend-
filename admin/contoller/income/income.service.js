@@ -1,4 +1,4 @@
-const incomeTransactionSchema = require('../../../controller/income/income.module');
+const incomeTransactionSchema = require('../../../controller/income/transaction/incometransaction.model');
 
 
 const changeIncomeStatus = (user_id,status) =>{
