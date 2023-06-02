@@ -10,5 +10,10 @@ const UserFundStatus = {
     REJECT:'REJECT'
 }
 
+const UserRole = {
+    USER: 1,
+    ADMIN: 0
+}
 
-module.exports = { Status,UserFundStatus }
+
+module.exports = { Status, UserFundStatus, UserRole }
