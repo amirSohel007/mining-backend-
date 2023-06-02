@@ -1,6 +1,7 @@
 const userFundSchema = require('./userfund/userfund.model');
 const fundTransactionSchema = require('./transaction/fundtransaction.model');
 const { getUserInfo } = require('../user/user.service');
+const {UserFundStatus} = require('../../commonHelper');
 
 async function addFund (user_id, data, transaction_type) {
     try {
@@ -20,7 +21,7 @@ async function addFund (user_id, data, transaction_type) {
             receipt: data.receipt_path,
             transaction_type: transaction_type,
             received_from: data.received_from,
-            status: 'PENDING',
+            status: UserFundStatus.PENDING,
             user_fund: userFund._id
         });
         userFund.fund_balance += transaction.amount;
@@ -91,7 +92,7 @@ async function sendFund (user_id, to_user_id, amount) {
                     amount: amount,
                     transaction_type: 'FUND_SENT',
                     sent_to: to_user_id,
-                    status: 'PENDING',
+                    status: UserFundStatus.PENDING,
                     user_fund: fromUserFund._id
                 });
 

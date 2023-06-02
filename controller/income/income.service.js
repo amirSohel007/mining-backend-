@@ -1,6 +1,7 @@
 const userIncomeSchema = require('./income.module');
 const incomeTransactionSchema = require('./transaction/incometransaction.model');
 const userSchema = require('../user/user.model');
+const { UserFundStatus } = require('../../commonHelper');
 
 async function creditIncome (user_id, amount) {
     try {
@@ -13,7 +14,7 @@ async function creditIncome (user_id, amount) {
             let newTransaction = await incomeTransactionSchema.create({
                 user_id: user_id,
                 balance: amount,
-                status: 'PENDING'
+                status: UserFundStatus.PENDING
             });
             userIncome.balance += amount;
             userIncome.transaction.push(newTransaction._id);
@@ -55,7 +56,7 @@ async function withdrawlIncome (user_id, amount) {
             const transaction = await incomeTransactionSchema.create({
                 user_id: user_id,
                 amount: amount,
-                status: 'PENDING'
+                status: UserFundStatus.PENDING
             });
             
             
