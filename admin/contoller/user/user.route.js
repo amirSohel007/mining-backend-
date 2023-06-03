@@ -3,6 +3,16 @@ const app = express();
 const { allUsers,changeUserStatus,changeUserPassword,createAdminUser,saveAdminQr,getAdminQr } = require('./user.service');
 const responseService = require('../../../response/response.handler');
 const { getUserIdFromToken } = require('../../../commonHelper');
+const multer = require('multer');
+
+const Stroage = multer.diskStorage({
+    destination : 'uploads',
+    filename : (req,file,cb) => {
+        cb(null,file.originalname);
+    }
+});
+
+const upload = multer({storage : Stroage}).single('qr');
 
 app.get('/status/:statusId',(req,res) => {
     try{
@@ -59,10 +69,16 @@ app.post('/register',(req,res) => {
 app.post('/qr',(req,res) => {
     try{
         console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
-        saveAdminQr(getUserIdFromToken(req.headers.authorization),req.body.qrCode).then((result) => {
-            responseService.response(req, null, result, res);
-        }).catch((err) => {
-            responseService.response(req, err, null, res);
+        upload(req,res,(err) => {
+            if(err){
+                console.log(err);
+            }else{
+                saveAdminQr(getUserIdFromToken(req.headers.authorization),{data:req.file.fieldname,contentType:'image/png'}).then((result) => {
+                    responseService.response(req, null, result, res);
+                }).catch((err) => {
+                    responseService.response(req, err, null, res);
+                });        
+            }
         });
     }catch(error){
         responseService.response(req, error, null, res);

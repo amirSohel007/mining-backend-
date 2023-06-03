@@ -1,6 +1,7 @@
 const userSchema = require('../user/user.model');
 const jwt = require('jsonwebtoken');
 const config = require('../../config').config();
+const adminUserSchema = require('../../admin/contoller/admin_user/admin_user.model');
 
 async function loginUser (email, password) {
     try {
@@ -11,12 +12,17 @@ async function loginUser (email, password) {
             }
         }
         const user = await userSchema.findOne({ email: email, password: password });
- 
+        const adminUser = await adminUserSchema.findOne({ email: email, password: password });
         if (user && user.password === password) {
             const token = jwt.sign({ user_id: user._id, my_reffer_code: user.my_reffer_code }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
             user.token = token;
             user.save();
             return user;
+        }else if(adminUser && adminUser.password === password){
+            const token = jwt.sign({ user_id: adminUser._id}, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
+            adminUser.token = token;
+            adminUser.save();
+            return adminUser;
         } 
         
         throw {
