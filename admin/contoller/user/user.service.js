@@ -1,5 +1,8 @@
 const userSchema = require('../../../controller/user/user.model');
 const { Status } = require('../../../commonHelper');
+const jwt = require('jsonwebtoken');
+const config = require('../../../config').config();
+const adminUserSchema = require('../admin_user/admin_user.model');
 
 const allUsers = (status) => {
     return new Promise(async (resolve,reject) => {
@@ -72,4 +75,63 @@ const filterInActiveUsers = (users) => {
     return users.filter((user) => user.status === Status.INACTIVE); 
 }
 
-module.exports = { allUsers,changeUserStatus,changeUserPassword };
+const createAdminUser  = (data) => {
+    return new Promise(async (resolve,reject) => {
+        try{
+            const user = await adminUserSchema.create(data);
+            const token = jwt.sign({ user_id: user._id }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
+            user.token = token;
+            user.save();
+            if(user != null || user != undefined){
+                resolve(user);
+            }else{
+                reject({ message: 'some error occured'})
+            }
+        }catch(error){
+            reject({
+                status: error.status || 500,
+                message: error
+            })
+        }
+    });
+}
+
+const saveAdminQr = (admin_id,qrCodeString) => {
+    return new Promise(async (resolve,reject) => {
+        try{
+            const user = await adminUserSchema.findById({_id: admin_id});
+            user.qr = qrCodeString;
+            user.save();
+            if(user != null || user != undefined){
+                resolve({ message: 'qr saved'});
+            }else{
+                reject({ message: 'some error occured'});
+            }
+        }catch(error){
+            reject({
+                status: error.status || 500,
+                message: error
+            })
+        }
+    });
+}
+
+const getAdminQr = (admin_id) => {
+    return new Promise(async (resolve,reject) => {
+        try{
+            const user = await adminUserSchema.findById({_id: admin_id});
+            if(user != null || user != undefined){
+                resolve(user.qr);
+            }else{
+                reject({ message: 'some error occured'});
+            }
+        }catch(error){
+            reject({
+                status: error.status || 500,
+                message: error
+            })
+        }
+    });
+}
+
+module.exports = { allUsers,changeUserStatus,changeUserPassword,createAdminUser,saveAdminQr,getAdminQr };

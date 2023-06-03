@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+
 const Status = {
     ALL : 'ALL',
     ACTIVE : 'ACTIVE',
@@ -15,5 +17,10 @@ const UserRole = {
     ADMIN: 0
 }
 
+const getUserIdFromToken = (token) => {
+    const tokenUser =  jwt.decode(token.replace('Bearer ','').trim());
+    return tokenUser?.user_id;
 
-module.exports = { Status, UserFundStatus, UserRole }
+} 
+
+module.exports = { Status,UserFundStatus,getUserIdFromToken ,UserRole}
