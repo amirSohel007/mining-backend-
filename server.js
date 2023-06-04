@@ -37,7 +37,7 @@ app.use(function (req, res, next) {
 
 
 // connect mongodb
-//connectDB();
+connectDB();
 
 // initilizating routing
 require('./routing').route(app);
