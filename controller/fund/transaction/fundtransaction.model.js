@@ -14,6 +14,7 @@ const FundTransactionSchema = new Schema({
     sent_to: { type: Schema.Types.ObjectId, ref: 'user' },
     status: { type: String, required: true },
     user_fund: { type: Schema.Types.ObjectId, require: true, ref: 'userfund'},
+    fund_receipt:{type: String,require:true },
     created_at: { type: Date, require: true, default: Date.now() },
     updated_at: { type: Date, require: true, default: Date.now() }
 });

@@ -5,29 +5,19 @@ const bodyParser = require('body-parser');
 const cors = require("cors");
 
 // defining port, if one is not available then port will be 3000
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 5000;
 
 //  pasrse body to json and add body to request
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+  origin : '*'
+}));
 
 app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  // allowed http methods
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-  );
-
-  // allowed request headers
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "content-type, Authorization, X-Requested-With"
-  );
-
   // headers security
   res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("X-XSS-Protection", "1, mode=block");
