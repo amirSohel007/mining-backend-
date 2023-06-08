@@ -3,7 +3,7 @@ const fundTransactionSchema = require('./transaction/fundtransaction.model');
 const { getUserInfo } = require('../user/user.service');
 const {UserFundStatus} = require('../../commonHelper');
 
-async function addFund (user_id, data, transaction_type) {
+async function addFund (user_id, data, transaction_type,imageData) {
     try {
         let userFund = await userFundSchema.findOne({ user_id });
         if (userFund == null) {
@@ -22,7 +22,8 @@ async function addFund (user_id, data, transaction_type) {
             transaction_type: transaction_type,
             received_from: data.received_from,
             status: UserFundStatus.PENDING,
-            user_fund: userFund._id
+            user_fund: userFund._id,
+            fund_receipt : imageData
         });
         userFund.fund_balance += transaction.amount;
         userFund.fund_transaction.push(transaction._id);
