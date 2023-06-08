@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { changeFundStatus } = require('./fund.service');
+const { changeFundStatus,getAllFunds } = require('./fund.service');
 const responseService = require('../../../response/response.handler');
 const { getUserIdFromToken } = require('../../../commonHelper');
 
@@ -8,7 +8,20 @@ const { getUserIdFromToken } = require('../../../commonHelper');
 app.post('/changestatus',(req,res) => {
     try{
         console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
-        changeFundStatus(getUserIdFromToken(req.headers.authorization),req.body.transactionId,req.body.status).then((result) => {
+        changeFundStatus(getUserIdFromToken(req.headers.token),req.body.transactionId,req.body.status).then((result) => {
+            responseService.response(req, null, result, res);
+        }).catch((err) => {
+            responseService.response(req, err, null, res);
+        });
+    }catch(error){
+        responseService.response(req, error, null, res);
+    }
+});
+
+app.get('/',(req,res) => {
+    try{
+        console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
+        getAllFunds().then((result) => {
             responseService.response(req, null, result, res);
         }).catch((err) => {
             responseService.response(req, err, null, res);

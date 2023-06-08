@@ -36,4 +36,22 @@ const updateAdminTotalIncome = async (admin_id,transaction) => {
     adminFundUpdate.save();
 }
 
-module.exports = { changeIncomeStatus };
+const getAllIncome = () => {
+    return new Promise(async (resolve,reject) => {
+        try{
+            const incomes = await incomeTransactionSchema.find({});
+            if(incomes != null || incomes != undefined){
+                resolve(incomes);
+            }else{
+                reject({ message: 'some error occured'});
+            }
+        }catch(error){
+            reject({
+                status: error.status || 500,
+                message: error
+            })
+        }
+    });
+}
+
+module.exports = { changeIncomeStatus,getAllIncome };
