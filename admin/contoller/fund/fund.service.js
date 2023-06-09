@@ -36,4 +36,22 @@ const updateAdminTotalFund = async (admin_id,transaction) => {
     adminFundUpdate.save();
 }
 
-module.exports = { changeFundStatus };
+const getAllFunds = () => {
+    return new Promise(async (resolve,reject) => {
+        try{
+            const fund = await fundTransactionSchema.find({});
+            if(fund != null || fund != undefined){
+                resolve(fund);
+            }else{
+                reject({ message: 'some error occured'});
+            }
+        }catch(error){
+            reject({
+                status: error.status || 500,
+                message: error
+            })
+        }
+    });
+}
+
+module.exports = { changeFundStatus , getAllFunds};

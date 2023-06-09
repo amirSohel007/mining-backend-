@@ -18,7 +18,7 @@ const UserRole = {
 }
 
 const getUserIdFromToken = (token) => {
-    const tokenUser =  jwt.decode(token.replace('Bearer ','').trim());
+    const tokenUser =  jwt.decode(token);
     return tokenUser?.user_id;
 
 } 

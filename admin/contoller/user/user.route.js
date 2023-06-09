@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { allUsers,changeUserStatus,changeUserPassword,createAdminUser,saveAdminQr,getAdminQr } = require('./user.service');
+const { allUsers,changeUserStatus,changeUserPassword,createAdminUser,saveAdminQr,getAdminQr,getAdminData } = require('./user.service');
 const responseService = require('../../../response/response.handler');
 const { getUserIdFromToken } = require('../../../commonHelper');
 const multer = require('multer');
@@ -12,7 +12,7 @@ const Stroage = multer.diskStorage({
     }
 });
 
-const upload = multer({storage : Stroage}).single('qr');
+const upload = multer({storage : Stroage}).single('image');
 
 app.get('/status/:statusId',(req,res) => {
     try{
@@ -73,7 +73,7 @@ app.post('/qr',(req,res) => {
             if(err){
                 console.log(err);
             }else{
-                saveAdminQr(getUserIdFromToken(req.headers.authorization),{data:req.file.fieldname,contentType:'image/png'}).then((result) => {
+                saveAdminQr(getUserIdFromToken(req.headers.token),{data:req.file.fieldname,contentType:'image/png'}).then((result) => {
                     responseService.response(req, null, result, res);
                 }).catch((err) => {
                     responseService.response(req, err, null, res);
@@ -88,7 +88,20 @@ app.post('/qr',(req,res) => {
 app.get('/qr',(req,res) => {
     try{
         console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
-        getAdminQr(getUserIdFromToken(req.headers.authorization)).then((result) => {
+        getAdminQr().then((result) => {
+            responseService.response(req, null, result, res);
+        }).catch((err) => {
+            responseService.response(req, err, null, res);
+        });
+    }catch(error){
+        responseService.response(req, error, null, res);
+    }
+});
+
+app.get('/',(req,res) => {
+    try{
+        console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
+        getAdminData().then((result) => {
             responseService.response(req, null, result, res);
         }).catch((err) => {
             responseService.response(req, err, null, res);
