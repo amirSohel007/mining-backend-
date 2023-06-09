@@ -116,12 +116,12 @@ const saveAdminQr = (admin_id,qrCodeString) => {
     });
 }
 
-const getAdminQr = (admin_id) => {
+const getAdminQr = () => {
     return new Promise(async (resolve,reject) => {
         try{
-            const user = await adminUserSchema.findById({_id: admin_id});
+            const user = await adminUserSchema.find({});
             if(user != null || user != undefined){
-                resolve(user.qr);
+                resolve(user[0].qr);
             }else{
                 reject({ message: 'some error occured'});
             }
@@ -134,4 +134,22 @@ const getAdminQr = (admin_id) => {
     });
 }
 
-module.exports = { allUsers,changeUserStatus,changeUserPassword,createAdminUser,saveAdminQr,getAdminQr };
+const getAdminData = () => {
+    return new Promise(async (resolve,reject) => {
+        try{
+            const user = await adminUserSchema.find({});
+            if(user != null || user != undefined){
+                resolve(user[0]);
+            }else{
+                reject({ message: 'some error occured'});
+            }
+        }catch(error){
+            reject({
+                status: error.status || 500,
+                message: error
+            })
+        }
+    });
+}
+
+module.exports = { allUsers,changeUserStatus,changeUserPassword,createAdminUser,saveAdminQr,getAdminQr,getAdminData };

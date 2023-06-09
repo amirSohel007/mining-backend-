@@ -39,5 +39,24 @@ const resetUserBankDetails = (bankDetails) =>{
     })
 }
 
+const deleteUserBankDelete = (userId) => {
+    return new Promise(async (resolve,reject) => {
+        try{
+            const bankDetail = await bankDetailSchema.deleteOne({user_id : userId});
+            console.log(bankDetail);
+            if(bankDetail && bankDetail.length > 0){
+                resolve(bankDetail);
+            }else{
+                reject(bankDetail);
+            }
+        }catch(error){
+            reject({
+                status: error.status || 500,
+                message: error
+            })
+        }
+    })
+}
 
-module.exports = { getAllUsersBankDetails,resetUserBankDetails };
+
+module.exports = { getAllUsersBankDetails,resetUserBankDetails,deleteUserBankDelete };
