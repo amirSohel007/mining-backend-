@@ -9,42 +9,37 @@ const uuid  = require('uuid');
 
 //Configuration for Multer
 const Stroage = multer.diskStorage({ 
-    destination : 'uploads',
-    filename : (req,file,cb) => {
-        const fileName = req.user.user_id + uuid.v4() + '-' + file.originalname;
-        req.temp = fileName;
-        cb(null, fileName);
-    }
+    destination: (req, file, cb) => {
+        cb(null, 'uploads');
+    },
+    filename: (req, file, cb) => {
+        const ext = file.mimetype.split('/')[1];
+        cb(null, `payment-receipt-image/${req.user.user_id}_${Date.now()}.${ext}`);
+    } 
 });
 
 const upload = multer({storage : Stroage}).single('image');
 
-app.post('/',(req, res) => {
+app.post('/', upload, async (req, res) => {
     console.log(`url : ${req.protocol}://${req.hostname}:3001${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        upload(req,res,async (err) => {
-        if(err){
-            console.log(err);
-        }else{
-            const data = req.body;
-            const { user_id } = req.user;
-            if (data && user_id && data.user_id !== '') {
-                if (data.amount && data.amount > 0) {
-                    let user = await getUserInfo(user_id);
-                    if (user && !user.message) {
-                        const result = await addFund(user_id, data, 'FUND_ADD',req.temp);
-                        responseService.response(req, null, result, res);
-                    } else {
-                        responseService.response(req, { status: 400, message: { status: 400, message: "sender dose not exist" } }, null, res);
-                    }
+        const data = req.body;
+        const { user_id } = req.user;
+        if (data && user_id) {
+            if (data.amount && data.amount > 0) {
+                let user = await getUserInfo(user_id);
+                if (user && !user.message) {
+                    const result = await addFund(user_id, data, 'FUND_ADD', req.file.path);
+                    responseService.response(req, null, result, res);
                 } else {
-                    responseService.response(req, { status: 400, message: { status: 400, message: "amount can't be 0" } }, null, res);
+                    responseService.response(req, { status: 400, message: { status: 400, message: "sender dose not exist" } }, null, res);
                 }
             } else {
-                responseService.response(req, { status: 400, message: { status: 400, message: 'user id is missing' } }, null, res);
+                responseService.response(req, { status: 400, message: { status: 400, message: "amount can't be 0" } }, null, res);
             }
+        } else {
+            responseService.response(req, { status: 400, message: { status: 400, message: 'user id is missing' } }, null, res);
         }
-        });
     } catch (error) {
         console.log('ADD_FUND_ERROR : ', error);
         responseService.response(req, error, null, res);
