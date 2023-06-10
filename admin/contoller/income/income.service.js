@@ -53,7 +53,7 @@ const updateAdminTotalIncome = async (admin_id,transaction) => {
 const getAllIncome = (status) => {
     return new Promise(async (resolve,reject) => {
         try{
-            const incomes = await incomeTransactionSchema.find({});
+            const incomes = await incomeTransactionSchema.find({}).populate({ path: 'user_id' }).exec();
             if(incomes && incomes.length > 0){
                 switch(status)
                 {
