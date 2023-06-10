@@ -6,16 +6,30 @@ const changeIncomeStatus = (admin_id,transactionId,status) =>{
     return new Promise(async (resolve,reject) => {
         try{
             const checkUserStatus = await incomeTransactionSchema.findById({ _id: transactionId });
-            if(checkUserStatus.status === UserFundStatus.ACCEPT){
+            if(status == UserFundStatus.ACCEPT && checkUserStatus.status === UserFundStatus.ACCEPT){
                 resolve({ message: 'status Already Approved'});
                 return;
             }
-            const incomeTransaction = await incomeTransactionSchema.findOneAndUpdate({ _id: transactionId },{status : status});
-            console.log(incomeTransaction);
-            if(status === UserFundStatus.ACCEPT){
-                updateAdminTotalIncome(admin_id,incomeTransaction);
+            if(status == UserFundStatus.ACCEPT && checkUserStatus.status === UserFundStatus.REJECT){
+                resolve({ message: 'status Already REJECTED'});
+                return;
             }
-            if(incomeTransaction){
+            if(status == UserFundStatus.REJECT && checkUserStatus.status === UserFundStatus.REJECT){
+                resolve({ message: 'status Already Rejected'});
+                return;
+            }
+            if(status == UserFundStatus.REJECT &&checkUserStatus.status === UserFundStatus.PENDING){
+                checkUserStatus.status = UserFundStatus.REJECT;
+                checkUserStatus.save();
+                resolve({ message: 'status updated'});
+                return;
+            }
+            if(status == UserFundStatus.ACCEPT && checkUserStatus.status === UserFundStatus.PENDING){
+                checkUserStatus.status = UserFundStatus.ACCEPT;
+                checkUserStatus.save();
+                updateAdminTotalIncome(admin_id,checkUserStatus);
+            }
+            if(checkUserStatus){
                 resolve({ message: 'status updated'})
             }else{
                 reject({ message: 'user not found'})
@@ -32,18 +46,25 @@ const changeIncomeStatus = (admin_id,transactionId,status) =>{
 const updateAdminTotalIncome = async (admin_id,transaction) => {
     const adminFundUpdate = await adminUserSchema.findById({_id:admin_id});
     console.log(adminFundUpdate,transaction);
-    adminFundUpdate.totalWithdrawal += transaction.amount;
+    adminFundUpdate.totalWithdrawal = adminFundUpdate.totalWithdrawal + transaction.amount;
     adminFundUpdate.save();
 }
 
-const getAllIncome = () => {
+const getAllIncome = (status) => {
     return new Promise(async (resolve,reject) => {
         try{
-            const incomes = await incomeTransactionSchema.find({});
-            if(incomes != null || incomes != undefined){
-                resolve(incomes);
+            const incomes = await incomeTransactionSchema.find({}).populate({ path: 'user_id' }).exec();
+            if(incomes && incomes.length > 0){
+                switch(status)
+                {
+                    case UserFundStatus.ALL : resolve(incomes);break;
+                    case UserFundStatus.ACCEPT : resolve(filterAcceptIncome(incomes)); break;
+                    case UserFundStatus.PENDING : resolve(filterPendingIncome(incomes));break;
+                    case UserFundStatus.REJECT : resolve(filterRejectIncome(incomes));break;
+                }
+                
             }else{
-                reject({ message: 'some error occured'});
+                reject(incomes);
             }
         }catch(error){
             reject({
@@ -54,4 +75,15 @@ const getAllIncome = () => {
     });
 }
 
+const filterAcceptIncome = (incomes) => {
+    return incomes.filter((income) => income.status === UserFundStatus.ACCEPT); 
+}
+
+const filterPendingIncome = (incomes) => {
+    return incomes.filter((income) => income.status === UserFundStatus.PENDING); 
+}
+
+const filterRejectIncome = (incomes) => {
+    return incomes.filter((income) => income.status === UserFundStatus.REJECT); 
+}
 module.exports = { changeIncomeStatus,getAllIncome };
