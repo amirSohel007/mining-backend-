@@ -18,10 +18,16 @@ const UserRole = {
     ADMIN: 0
 }
 
+const FundTransactionType = {
+    ADD: 'FUND_ADD',
+    RECEIVE: 'FUND_RECEIVED',
+    SENT: 'FUND_SENT'
+}
+
 const getUserIdFromToken = (token) => {
     const tokenUser =  jwt.decode(token);
     return tokenUser?.user_id;
 
 } 
 
-module.exports = { Status,UserFundStatus,getUserIdFromToken ,UserRole}
+module.exports = { Status, UserFundStatus, getUserIdFromToken, UserRole, FundTransactionType }
