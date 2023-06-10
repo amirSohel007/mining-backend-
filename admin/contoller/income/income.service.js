@@ -50,14 +50,21 @@ const updateAdminTotalIncome = async (admin_id,transaction) => {
     adminFundUpdate.save();
 }
 
-const getAllIncome = () => {
+const getAllIncome = (status) => {
     return new Promise(async (resolve,reject) => {
         try{
             const incomes = await incomeTransactionSchema.find({});
-            if(incomes != null || incomes != undefined){
-                resolve(incomes);
+            if(incomes && incomes.length > 0){
+                switch(status)
+                {
+                    case UserFundStatus.ALL : resolve(incomes);break;
+                    case UserFundStatus.ACCEPT : resolve(filterAcceptIncome(incomes)); break;
+                    case UserFundStatus.PENDING : resolve(filterPendingIncome(incomes));break;
+                    case UserFundStatus.REJECT : resolve(filterRejectIncome(incomes));break;
+                }
+                
             }else{
-                reject({ message: 'some error occured'});
+                reject(incomes);
             }
         }catch(error){
             reject({
@@ -68,4 +75,15 @@ const getAllIncome = () => {
     });
 }
 
+const filterAcceptIncome = (incomes) => {
+    return incomes.filter((income) => income.status === UserFundStatus.ACCEPT); 
+}
+
+const filterPendingIncome = (incomes) => {
+    return incomes.filter((income) => income.status === UserFundStatus.PENDING); 
+}
+
+const filterRejectIncome = (incomes) => {
+    return incomes.filter((income) => income.status === UserFundStatus.REJECT); 
+}
 module.exports = { changeIncomeStatus,getAllIncome };

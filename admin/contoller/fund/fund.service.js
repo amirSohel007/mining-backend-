@@ -50,14 +50,21 @@ const updateAdminTotalFund = async (admin_id,transaction) => {
     adminFundUpdate.save();
 }
 
-const getAllFunds = () => {
+const getAllFunds = (status) => {
     return new Promise(async (resolve,reject) => {
         try{
             const fund = await fundTransactionSchema.find({});
-            if(fund != null || fund != undefined){
-                resolve(fund);
+            if(fund && fund.length > 0){
+                switch(status)
+                {
+                    case UserFundStatus.ALL : resolve(fund);break;
+                    case UserFundStatus.ACCEPT : resolve(filterAcceptFund(fund)); break;
+                    case UserFundStatus.PENDING : resolve(filterPendingFund(fund));break;
+                    case UserFundStatus.REJECT : resolve(filterRejectFund(fund));break;
+                }
+                
             }else{
-                reject({ message: 'some error occured'});
+                reject(fund);
             }
         }catch(error){
             reject({
@@ -66,6 +73,18 @@ const getAllFunds = () => {
             })
         }
     });
+}
+
+const filterAcceptFund = (funds) => {
+    return funds.filter((fund) => fund.status === UserFundStatus.ACCEPT); 
+}
+
+const filterPendingFund = (funds) => {
+    return funds.filter((fund) => fund.status === UserFundStatus.PENDING); 
+}
+
+const filterRejectFund = (funds) => {
+    return funds.filter((fund) => fund.status === UserFundStatus.REJECT); 
 }
 
 module.exports = { changeFundStatus , getAllFunds};

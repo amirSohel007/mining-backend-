@@ -9,7 +9,8 @@ const Status = {
 const UserFundStatus = {
     ACCEPT: 'ACCEPT',
     PENDING:'PENDING',
-    REJECT:'REJECT'
+    REJECT:'REJECT',
+    ALL:'ALL'
 }
 
 const UserRole = {
