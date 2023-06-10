@@ -17,10 +17,10 @@ app.post('/changestatus',(req,res) => {
     }
 });
 
-app.get('/',(req,res) => {
+app.get('/:status',(req,res) => {
     try{
         console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
-        getAllIncome().then((result) => {
+        getAllIncome(req.params.status).then((result) => {
             responseService.response(req, null, result, res);
         }).catch((err) => {
             responseService.response(req, err, null, res);
