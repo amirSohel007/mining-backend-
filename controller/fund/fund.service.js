@@ -25,7 +25,7 @@ async function addFund (user_id, data, transaction_type,imageData) {
             user_fund: userFund._id,
             fund_receipt : imageData
         });
-        userFund.fund_balance += transaction.amount;
+        // userFund.fund_balance += transaction.amount;
         userFund.fund_transaction.push(transaction._id);
         userFund.save();
         return userFund;
@@ -63,7 +63,8 @@ async function getUserFundTransaction (user_id, fund_request_type) {
         }
         console.log('FUND_TRANSACTION : ', query);
         let transaction = await fundTransactionSchema.find(query, '-_id -user_id')
-        .populate({ path: 'sent_to', model: 'user', select: '-_id my_reffer_code full_name' });
+        .populate({ path: 'sent_to', model: 'user', select: '-_id my_reffer_code full_name' })
+        .populate({ path: 'user_id', model: 'user', select: '-_id my_reffer_code full_name' });
         if (transaction) {
             return transaction;
         }
