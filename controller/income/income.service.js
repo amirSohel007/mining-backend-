@@ -44,7 +44,7 @@ async function withdrawlIncome (user_id, amount) {
             if (userIncome.first_withdrawal && amount > 300) {
                 throw {
                     status: 400,
-                    message: 'first withdrawal can not be exceed $300'
+                    message: 'first withdrawal can not be exceed 300'
                 }
             } else if (userIncome.balance < amount) {
                 throw {
@@ -64,7 +64,7 @@ async function withdrawlIncome (user_id, amount) {
                 userIncome.first_withdrawal = false
             }
             userIncome.transaction.push(transaction._id);
-            userIncome -= amount;
+            // userIncome -= amount;
             userIncome.save();
             return userIncome;
         } else {

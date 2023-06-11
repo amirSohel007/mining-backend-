@@ -44,7 +44,7 @@ const deleteUserBankDelete = (userId) => {
         try{
             const bankDetail = await bankDetailSchema.deleteOne({user_id : userId});
             console.log(bankDetail);
-            if(bankDetail && bankDetail.length > 0){
+            if(bankDetail){
                 resolve(bankDetail);
             }else{
                 reject(bankDetail);

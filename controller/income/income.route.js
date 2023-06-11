@@ -40,9 +40,8 @@ app.post('/credit', async (req, res) => {
 app.get('/', async (req, res) => {
     console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        let { amount } = req.query;
         const { user_id } = req.user;
-        if (user_id && amount > 0) {
+        if (user_id) {
             const result = await getIncome(user_id);
             responseService.response(req, null, result, res);
         } else {

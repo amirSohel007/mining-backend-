@@ -2,8 +2,10 @@ const userFundSchema = require('./userfund/userfund.model');
 const fundTransactionSchema = require('./transaction/fundtransaction.model');
 const { getUserInfo } = require('../user/user.service');
 const {UserFundStatus} = require('../../commonHelper');
+const { upload_file_to_s3, get_s3_file } = require('../../s3_confif');
+const { FundTransactionType } = require('../../commonHelper');
 
-async function addFund (user_id, data, transaction_type,imageData) {
+async function addFund (user_id, data, transaction_type, imageData) {
     try {
         let userFund = await userFundSchema.findOne({ user_id });
         if (userFund == null) {
@@ -13,6 +15,8 @@ async function addFund (user_id, data, transaction_type,imageData) {
                 fund_transaction: []
             });
         }
+        const s3_file = await upload_file_to_s3(imageData);
+        console.log('S3_FILE_DATA : ', s3_file);
         // create transaction history
         let transaction = await fundTransactionSchema.create({
             user_id: user_id,
@@ -23,9 +27,9 @@ async function addFund (user_id, data, transaction_type,imageData) {
             received_from: data.received_from,
             status: UserFundStatus.PENDING,
             user_fund: userFund._id,
-            fund_receipt : imageData
+            fund_receipt : s3_file.key
         });
-        userFund.fund_balance += transaction.amount;
+        // userFund.fund_balance += transaction.amount;
         userFund.fund_transaction.push(transaction._id);
         userFund.save();
         return userFund;
@@ -63,9 +67,30 @@ async function getUserFundTransaction (user_id, fund_request_type) {
         }
         console.log('FUND_TRANSACTION : ', query);
         let transaction = await fundTransactionSchema.find(query, '-_id -user_id')
-        .populate({ path: 'sent_to', model: 'user', select: '-_id my_reffer_code full_name' });
+        .populate({ path: 'sent_to', model: 'user', select: '-_id my_reffer_code full_name' })
+        .populate({ path: 'user_id', model: 'user', select: '-_id my_reffer_code full_name' }).lean().exec();
         if (transaction) {
-            return transaction;
+            let result = [];
+            if (fund_request_type = FundTransactionType.ADD && transaction.length) {
+                // result = transaction.map(async (obj) => {
+                //     if (obj.fund_receipt && obj.fund_receipt.indexOf('receipts/') != -1) {
+                //         obj.fund_receipt = await get_s3_file(obj.fund_receipt);
+                //         console.log('OBJ : ', obj);
+                //     }
+                //     return obj;
+                // });
+                for (let i = 0; i < transaction.length; i++) {
+                    let obj = { ...transaction[i] };
+                    if (obj.fund_receipt && obj.fund_receipt.indexOf('receipts/') != -1) {
+                        obj.fund_receipt = await get_s3_file(obj.fund_receipt);
+                        console.log('OBJ : ', obj);
+                    }
+                    result.push(obj);
+                }
+            } else {
+                result = transaction;
+            }
+            return result;
         }
         return { message: 'record not found'};
     } catch (error) {

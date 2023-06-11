@@ -9,12 +9,19 @@ const Status = {
 const UserFundStatus = {
     ACCEPT: 'ACCEPT',
     PENDING:'PENDING',
-    REJECT:'REJECT'
+    REJECT:'REJECT',
+    ALL:'ALL'
 }
 
 const UserRole = {
     USER: 1,
     ADMIN: 0
+}
+
+const FundTransactionType = {
+    ADD: 'FUND_ADD',
+    RECEIVE: 'FUND_RECEIVED',
+    SENT: 'FUND_SENT'
 }
 
 const getUserIdFromToken = (token) => {
@@ -23,4 +30,4 @@ const getUserIdFromToken = (token) => {
 
 } 
 
-module.exports = { Status,UserFundStatus,getUserIdFromToken ,UserRole}
+module.exports = { Status, UserFundStatus, getUserIdFromToken, UserRole, FundTransactionType }
