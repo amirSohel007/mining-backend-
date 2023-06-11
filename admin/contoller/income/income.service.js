@@ -6,25 +6,25 @@ const changeIncomeStatus = (admin_id,transactionId,status) =>{
     return new Promise(async (resolve,reject) => {
         try{
             const checkUserStatus = await incomeTransactionSchema.findById({ _id: transactionId });
-            if(status == UserFundStatus.ACCEPT && checkUserStatus.status === UserFundStatus.ACCEPT){
+            if(status == UserFundStatus.ACCEPT && checkUserStatus?.status === UserFundStatus.ACCEPT){
                 resolve({ message: 'status Already Approved'});
                 return;
             }
-            if(status == UserFundStatus.ACCEPT && checkUserStatus.status === UserFundStatus.REJECT){
+            if(status == UserFundStatus.ACCEPT && checkUserStatus?.status === UserFundStatus.REJECT){
                 resolve({ message: 'status Already REJECTED'});
                 return;
             }
-            if(status == UserFundStatus.REJECT && checkUserStatus.status === UserFundStatus.REJECT){
+            if(status == UserFundStatus.REJECT && checkUserStatus?.status === UserFundStatus.REJECT){
                 resolve({ message: 'status Already Rejected'});
                 return;
             }
-            if(status == UserFundStatus.REJECT &&checkUserStatus.status === UserFundStatus.PENDING){
+            if(status == UserFundStatus.REJECT &&checkUserStatus?.status === UserFundStatus.PENDING){
                 checkUserStatus.status = UserFundStatus.REJECT;
                 checkUserStatus.save();
                 resolve({ message: 'status updated'});
                 return;
             }
-            if(status == UserFundStatus.ACCEPT && checkUserStatus.status === UserFundStatus.PENDING){
+            if(status == UserFundStatus.ACCEPT && checkUserStatus?.status === UserFundStatus.PENDING){
                 checkUserStatus.status = UserFundStatus.ACCEPT;
                 checkUserStatus.save();
                 updateAdminTotalIncome(admin_id,checkUserStatus);
