@@ -3,6 +3,7 @@ const { Status } = require('../../../commonHelper');
 const jwt = require('jsonwebtoken');
 const config = require('../../../config').config();
 const adminUserSchema = require('../admin_user/admin_user.model');
+const { upload_file_to_s3, get_s3_file } = require('../../../s3_confif');
 
 const allUsers = (status) => {
     return new Promise(async (resolve,reject) => {
@@ -96,11 +97,12 @@ const createAdminUser  = (data) => {
     });
 }
 
-const saveAdminQr = (admin_id,qrCodeString) => {
+const saveAdminQr = (admin_id, qrCodeFilePath) => {
     return new Promise(async (resolve,reject) => {
         try{
+            const file = await upload_file_to_s3(qrCodeFilePath);
             const user = await adminUserSchema.findById({_id: admin_id});
-            user.qr = qrCodeString;
+            user.qr = file.key;
             user.save();
             if(user != null || user != undefined){
                 resolve({ message: 'qr saved'});
@@ -121,7 +123,8 @@ const getAdminQr = () => {
         try{
             const user = await adminUserSchema.find({});
             if(user != null || user != undefined){
-                resolve(user[0].qr);
+                const qr = await get_s3_file(user.qr);
+                resolve(qr);
             }else{
                 reject({ message: 'some error occured'});
             }

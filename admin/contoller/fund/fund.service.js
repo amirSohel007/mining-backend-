@@ -98,10 +98,10 @@ const filterRejectFund = (funds) => {
 
 async function updateUserFundBalance (userFundId, amount) {
     try {
-        const fund = await userFundSchema.findOneAndUpdate({ _id: userFundId }, { fund_balance: amount }, { returnOriginal: false });
-        // const fund = await userFundSchema.findOne({ _id: userFundId }); //, { fund_balanc: amount }, { returnOriginal: false });
-        // fund.fund_balance += amount;
-        // fund.save();
+        // const fund = await userFundSchema.findOneAndUpdate({ _id: userFundId }, { fund_balance: amount }, { returnOriginal: false });
+        const fund = await userFundSchema.findOne({ _id: userFundId }); //, { fund_balanc: amount }, { returnOriginal: false });
+        fund.fund_balance += amount;
+        fund.save();
         console.log('USER_FUND : ', fund);
         return fund;
     } catch (error) {
