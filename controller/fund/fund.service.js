@@ -15,8 +15,12 @@ async function addFund (user_id, data, transaction_type, imageData) {
                 fund_transaction: []
             });
         }
-        const s3_file = await upload_file_to_s3(imageData);
-        console.log('S3_FILE_DATA : ', s3_file);
+
+        let s3_file = '';
+        if (transaction_type === FundTransactionType.ADD) {
+            s3_file = await upload_file_to_s3(imageData);
+            console.log('S3_FILE_DATA : ', s3_file);
+        }
         // create transaction history
         let transaction = await fundTransactionSchema.create({
             user_id: user_id,
