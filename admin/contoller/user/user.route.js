@@ -3,13 +3,26 @@ const app = express();
 const { allUsers,changeUserStatus,changeUserPassword,createAdminUser,saveAdminQr,getAdminQr,getAdminData } = require('./user.service');
 const responseService = require('../../../response/response.handler');
 const { getUserIdFromToken } = require('../../../commonHelper');
-const multer = require('multer');
+const multer = require('multer')
 
-const Stroage = multer.diskStorage({
-    destination : 'uploads',
-    filename : (req,file,cb) => {
-        cb(null,file.originalname);
-    }
+// const Stroage = multer.diskStorage({
+//     destination : 'uploads',
+//     filename : (req,file,cb) => {
+//         cb(null,file.originalname);
+//     }
+// });
+
+// const upload = multer({storage : Stroage}).single('image');
+
+//Configuration for Multer
+const Stroage = multer.diskStorage({ 
+    destination: (req, file, cb) => {
+        cb(null, 'uploads');
+    },
+    filename: (req, file, cb) => {
+        const ext = file.mimetype.split('/')[1];
+        cb(null, `payment-receipt-image/${req.user.user_id}_${Date.now()}.${ext}`);
+    } 
 });
 
 const upload = multer({storage : Stroage}).single('image');
@@ -88,7 +101,7 @@ app.post('/register',(req,res) => {
 app.post('/qr', upload, (req,res) => {
     try{
         console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
-        saveAdminQr(getUserIdFromToken(req.headers.token),{data:req.file.path,contentType:'image/png'}).then((result) => {
+        saveAdminQr(getUserIdFromToken(req.headers.token), req.file.path).then((result) => {
             responseService.response(req, null, result, res);
         }).catch((err) => {
             responseService.response(req, err, null, res);
