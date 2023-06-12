@@ -102,7 +102,7 @@ const saveAdminQr = (admin_id, qrCodeFilePath) => {
         try{
             const file = await upload_file_to_s3(qrCodeFilePath);
             const user = await adminUserSchema.findById({_id: admin_id});
-            user.qr = file.key;
+            user['qr'] = file.key;
             user.save();
             if(user != null || user != undefined){
                 resolve({ message: 'qr saved'});
@@ -123,7 +123,7 @@ const getAdminQr = () => {
         try{
             const user = await adminUserSchema.find({});
             if(user != null || user != undefined){
-                const qr = await get_s3_file(user.qr);
+                const qr = await get_s3_file(user[0].qr);
                 resolve(qr);
             }else{
                 reject({ message: 'some error occured'});
