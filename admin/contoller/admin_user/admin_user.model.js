@@ -10,7 +10,7 @@ const AdminUserSchema = new Schema({
     password: { type: String, require: true },
     token: { type: String },
     role: { type: Number, require: true, default: UserRole.ADMIN },
-    qr:{ data: Buffer,contentType:String },
+    qr:{ type: String },
     totalFund:{type:SchemaTypes.Mixed,default: 0.00},
     totalWithdrawal:{type:SchemaTypes.Mixed,default: 0.00},
     joining_date : {type: Date,require: true, default : Date.now()},
