@@ -120,6 +120,10 @@ async function getUserAndDownlineTeam (user_id) {
         }
     } catch (error) {
         console.log('GET_USERS_DOWNLINE_TEAM_ERROR : ', error);
+        throw {
+            status: error.status || 500,
+            message: error
+        }
     }
 }
 
@@ -142,6 +146,10 @@ async function getUserAndDirectTeam (user_id) {
         }
     } catch (error) {
         console.log('GET_USERS_DOWNLINE_TEAM_ERROR : ', error);
+        throw {
+            status: error.status || 500,
+            message: error
+        }
     }
 }
 

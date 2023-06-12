@@ -1,6 +1,7 @@
 const fundTransactionSchema = require('../../../controller/fund/transaction/fundtransaction.model');
 const { UserFundStatus } = require('../../../commonHelper');
 const adminUserSchema = require('../admin_user/admin_user.model');
+const userFundSchema = require('../../../controller/fund/userfund/userfund.model');
 
 const changeFundStatus = (admin_id,transactionId,status) =>{
     return new Promise(async (resolve,reject) => {
@@ -26,9 +27,15 @@ const changeFundStatus = (admin_id,transactionId,status) =>{
                 return;
             }
             if(status == UserFundStatus.ACCEPT && checkUserStatus?.status === UserFundStatus.PENDING){
-                checkUserStatus.status = UserFundStatus.ACCEPT;
-                checkUserStatus.save();
-                updateAdminTotalFund(admin_id,checkUserStatus);
+                const updatedFundBalance = await updateUserFundBalance(checkUserStatus.user_fund, checkUserStatus.amount);
+                if (updatedFundBalance) {
+                    checkUserStatus.status = UserFundStatus.ACCEPT;
+                    checkUserStatus.save();
+                    updateAdminTotalFund(admin_id,checkUserStatus);
+                    resolve(checkUserStatus);
+                } else {
+                    reject({ message: 'unable to add fund' });
+                }
             }
             if(checkUserStatus){
                 resolve({ message: 'status updated'})
@@ -48,7 +55,7 @@ const changeFundStatus = (admin_id,transactionId,status) =>{
 const updateAdminTotalFund = async (admin_id,transaction) => {
     const adminFundUpdate = await adminUserSchema.findById({_id:admin_id});
     console.log(adminFundUpdate,transaction);
-    adminFundUpdate.totalFund =  adminFundUpdate.totalFund  + transaction.amount;
+    adminFundUpdate.totalFund =  adminFundUpdate.totalFund ? adminFundUpdate.totalFund  + transaction.amount : transaction.amount;
     adminFundUpdate.save();
 }
 
@@ -87,6 +94,20 @@ const filterPendingFund = (funds) => {
 
 const filterRejectFund = (funds) => {
     return funds.filter((fund) => fund.status === UserFundStatus.REJECT); 
+}
+
+async function updateUserFundBalance (userFundId, amount) {
+    try {
+        const fund = await userFundSchema.findOneAndUpdate({ _id: userFundId }, { fund_balance: amount }, { returnOriginal: false });
+        // const fund = await userFundSchema.findOne({ _id: userFundId }); //, { fund_balanc: amount }, { returnOriginal: false });
+        // fund.fund_balance += amount;
+        // fund.save();
+        console.log('USER_FUND : ', fund);
+        return fund;
+    } catch (error) {
+        console.log('UPDATE_USER_FUND_ERROR : ', error);
+        throw error;
+    }
 }
 
 module.exports = { changeFundStatus , getAllFunds};
