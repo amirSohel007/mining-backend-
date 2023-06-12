@@ -72,13 +72,6 @@ async function getUserFundTransaction (user_id, fund_request_type) {
         if (transaction) {
             let result = [];
             if (fund_request_type = FundTransactionType.ADD && transaction.length) {
-                // result = transaction.map(async (obj) => {
-                //     if (obj.fund_receipt && obj.fund_receipt.indexOf('receipts/') != -1) {
-                //         obj.fund_receipt = await get_s3_file(obj.fund_receipt);
-                //         console.log('OBJ : ', obj);
-                //     }
-                //     return obj;
-                // });
                 for (let i = 0; i < transaction.length; i++) {
                     let obj = { ...transaction[i] };
                     if (obj.fund_receipt && obj.fund_receipt.indexOf('receipts/') != -1) {
