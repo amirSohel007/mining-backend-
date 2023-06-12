@@ -66,19 +66,32 @@ app.post('/register',(req,res) => {
     }
 });
 
-app.post('/qr',(req,res) => {
+// app.post('/qr',(req,res) => {
+//     try{
+//         console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
+//         upload(req,res,(err) => {
+//             if(err){
+//                 console.log(err);
+//             }else{
+//                 saveAdminQr(getUserIdFromToken(req.headers.token),{data:req.file.fieldname,contentType:'image/png'}).then((result) => {
+//                     responseService.response(req, null, result, res);
+//                 }).catch((err) => {
+//                     responseService.response(req, err, null, res);
+//                 });        
+//             }
+//         });
+//     }catch(error){
+//         responseService.response(req, error, null, res);
+//     }
+// });
+
+app.post('/qr', upload, (req,res) => {
     try{
         console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
-        upload(req,res,(err) => {
-            if(err){
-                console.log(err);
-            }else{
-                saveAdminQr(getUserIdFromToken(req.headers.token),{data:req.file.fieldname,contentType:'image/png'}).then((result) => {
-                    responseService.response(req, null, result, res);
-                }).catch((err) => {
-                    responseService.response(req, err, null, res);
-                });        
-            }
+        saveAdminQr(getUserIdFromToken(req.headers.token),{data:req.file.path,contentType:'image/png'}).then((result) => {
+            responseService.response(req, null, result, res);
+        }).catch((err) => {
+            responseService.response(req, err, null, res);
         });
     }catch(error){
         responseService.response(req, error, null, res);
