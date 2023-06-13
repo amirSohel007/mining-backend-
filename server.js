@@ -3,6 +3,7 @@ const app = express();
 const connectDB = require('./connection/connection')
 const bodyParser = require('body-parser');
 const cors = require("cors");
+const { deleteAllDirectoryFiles } = require('./commonHelper');
 
 // defining port, if one is not available then port will be 3000
 const port = process.env.PORT || 5000;
@@ -24,7 +25,12 @@ app.use(function (req, res, next) {
   next();
 });
 
-
+// delete all files from upload/payment-receipt-image folder in every 24 hours
+setInterval(() => {
+  console.log('CLEARING_UPLOAD_FOLDER_START');
+  deleteAllDirectoryFiles('uploads/payment-receipt-image');
+  console.log('CLEARING_UPLOAD_FOLDER_END');
+}, (1000 * 60 * 60 * 24)); 
 
 // connect mongodb
 connectDB();
