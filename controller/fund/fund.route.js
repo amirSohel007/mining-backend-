@@ -4,7 +4,6 @@ const { addFund, getUserFund, sendFund, getUserFundTransaction } = require('./fu
 const { getUserInfo, getUser } = require('../user/user.service');
 const responseService = require('../../response/response.handler');
 const multer = require('multer');
-const fs = require('fs');
 const uuid  = require('uuid');
 
 //Configuration for Multer
@@ -14,7 +13,7 @@ const Stroage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const ext = file.mimetype.split('/')[1];
-        cb(null, `payment-receipt-image/${req.user.user_id}_${Date.now()}.${ext}`);
+        cb(null, `${req.user.user_id}_${Date.now()}.${ext}`);
     } 
 });
 
@@ -29,7 +28,7 @@ app.post('/', upload, async (req, res) => {
             if (data.amount && data.amount > 0) {
                 let user = await getUserInfo(user_id);
                 if (user && !user.message) {
-                    const result = await addFund(user_id, data, 'FUND_ADD', req.file.path);
+                    const result = await addFund(user_id, data, 'FUND_ADD', req.file.filename);
                     responseService.response(req, null, result, res);
                 } else {
                     responseService.response(req, { status: 400, message: { status: 400, message: "sender dose not exist" } }, null, res);

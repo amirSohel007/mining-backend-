@@ -85,8 +85,8 @@ async function getUserFundTransaction (user_id, fund_request_type, req) {
                         obj.fund_receipt = await get_s3_file(obj.fund_receipt);
                         console.log('OBJ : ', obj);
                     }
-                    if (obj.fund_receipt && obj.fund_receipt.indexOf('uploads\\') != -1) {
-                        obj.fund_receipt = `${getBaseUrl(req)}/${obj.fund_receipt.split('\\')[2]}`;
+                    if (obj.fund_receipt) {
+                        obj.fund_receipt = `${getBaseUrl(req)}/${obj.fund_receipt}`;
                     }
                     result.push(obj);
                 }

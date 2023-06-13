@@ -21,7 +21,7 @@ const Stroage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const ext = file.mimetype.split('/')[1];
-        cb(null, `payment-receipt-image/${req.user.user_id}_${Date.now()}.${ext}`);
+        cb(null, `${req.user.user_id}_${Date.now()}.${ext}`);
     } 
 });
 
@@ -101,7 +101,7 @@ app.post('/changepassword',(req,res) => {
 app.post('/qr', upload, (req,res) => {
     try{
         console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
-        saveAdminQr(getUserIdFromToken(req.headers.token), req.file.path).then((result) => {
+        saveAdminQr(getUserIdFromToken(req.headers.token), req.file.filename).then((result) => {
             responseService.response(req, null, result, res);
         }).catch((err) => {
             responseService.response(req, err, null, res);

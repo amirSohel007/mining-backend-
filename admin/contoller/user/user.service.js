@@ -125,14 +125,14 @@ const getAdminQr = (req) => {
     return new Promise(async (resolve,reject) => {
         try{
             const user = await adminUserSchema.findOne({ _id: req.user.user_id });
-            consoel.log('ADMIN_USER : ', user);
+            console.log('ADMIN_USER : ', user);
             if(user != null || user != undefined) {
                 let qr = '';
                 console.log('USE_S3 : ', config.useS3);
                 if (config.useS3) {
                     qr = await get_s3_file(user.qr);
                 } else {
-                    qr = `${getBaseUrl(req)}/${user[0].qr.split('\\')[2]}`
+                    qr = `${getBaseUrl(req)}/${user._doc.qr}`
                 }
                 console.log('USE_S3 : ', qr);
                 resolve(qr);
