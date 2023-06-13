@@ -72,9 +72,11 @@ const getAllFunds = (status, req) => {
                     if (config.useS3 && obj.fund_receipt && obj.fund_receipt.indexOf('receipts/') != -1) {
                         obj.fund_receipt = await get_s3_file(obj.fund_receipt);
                     }
+                    console.log('OBJ : ', obj.fund_receipt.indexOf('uploads\\') != -1);
                     if (obj.fund_receipt && obj.fund_receipt.indexOf('uploads\\') != -1) {
                         obj.fund_receipt = `${getBaseUrl(req)}/${obj.fund_receipt.split('\\')[2]}`;
                     }
+                    console.log('OBJ : ', `${getBaseUrl(req)}/${obj.fund_receipt.split('\\')[2]}`);
                     result.push(obj);
                 }
                 switch(status)
