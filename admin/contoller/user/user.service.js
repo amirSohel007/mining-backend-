@@ -1,5 +1,5 @@
 const userSchema = require('../../../controller/user/user.model');
-const { Status } = require('../../../commonHelper');
+const { Status, getBaseUrl } = require('../../../commonHelper');
 const jwt = require('jsonwebtoken');
 const config = require('../../../config').config();
 const adminUserSchema = require('../admin_user/admin_user.model');
@@ -99,10 +99,13 @@ const createAdminUser  = (data) => {
 
 const saveAdminQr = (admin_id, qrCodeFilePath) => {
     return new Promise(async (resolve,reject) => {
-        try{
-            const file = await upload_file_to_s3(qrCodeFilePath);
+        try {
+            let file = qrCodeFilePath;
+            if (config.useS3) {
+                file = await upload_file_to_s3(qrCodeFilePath);
+            }
             const user = await adminUserSchema.findById({_id: admin_id});
-            user['qr'] = file.key;
+            user['qr'] = file.key ? file.key : file;
             user.save();
             if(user != null || user != undefined){
                 resolve({ message: 'qr saved'});
@@ -118,12 +121,17 @@ const saveAdminQr = (admin_id, qrCodeFilePath) => {
     });
 }
 
-const getAdminQr = () => {
+const getAdminQr = (req) => {
     return new Promise(async (resolve,reject) => {
         try{
             const user = await adminUserSchema.find({});
-            if(user != null || user != undefined){
-                const qr = await get_s3_file(user[0].qr);
+            if(user != null || user != undefined) {
+                let qr = '';
+                if (config.useS3) {
+                    qr = await get_s3_file(user[0].qr);
+                } else {
+                    qr = `${getBaseUrl(req)}/${user[0].qr.split('\\')[2]}`
+                }
                 resolve(qr);
             }else{
                 reject({ message: 'some error occured'});

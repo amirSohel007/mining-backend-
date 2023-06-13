@@ -21,7 +21,7 @@ app.post('/changestatus',(req,res) => {
 app.get('/:status',(req,res) => {
     try{
         console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
-        getAllFunds(req.params.status).then((result) => {
+        getAllFunds(req.params.status, req).then((result) => {
             responseService.response(req, null, result, res);
         }).catch((err) => {
             responseService.response(req, err, null, res);

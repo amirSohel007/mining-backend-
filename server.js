@@ -26,11 +26,13 @@ app.use(function (req, res, next) {
 });
 
 // delete all files from upload/payment-receipt-image folder in every 24 hours
-setInterval(() => {
-  console.log('CLEARING_UPLOAD_FOLDER_START');
-  deleteAllDirectoryFiles('uploads/payment-receipt-image');
-  console.log('CLEARING_UPLOAD_FOLDER_END');
-}, (1000 * 60 * 60 * 24)); 
+// setInterval(() => {
+//   console.log('CLEARING_UPLOAD_FOLDER_START');
+//   deleteAllDirectoryFiles('uploads/payment-receipt-image');
+//   console.log('CLEARING_UPLOAD_FOLDER_END');
+// }, (1000 * 60 * 60 * 24)); 
+
+app.use(express.static('uploads/payment-receipt-image'));
 
 // connect mongodb
 connectDB();

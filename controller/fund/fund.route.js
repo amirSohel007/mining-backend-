@@ -68,7 +68,7 @@ app.get('/history', async (req, res) => {
         const { fund_request_type } = req.query;
         const { user_id } = req.user;
         if (user_id) {
-            const result = await getUserFundTransaction(user_id, fund_request_type);
+            const result = await getUserFundTransaction(user_id, fund_request_type, req);
             responseService.response(req, null, result, res);
         } else {
             responseService.response(req, { status: 400, message: { status: 400, message: 'user id is missing' } }, null, res);

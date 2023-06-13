@@ -1,8 +1,9 @@
 const fundTransactionSchema = require('../../../controller/fund/transaction/fundtransaction.model');
-const { UserFundStatus } = require('../../../commonHelper');
+const { UserFundStatus, getBaseUrl } = require('../../../commonHelper');
 const adminUserSchema = require('../admin_user/admin_user.model');
 const userFundSchema = require('../../../controller/fund/userfund/userfund.model');
 const { get_s3_file } = require('../../../s3_confif');
+const config = require('../../../config').config();
 
 const changeFundStatus = (admin_id,transactionId,status) =>{
     return new Promise(async (resolve,reject) => {
@@ -60,7 +61,7 @@ const updateAdminTotalFund = async (admin_id,transaction) => {
     adminFundUpdate.save();
 }
 
-const getAllFunds = (status) => {
+const getAllFunds = (status, req) => {
     return new Promise(async (resolve,reject) => {
         try{
             const fund = await fundTransactionSchema.find({}).populate({ path: 'user_id' }).lean().exec();
@@ -68,8 +69,11 @@ const getAllFunds = (status) => {
                 const result = [];
                 for (i = 0; i < fund.length; i++) {
                     let obj = { ...fund[i] };
-                    if (obj.fund_receipt && obj.fund_receipt.indexOf('receipts/') != -1) {
+                    if (config.useS3 && obj.fund_receipt && obj.fund_receipt.indexOf('receipts/') != -1) {
                         obj.fund_receipt = await get_s3_file(obj.fund_receipt);
+                    }
+                    if (obj.fund_receipt && obj.fund_receipt.indexOf('uploads\\') != -1) {
+                        obj.fund_receipt = `${getBaseUrl(req)}/${obj.fund_receipt.split('\\')[2]}`;
                     }
                     result.push(obj);
                 }
