@@ -9,7 +9,8 @@ module.exports = {
         bucket_name: 'mining-project',
         access_key: 'AKIAYMTDEK7Y5NDVRF7N',
         secret_access_key: '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',
-        signature_version: 's3v4',
+        signature_version: 'v4',
         region: 'us-east-2',
-    }
+    },
+    useS3: false
 }

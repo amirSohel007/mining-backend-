@@ -114,7 +114,7 @@ app.post('/qr', upload, (req,res) => {
 app.get('/qr',(req,res) => {
     try{
         console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
-        getAdminQr().then((result) => {
+        getAdminQr(req).then((result) => {
             responseService.response(req, null, result, res);
         }).catch((err) => {
             responseService.response(req, err, null, res);

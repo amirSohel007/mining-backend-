@@ -3,7 +3,8 @@ const fundTransactionSchema = require('./transaction/fundtransaction.model');
 const { getUserInfo } = require('../user/user.service');
 const {UserFundStatus} = require('../../commonHelper');
 const { upload_file_to_s3, get_s3_file } = require('../../s3_confif');
-const { FundTransactionType } = require('../../commonHelper');
+const { FundTransactionType, getBaseUrl } = require('../../commonHelper');
+const config = require('../../config').config();
 
 async function addFund (user_id, data, transaction_type, imageData) {
     try {
@@ -16,10 +17,12 @@ async function addFund (user_id, data, transaction_type, imageData) {
             });
         }
 
-        let s3_file = '';
+        let s3_file = imageData;
         if (transaction_type === FundTransactionType.ADD) {
-            s3_file = await upload_file_to_s3(imageData);
-            console.log('S3_FILE_DATA : ', s3_file);
+            if (config.useS3) {
+                s3_file = await upload_file_to_s3(imageData);
+                console.log('S3_FILE_DATA : ', s3_file);
+            }
         }
         // create transaction history
         let transaction = await fundTransactionSchema.create({
@@ -31,7 +34,7 @@ async function addFund (user_id, data, transaction_type, imageData) {
             received_from: data.received_from,
             status: UserFundStatus.PENDING,
             user_fund: userFund._id,
-            fund_receipt : s3_file.key
+            fund_receipt : s3_file.key ? s3_file.key : s3_file
         });
         // userFund.fund_balance += transaction.amount;
         userFund.fund_transaction.push(transaction._id);
@@ -63,7 +66,7 @@ async function getUserFund (user_id) {
     }
 }
 
-async function getUserFundTransaction (user_id, fund_request_type) {
+async function getUserFundTransaction (user_id, fund_request_type, req) {
     try {
         let query = { user_id };
         if (fund_request_type) {
@@ -78,9 +81,12 @@ async function getUserFundTransaction (user_id, fund_request_type) {
             if (fund_request_type = FundTransactionType.ADD && transaction.length) {
                 for (let i = 0; i < transaction.length; i++) {
                     let obj = { ...transaction[i] };
-                    if (obj.fund_receipt && obj.fund_receipt.indexOf('receipts/') != -1) {
+                    if (config.useS3 && obj.fund_receipt && obj.fund_receipt.indexOf('receipts/') != -1) {
                         obj.fund_receipt = await get_s3_file(obj.fund_receipt);
                         console.log('OBJ : ', obj);
+                    }
+                    if (obj.fund_receipt && obj.fund_receipt.indexOf('uploads\\') != -1) {
+                        obj.fund_receipt = `${getBaseUrl(req)}/${obj.fund_receipt.split('\\')[2]}`;
                     }
                     result.push(obj);
                 }

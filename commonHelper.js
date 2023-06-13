@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
+const express = require('express');
+const app = express();
 
 const Status = {
     ALL : 'ALL',
@@ -45,4 +47,20 @@ const deleteAllDirectoryFiles = async (directoryName = null) => {
     }
 }
 
-module.exports = { Status, UserFundStatus, getUserIdFromToken, UserRole, FundTransactionType, deleteAllDirectoryFiles }
+const getBaseUrl = (req) => {
+    if (req.hostname = 'localhost') {
+        return `${req.protocol}://${req.hostname}:5000/api/receipt`;
+    } else {
+        return `${req.protocol}://${req.hostname}/api/receipt`;
+    }
+}
+
+module.exports = { 
+    Status, 
+    UserFundStatus, 
+    getUserIdFromToken, 
+    UserRole, 
+    FundTransactionType, 
+    deleteAllDirectoryFiles,
+    getBaseUrl 
+}
