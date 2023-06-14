@@ -4,10 +4,10 @@ const connectDB = require('./connection/connection')
 const bodyParser = require('body-parser');
 const cors = require("cors");
 require("dotenv").config();
-const { deleteAllDirectoryFiles } = require('./commonHelper');
+const { deleteAllDirectoryFiles, createUploadFolder } = require('./commonHelper');
 
 // defining port, if one is not available then port will be 3000
-const port = process.env.PORT || 5000;
+const port = process.env.NODE_PORT || 5000;
 
 //  pasrse body to json and add body to request
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -31,9 +31,12 @@ app.use(function (req, res, next) {
 //   console.log('CLEARING_UPLOAD_FOLDER_START');
 //   deleteAllDirectoryFiles('uploads/payment-receipt-image');
 //   console.log('CLEARING_UPLOAD_FOLDER_END');
-// }, (1000 * 60 * 60 * 24)); 
+// }, (1000 * 60 * 60 * 24));
 
-app.use(express.static('uploads/payment-receipt-image'));
+// create upload folder on server startup
+createUploadFolder(); 
+
+app.use(express.static('uploads/'));
 
 // connect mongodb
 connectDB();

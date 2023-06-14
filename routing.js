@@ -17,4 +17,5 @@ module.exports.route = (app) => {
     app.use('/api/admin/income',verifyToken,require('./admin/contoller/income/income.route').income);
     app.use('/api/admin/bank',verifyToken,require('./admin/contoller/bank_details/bank.route').bankDetails);
     app.use('/api/receipt', express.static(path.join(__dirname, 'uploads')));
+    app.use('/api/qr', express.static(path.join(__dirname, 'uploads/qr')));
 }

@@ -48,9 +48,25 @@ const deleteAllDirectoryFiles = async (directoryName = null) => {
 }
 const getBaseUrl = (req) => {
     if (req.hostname = 'localhost') {
-        return `${process.env.NODE_PORT}/api/receipt`;
+        return `${req.protocol}://${req.hostname}:${process.env.NODE_PORT}/api/receipt`;
     } else {
-        return `${process.env.NODE_PORT}/api/receipt`;
+        return `${req.protocol}://${req.hostname}/api/receipt`;
+    }
+}
+
+const getQRCode = async () => {
+    const dirPath = path.join(__dirname, 'uploads/qr');
+    const qrCode = await fs.readdirSync(dirPath);
+    console.log('QR_FILE_NAME : ', qrCode);
+    return qrCode && qrCode.length ? qrCode[0] : qrCode;
+}
+
+const createUploadFolder = () => {
+    
+    var dir = './uploads/qr';
+
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir, { recursive: true });
     }
 }
 
@@ -61,5 +77,7 @@ module.exports = {
     UserRole, 
     FundTransactionType, 
     deleteAllDirectoryFiles,
-    getBaseUrl 
+    getBaseUrl,
+    createUploadFolder,
+    getQRCode 
 }

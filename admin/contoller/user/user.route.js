@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const { allUsers,changeUserStatus,changeUserPassword,createAdminUser,saveAdminQr,getAdminQr,getAdminData } = require('./user.service');
 const responseService = require('../../../response/response.handler');
-const { getUserIdFromToken } = require('../../../commonHelper');
+const { getUserIdFromToken, getQRCode, deleteAllDirectoryFiles, getBaseUrl } = require('../../../commonHelper');
 const multer = require('multer')
 
 // const Stroage = multer.diskStorage({
@@ -15,13 +15,14 @@ const multer = require('multer')
 // const upload = multer({storage : Stroage}).single('image');
 
 //Configuration for Multer
-const Stroage = multer.diskStorage({ 
+const Stroage = multer.diskStorage({
     destination: (req, file, cb) => {
+        // deleteAllDirectoryFiles('uploads/qr');
         cb(null, 'uploads');
     },
     filename: (req, file, cb) => {
         const ext = file.mimetype.split('/')[1];
-        cb(null, `${req.user.user_id}_${Date.now()}.${ext}`);
+        cb(null, `qr/${req.user.user_id}_${Date.now()}.${ext}`);
     } 
 });
 
@@ -111,14 +112,23 @@ app.post('/qr', upload, (req,res) => {
     }
 });
 
-app.get('/qr',(req,res) => {
+app.get('/qr', async (req, res) => {
     try{
         console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
-        getAdminQr(req).then((result) => {
-            responseService.response(req, null, result, res);
-        }).catch((err) => {
-            responseService.response(req, err, null, res);
-        });
+
+        // getAdminQr(req).then((result) => {
+        //     responseService.response(req, null, result, res);
+        // }).catch((err) => {
+        //     responseService.response(req, err, null, res);
+        // });
+        try {
+            console.log("GET_BASE_URL : ", getBaseUrl(req) );
+            const qrCode = `${req.protocol}://${req.hostname}:5000/api/qr/${await getQRCode()}`;
+            responseService.response(req, null, qrCode, res);
+        } catch (error) {
+            responseService.response(req, error, null, res);            
+        }
+
     }catch(error){
         responseService.response(req, error, null, res);
     }

@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../../../config').config();
 const adminUserSchema = require('../admin_user/admin_user.model');
 const { upload_file_to_s3, get_s3_file } = require('../../../s3_confif');
+const qrCodeSchema = require('../qr/qr.model');
 
 const allUsers = (status) => {
     return new Promise(async (resolve,reject) => {
@@ -105,12 +106,22 @@ const saveAdminQr = (admin_id, qrCodeFilePath) => {
                 file = await upload_file_to_s3(qrCodeFilePath);
             }
             const user = await adminUserSchema.findById({_id: admin_id});
-            user['qr'] = file.key ? file.key : file;
-            user.save();
+            const qrCode = await qrCodeSchema.findOne({});
+            if (qrCode) {
+                qrCode['qr'] = file.key ? file.key : file;
+                qrCode.updated_by = user._id
+                qrCode.save();
+            } else {
+                qrCodeSchema.create({
+                    qr: file.key ? file.key : file,
+                    created_by: user._id,
+                    updated_by: user._id
+                })
+            }
             if(user != null || user != undefined){
-                resolve({ message: 'qr saved'});
+                resolve({ message: 'qr code saved' });
             }else{
-                reject({ message: 'some error occured'});
+                reject({ message: 'admin user not found' });
             }
         }catch(error){
             reject({
@@ -124,20 +135,20 @@ const saveAdminQr = (admin_id, qrCodeFilePath) => {
 const getAdminQr = (req) => {
     return new Promise(async (resolve,reject) => {
         try{
-            const user = await adminUserSchema.findOne({ _id: req.user.user_id });
-            console.log('ADMIN_USER : ', user);
-            if(user != null || user != undefined) {
+            const qrCode = await qrCodeSchema.findOne({});
+            console.log('QR_CODE : ', qrCode);
+            if(qrCode != null || qrCode != undefined) {
                 let qr = '';
                 console.log('USE_S3 : ', config.useS3);
                 if (config.useS3) {
                     qr = await get_s3_file(user.qr);
                 } else {
-                    qr = `${getBaseUrl(req)}/${user._doc.qr}`
+                    qr = `${getBaseUrl(req)}/${qrCode._doc.qr}`
                 }
                 console.log('USE_S3 : ', qr);
                 resolve(qr);
             }else{
-                reject({ message: 'some error occured'});
+                reject({ message: 'QR Code not found, please upload QR Code first.'});
             }
         }catch(error){
             reject({
