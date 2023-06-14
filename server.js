@@ -3,6 +3,7 @@ const app = express();
 const connectDB = require('./connection/connection')
 const bodyParser = require('body-parser');
 const cors = require("cors");
+require("dotenv").config();
 const { deleteAllDirectoryFiles } = require('./commonHelper');
 
 // defining port, if one is not available then port will be 3000

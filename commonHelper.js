@@ -46,12 +46,11 @@ const deleteAllDirectoryFiles = async (directoryName = null) => {
         console.log('DELETE_FILES_ERROR : ', error);
     }
 }
-
 const getBaseUrl = (req) => {
     if (req.hostname = 'localhost') {
-        return `${req.protocol}://${req.hostname}:5000/api/receipt`;
+        return `${process.env.NODE_PORT}/api/receipt`;
     } else {
-        return `${req.protocol}://${req.hostname}/api/receipt`;
+        return `${process.env.NODE_PORT}/api/receipt`;
     }
 }
 
