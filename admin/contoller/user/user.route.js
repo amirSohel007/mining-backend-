@@ -114,16 +114,10 @@ app.post('/qr', upload, (req,res) => {
 
 app.get('/qr', async (req, res) => {
     try{
-        console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
+        console.log(`url : ${req.protocol}://${req.hostname}:${process.env.NODE_PORT}${req.baseUrl}${req.path}`);
 
-        // getAdminQr(req).then((result) => {
-        //     responseService.response(req, null, result, res);
-        // }).catch((err) => {
-        //     responseService.response(req, err, null, res);
-        // });
         try {
-            console.log("GET_BASE_URL : ", getBaseUrl(req) );
-            const qrCode = `${req.protocol}://${req.hostname}:5000/api/qr/${await getQRCode()}`;
+            const qrCode = `${req.protocol}://${req.hostname}:${process.env.NODE_PORT}/api/qr/${await getQRCode()}`;
             responseService.response(req, null, qrCode, res);
         } catch (error) {
             responseService.response(req, error, null, res);            
