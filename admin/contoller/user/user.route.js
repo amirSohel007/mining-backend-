@@ -3,7 +3,8 @@ const app = express();
 const { allUsers,changeUserStatus,changeUserPassword,createAdminUser,saveAdminQr,getAdminQr,getAdminData } = require('./user.service');
 const responseService = require('../../../response/response.handler');
 const { getUserIdFromToken, getQRCode, deleteAllDirectoryFiles, getBaseUrl } = require('../../../commonHelper');
-const multer = require('multer')
+const multer = require('multer');
+const fs = require('fs-extra');
 
 // const Stroage = multer.diskStorage({
 //     destination : 'uploads',
@@ -15,14 +16,32 @@ const multer = require('multer')
 // const upload = multer({storage : Stroage}).single('image');
 
 //Configuration for Multer
+// const Stroage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         // deleteAllDirectoryFiles('uploads/qr');
+//         cb(null, 'uploads');
+//     },
+//     filename: (req, file, cb) => {
+//         const ext = file.mimetype.split('/')[1];
+//         cb(null, `qr/${req.user.user_id}_${Date.now()}.${ext}`);
+//     } 
+// });
+
 const Stroage = multer.diskStorage({
     destination: (req, file, cb) => {
-        // deleteAllDirectoryFiles('uploads/qr');
-        cb(null, 'uploads');
+        const folderPath = 'uploads/qr'
+        fs.emptyDir(folderPath, (err) => {
+            if (err) {
+                console.log('CLEAR_QR_FOLDER_ERROR : ', err);
+            } else {
+                console.log('QR_FOLDER_CLEARED SUCCESSFULLY');
+                cb(null, folderPath);
+            }
+        });
     },
     filename: (req, file, cb) => {
         const ext = file.mimetype.split('/')[1];
-        cb(null, `qr/${req.user.user_id}_${Date.now()}.${ext}`);
+        cb(null, `${req.user.user_id}_${Date.now()}.${ext}`);
     } 
 });
 

@@ -34,7 +34,7 @@ async function addFund (user_id, data, transaction_type, imageData) {
             received_from: data.received_from,
             status: UserFundStatus.PENDING,
             user_fund: userFund._id,
-            fund_receipt : s3_file.key ? s3_file.key : s3_file
+            fund_receipt : s3_file && s3_file.key ? s3_file.key : s3_file
         });
         // userFund.fund_balance += transaction.amount;
         userFund.fund_transaction.push(transaction._id);
