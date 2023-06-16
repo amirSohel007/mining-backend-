@@ -75,9 +75,18 @@ async function getUserFundTransaction (user_id, fund_request_type, req) {
             query['transaction_type'] = fund_request_type;
         }
         console.log('FUND_TRANSACTION : ', query);
-        let transaction = await fundTransactionSchema.find(query, '-_id -user_id')
-        .populate({ path: 'sent_to', model: 'user', select: '-_id my_reffer_code full_name' })
-        .populate({ path: 'user_id', model: 'user', select: '-_id my_reffer_code full_name' }).lean().exec();
+        
+        let transaction;
+        if (FundTransactionType.RECEIVE === fund_request_type) {
+            transaction = await fundTransactionSchema.find(query, '-_id -user_id')
+            .populate({ path: 'received_from', model: 'user', select: '-_id my_reffer_code full_name' })
+            .populate({ path: 'user_id', model: 'user', select: '-_id my_reffer_code full_name' }).lean().exec();
+        } else {
+            transaction = await fundTransactionSchema.find(query, '-_id -user_id')
+            .populate({ path: 'sent_to', model: 'user', select: '-_id my_reffer_code full_name' })
+            .populate({ path: 'user_id', model: 'user', select: '-_id my_reffer_code full_name' }).lean().exec();
+        }
+
         if (transaction) {
             let result = [];
             if (fund_request_type = FundTransactionType.ADD && transaction.length) {
