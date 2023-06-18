@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../../config').config();
 const adminUserSchema = require('../../admin/contoller/admin_user/admin_user.model');
 
-async function loginUser (email, password) {
+async function loginUser (email, myRefferCode, password) {
     try {
         if (!(email && password)) {
             throw {
@@ -11,7 +11,7 @@ async function loginUser (email, password) {
                 message: 'email and password is required'
             }
         }
-        const user = await userSchema.findOne({ email: email, password: password });
+        const user = await userSchema.findOne({ $or: [{ email: email }, { my_reffer_code: myRefferCode }], password: password });
         const adminUser = await adminUserSchema.findOne({ email: email, password: password });
         if (user && user.password === password) {
             const token = jwt.sign({ user_id: user._id, my_reffer_code: user.my_reffer_code }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
