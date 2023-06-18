@@ -1,9 +1,8 @@
 const userFundSchema = require('./userfund/userfund.model');
 const fundTransactionSchema = require('./transaction/fundtransaction.model');
 const { getUserInfo } = require('../user/user.service');
-const {UserFundStatus} = require('../../commonHelper');
 const { upload_file_to_s3, get_s3_file } = require('../../s3_confif');
-const { FundTransactionType, getBaseUrl } = require('../../commonHelper');
+const { FundTransactionType, getBaseUrl, UserFundStatus } = require('../../commonHelper');
 const config = require('../../config').config();
 
 async function addFund (user_id, data, transaction_type, imageData) {
@@ -36,8 +35,11 @@ async function addFund (user_id, data, transaction_type, imageData) {
             user_fund: userFund._id,
             fund_receipt : s3_file && s3_file.key ? s3_file.key : s3_file
         });
-        // userFund.fund_balance += transaction.amount;
+        if (FundTransactionType.RECEIVE === transaction_type) {
+            userFund.fund_balance += transaction.amount;
+        }
         userFund.fund_transaction.push(transaction._id);
+        userFund.updated_at = Date.now();
         userFund.save();
         return userFund;
     } catch(error) {
