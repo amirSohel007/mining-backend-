@@ -48,7 +48,7 @@ const deleteAllDirectoryFiles = async (directoryName = null) => {
 }
 const getBaseUrl = (req) => {
     if (req.hostname = 'localhost') {
-        return `${req.protocol}://${req.hostname}:${process.env.NODE_PORT}/api/receipt`;
+        return `https://hostmarket.in/api/api/receipt`;
     } else {
         return `https://hostmarket.in/api/api/receipt`;
     }
