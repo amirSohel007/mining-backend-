@@ -30,25 +30,9 @@ async function updateUserDetails (query, data) {
 
 async function getUserInfo (user_id) {
     try {
-        const user = await userSchema.findOne({ _id: user_id }, { token: 0, password: 0 }).lean().exec();
-        // const user = await userSchema.aggregate([
-        //     { $match: { "_id": user_id } },
-        //     {
-        //         $project: {
-        //             count: {
-        //                 $size: {
-        //                     input: "$downline_team"
-        //                 }
-        //             }
-        //         }
-        //     },
-        //     {
-        //         $group: {
-        //             count: { $sum: '$count' }
-        //         }
-        //     }
-        // ]);
-        if (user) {
+        const result = await userSchema.find({ _id: user_id }, { token: 0, password: 0 }).lean().exec();
+        if (result && result.length) {
+            let user = result[0];
             user['direct_user_count'] = user.downline_team.length;
             user['down_user_count'] = getTeamMemberCount(user.downline_team, 0);
             console.log('USER : ', user);
@@ -131,7 +115,7 @@ async function getUserAndDirectTeam (user_id) {
     try {
         let user = await userSchema.findOne({ _id: user_id }, '-_id full_name my_reffer_code sponser_id joining_date status')
         .populate({ 
-            path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status' 
+            path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status downline_team' 
         }).lean().exec();
 
         if (user) {
@@ -171,7 +155,7 @@ function convertNestedArrayToLinearArray (arr = [], linearArray = []) {
             sponser_id: arr[i].sponser_id,
             level: arr[i].level,
             joining_date: arr[i].joining_date, 
-            status: arr[i].status
+            status: arr[i].status ? arr[i].status : 'INACTIVE'
         });
         convertNestedArrayToLinearArray(arr[i].downline_team, linearArray);
     }
@@ -182,7 +166,7 @@ function getTeamMemberCount (arr, count = 0) {
     if (arr && arr.length > 0) {
         for (let i = 0; i < arr.length; i++) {
             count += arr.length;
-            getTeamMemberCount(arr[i].downline_team, count);
+            return getTeamMemberCount(arr[i].downline_team, count);
         }
     }
     return count;
