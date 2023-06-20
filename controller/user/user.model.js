@@ -24,12 +24,13 @@ const UserSchema = new Schema({
 });
 
 UserSchema.index({ my_reffer_code: 1, _id: 1 }, { unique: true });
-UserSchema.virtual('direct_user_count').get(function() {
-    return this.downline_team.length;
-});
-UserSchema.virtual('down_user_count').get(function() {
-    return this.downline_team.length;
-});
+
+function autoPopulateTeam (next) {
+    this.populate('downline_team');
+    next();
+}
+
+UserSchema.pre('find', autoPopulateTeam);
 
 
 const userSchema = mongoose.model('user', UserSchema)

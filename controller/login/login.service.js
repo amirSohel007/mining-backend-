@@ -6,7 +6,7 @@ const adminUserSchema = require('../../admin/contoller/admin_user/admin_user.mod
 async function loginUser(userEmail, myRefferCode, password) {
     
     try {
-        if (!(userEmail && password)) {
+        if (!((userEmail || myRefferCode) && password)) {
           throw {
             status: 400,
             message: "email and password is required",

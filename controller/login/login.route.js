@@ -4,10 +4,10 @@ const { loginUser } = require('./login.service');
 const responseService = require('../../response/response.handler');
 
 app.post('/', async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}`);
+    console.log(`url : ${req.protocol}://${req.hostname}:${process.env.NODE_PORT}${req.baseUrl}${req.path}`);
     try {
-        if (req.body && req.body.email !== null && req.body.email !== ''
-            && req.body.my_reffer_code !== null && req.body.my_reffer_code != '' 
+        if (((req.body && req.body.email !== null && req.body.email !== '')
+            || (req.body.my_reffer_code !== null && req.body.my_reffer_code != '' ))
             && req.body.password !== null && req.body.password !== '') {
             
             const result = await loginUser(req.body.email, req.body.my_reffer_code, req.body.password);
