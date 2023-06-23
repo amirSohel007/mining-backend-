@@ -1,23 +1,25 @@
-const userIncomeSchema = require('./income.module');
+const userIncomeSchema = require('./income.model');
 const incomeTransactionSchema = require('./transaction/incometransaction.model');
+const subscriptionTransactionSchema = require('../subscription/transaction/subscription.transaction.model');
 const userSchema = require('../user/user.model');
 const { UserFundStatus } = require('../../commonHelper');
 
-async function creditIncome (user_id, amount) {
+async function creditIncome (user_id, plan_id, amount, incomeType) {
     try {
         let user = await userSchema.findOne({ _id: user_id });
         if (user && !user.message) {
             let userIncome = await userIncomeSchema.findOne({ user_id });
             if (!userIncome) {
-                userIncome = await userIncomeSchema.create({ user_id, balance: amount });
+                userIncome = await userIncomeSchema.create({ user_id, balance: 0.0 });
             }
-            let newTransaction = await incomeTransactionSchema.create({
+            let newTransaction = await subscriptionTransactionSchema.create({
                 user_id: user_id,
-                balance: amount,
-                status: UserFundStatus.PENDING
+                user_subscription: plan_id,
+                amount: amount,
+                income_type: incomeType
             });
             userIncome.balance += amount;
-            userIncome.transaction.push(newTransaction._id);
+            userIncome.subscription.push(newTransaction._id);
             userIncome.save();
             user.income = userIncome._id;
             user.save();

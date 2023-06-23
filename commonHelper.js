@@ -28,6 +28,12 @@ const FundTransactionType = {
     SENT: 'FUND_SENT'
 }
 
+const IncomeType = {
+    DAILY: 'DAILY_INCOME',
+    DIRECT: 'DIRECT_INCOME',
+    REWARD: 'REWARD_INCOME'
+}
+
 const getUserIdFromToken = (token) => {
     const tokenUser =  jwt.decode(token);
     return tokenUser?.user_id;
@@ -73,11 +79,12 @@ const createUploadFolder = () => {
 module.exports = { 
     Status, 
     UserFundStatus, 
-    getUserIdFromToken, 
     UserRole, 
     FundTransactionType, 
+    IncomeType, 
+    getUserIdFromToken, 
     deleteAllDirectoryFiles,
     getBaseUrl,
     createUploadFolder,
-    getQRCode 
+    getQRCode
 }

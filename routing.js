@@ -18,4 +18,6 @@ module.exports.route = (app) => {
     app.use('/api/admin/bank',verifyToken,require('./admin/contoller/bank_details/bank.route').bankDetails);
     app.use('/api/receipt', express.static(path.join(__dirname, 'uploads')));
     app.use('/api/qr', express.static(path.join(__dirname, 'uploads/qr')));
+    app.use('/api/subscription', verifyToken, require('./controller/subscription/subscription.route').subscription);
+    app.use('/api/admin/subscription', verifyToken, require('./admin/contoller/subscription/subscription.route').adminSubscription);
 }

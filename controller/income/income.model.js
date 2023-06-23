@@ -9,6 +9,7 @@ const UserIncomeSchema = new Schema({
     first_withdrawal: { type: Boolean, default: true },
     user_id: { type: Schema.Types.ObjectId, ref: 'user' },
     transaction: [{ type: Schema.Types.ObjectId, ref: 'incometransaction' }],
+    subscription: [{ type: Schema.Types.ObjectId, ref: 'subscription_transaction' }],
     created_at: { type: Date, require: true, default: Date.now() },
     updated_at: { type: Date, require: true, default: Date.now() }
 });
