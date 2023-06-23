@@ -32,7 +32,7 @@ async function getSubscriptionPlan (plan_id = '') {
         if (plan_id) {
             query = { _id: plan_id };
         }
-        const plan = await subscriptionPlanSchema.findOne(query);
+        const plan = await subscriptionPlanSchema.find(query);
         return plan;
     } catch (error) {
         console.log('GET_SUBSCRIPTION_PLAN_ERROR : ', error);
@@ -119,7 +119,7 @@ async function getAllSubscribers () {
                     userSubscriptions[i].next_daily_income = moment(userSubscriptions[i].created_at).add(24, 'hours');
                     userSubscriptions[i].save();
                 }
-                console.log('INCOME_CREDITED : ', result);
+                console.log('INCOME_CREDITED');
             }
             return 1;
         }

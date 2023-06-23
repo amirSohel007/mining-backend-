@@ -14,7 +14,8 @@ const UserFundStatus = {
     ACCEPT: 'ACCEPT',
     PENDING:'PENDING',
     REJECT:'REJECT',
-    ALL:'ALL'
+    ALL:'ALL',
+    DEDUCTE: 'FUND_DEDUCTED'
 }
 
 const UserRole = {
@@ -25,7 +26,14 @@ const UserRole = {
 const FundTransactionType = {
     ADD: 'FUND_ADD',
     RECEIVE: 'FUND_RECEIVED',
-    SENT: 'FUND_SENT'
+    SENT: 'FUND_SENT',
+    PURCHASE: 'PLAN_PURCHASED'
+}
+
+const IncomeType = {
+    DAILY: 'DAILY_INCOME',
+    DIRECT: 'DIRECT_INCOME',
+    REWARD: 'REWARD_INCOME'
 }
 
 const IncomeType = {
