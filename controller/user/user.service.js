@@ -1,4 +1,6 @@
 const userSchema = require('./user.model');
+const subscriptionTransactionSchema = require('../subscription/transaction/subscription.transaction.model');
+const { IncomeType } = require('../../commonHelper');
 
 async function getUserDetailsWithPopulatedData (user_id, table_name) {
     try {
@@ -31,11 +33,12 @@ async function updateUserDetails (query, data) {
 async function getUserInfo (user_id) {
     try {
         const result = await userSchema.find({ _id: user_id }, { token: 0, password: 0 }).lean().exec();
+        const totalDailyIncome = (await subscriptionTransactionSchema.find({ user: user_id, income_type: IncomeType.DAILY }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
         if (result && result.length) {
             let user = result[0];
             user['direct_user_count'] = user.downline_team.length;
             user['down_user_count'] = getTeamMemberCount(user.downline_team, 0);
-            console.log('USER : ', user);
+            user['total_daily_income'] = totalDailyIncome;
             return user;
         }
         return { 
