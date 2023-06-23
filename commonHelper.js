@@ -36,12 +36,6 @@ const IncomeType = {
     REWARD: 'REWARD_INCOME'
 }
 
-const IncomeType = {
-    DAILY: 'DAILY_INCOME',
-    DIRECT: 'DIRECT_INCOME',
-    REWARD: 'REWARD_INCOME'
-}
-
 const getUserIdFromToken = (token) => {
     const tokenUser =  jwt.decode(token);
     return tokenUser?.user_id;
