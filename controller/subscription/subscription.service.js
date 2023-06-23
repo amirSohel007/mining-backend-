@@ -2,14 +2,14 @@ const subscriptionPlanSchema = require('./subscription_plan/subscriptionplan.mod
 const userSubscriptionSchema = require('./user_subscription/usersubscription.model');
 const fundTransactionSchema = require('../fund/transaction/fundtransaction.model');
 const userFundSchema = require('../fund/userfund/userfund.model');
-const { getUserFund } = require('../fund/fund.service');
-const { FundTransactionType, UserFundStatus } = require('../../commonHelper');
+const { creditIncome } = require('../income/income.service');
+const { FundTransactionType, UserFundStatus, IncomeType } = require('../../commonHelper');
 
 async function subscribePlan (user_id, plan_id) {
     try {
         const userFund = await userFundSchema.findOne({ user_id })
         const plan = await subscriptionPlanSchema.findOne({ _id: plan_id });
-        if (userFund) {
+        if (!userFund) {
             return {
                 message: 'please add fund balance'
             }
@@ -43,7 +43,7 @@ async function subscribePlan (user_id, plan_id) {
             userFund.save();
             userFund.markModified('fund_balance');
 
-            const transaction = fundTransactionSchema.create({
+            await fundTransactionSchema.create({
                 user_id: user_id,
                 amount: plan._doc.price,
                 transaction_type: FundTransactionType.PURCHASE,
@@ -51,6 +51,8 @@ async function subscribePlan (user_id, plan_id) {
                 user_fund: userFund._doc._id,
             })
 
+            // add daily income instantly
+            await creditIncome(user_id, plan._id.toString(), plan._doc.daily_income, IncomeType.DAILY);
             return subscribe;
         }
         throw {

@@ -1,6 +1,5 @@
 const subscriptionPlanSchema = require('../../../controller/subscription/subscription_plan/subscriptionplan.model');
 const userSubscriptionSchema = require('../../../controller/subscription/user_subscription/usersubscription.model');
-const subscriptionTransactionSchema = require('../../../controller/subscription/transaction/subscription.transaction.model');
 const { creditIncome } = require('../../../controller/income/income.service');
 const { IncomeType } = require('../../../commonHelper');
 const moment = require('moment');

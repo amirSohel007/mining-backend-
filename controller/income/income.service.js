@@ -13,7 +13,7 @@ async function creditIncome (user_id, plan_id, amount, incomeType) {
                 userIncome = await userIncomeSchema.create({ user_id, balance: 0.0 });
             }
             let newTransaction = await subscriptionTransactionSchema.create({
-                user_id: user_id,
+                user: user_id,
                 user_subscription: plan_id,
                 amount: amount,
                 income_type: incomeType
