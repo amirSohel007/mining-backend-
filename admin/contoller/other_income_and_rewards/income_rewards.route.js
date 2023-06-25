@@ -51,4 +51,4 @@ app.get('/', async (req, res) => {
     }
 });
 
-module.exports.income = app;
+module.exports.incomeRewards = app;
