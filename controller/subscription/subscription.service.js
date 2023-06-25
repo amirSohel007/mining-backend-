@@ -1,9 +1,11 @@
 const subscriptionPlanSchema = require('./subscription_plan/subscriptionplan.model');
 const userSubscriptionSchema = require('./user_subscription/usersubscription.model');
+const subscriptionTransactionSchema = require('./transaction/subscription.transaction.model');
 const fundTransactionSchema = require('../fund/transaction/fundtransaction.model');
 const userFundSchema = require('../fund/userfund/userfund.model');
+const userSchema = require('../user/user.model');
 const { creditIncome } = require('../income/income.service');
-const { FundTransactionType, UserFundStatus, IncomeType } = require('../../commonHelper');
+const { FundTransactionType, UserFundStatus, IncomeType, Status } = require('../../commonHelper');
 
 async function subscribePlan (user_id, plan_id) {
     try {
@@ -51,6 +53,13 @@ async function subscribePlan (user_id, plan_id) {
                 user_fund: userFund._doc._id,
             })
 
+            // activate user
+            const user = await userSchema.findOne({ _id: user_id });
+            if (user.status == Status.INACTIVE) {
+                user.status = Status.ACTIVE;
+                user.save();
+            }
+
             // add daily income instantly
             await creditIncome(user_id, plan._id.toString(), plan._doc.daily_income, IncomeType.DAILY);
             return subscribe;
@@ -91,4 +100,21 @@ async function getUserSubscription (user_id) {
     }
 }
 
-module.exports = { subscribePlan, getUserSubscription };
+async function getsubscriptionTransactions (user_id, incomeType) {
+    try {
+        let query = { user: user_id };
+        if (incomeType) {
+            query['income_type'] = incomeType;
+        }
+        const transactions = await subscriptionTransactionSchema.find(query);
+        return transactions;
+    } catch (error) {
+        console.log('GET_USER_SUBSCRIPTION_ERROR : ', error);
+        throw {
+            status: error.status || 500,
+            message: error
+        }
+    }
+}
+
+module.exports = { subscribePlan, getUserSubscription, getsubscriptionTransactions };
