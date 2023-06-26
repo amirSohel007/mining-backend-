@@ -136,7 +136,7 @@ app.get('/qr', async (req, res) => {
         console.log(`url : ${req.protocol}://${req.hostname}${req.baseUrl}${req.path}`);
 
         try {
-            const qrCode = `https://hostmarket.in/api/qr/${await getQRCode()}`;
+            const qrCode = `https://mining-backend.onrender.com/api/qr/${await getQRCode()}`;
             responseService.response(req, null, qrCode, res);
         } catch (error) {
             responseService.response(req, error, null, res);            
