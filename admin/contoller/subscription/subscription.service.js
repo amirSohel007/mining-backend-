@@ -88,9 +88,9 @@ async function deleteSubscriptionPlan (plan_id = '') {
     }
 }
 
-async function dailyIncome (user_id, subscribedPlan) {
+async function dailyIncome (user_id, subscribedPlan, userSubscriptionsId) {
     try {
-        const income = await creditIncome(user_id, subscribedPlan._id.toString(), subscribedPlan.daily_income, IncomeType.DAILY);
+        const income = await creditIncome(user_id, userSubscriptionsId, subscribedPlan.daily_income, IncomeType.DAILY);
         return income;
     } catch (error) {
         console.log('DAILY_INCOME_ERROR : ', error);
@@ -113,7 +113,7 @@ async function getAllSubscribers () {
                 const currentTime = moment(Date.now(), 'h:mm:ss a');
                 console.log('IS_24_HOURS_COMPLETED : ', currentTime.isAfter(subscriptionTime));
                 if (currentTime.isAfter(subscriptionTime)) {
-                    await dailyIncome(userSubscriptions[i].user.toString(), plan);
+                    await dailyIncome(userSubscriptions[i].user.toString(), plan, userSubscriptions[i]._id.toString());
                     userSubscriptions[i].updated_at = Date.now();
                     userSubscriptions[i].next_daily_income = moment(userSubscriptions[i].created_at).add(24, 'hours');
                     userSubscriptions[i].save();

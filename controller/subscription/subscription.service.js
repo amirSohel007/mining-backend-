@@ -12,7 +12,8 @@ async function subscribePlan (user_id, plan_id) {
         const userFund = await userFundSchema.findOne({ user_id })
         const plan = await subscriptionPlanSchema.findOne({ _id: plan_id });
         if (!userFund) {
-            return {
+            throw {
+                status: 400,
                 message: 'please add fund balance'
             }
         }
@@ -20,17 +21,22 @@ async function subscribePlan (user_id, plan_id) {
         if (plan) {
             // check if user has enough balance to purchase the plan
             console.log('USER_FUND_CHECK : ', (userFund._doc.fund_balance < plan._doc.price));
+            // console.log({userFund},{plan})
             if (userFund._doc.fund_balance && userFund._doc.fund_balance < plan._doc.price) {
                 console.log('USER_FUND : ', userFund);
-                return {
+                throw {
+                    status: 400,
                     message: 'user fund balance is insufficient'
                 }
             }
 
             // check if user has already purchased the plan
-            const subscribed = await userSubscriptionSchema.findOne({ plan: plan._id });
+            const subscribed = await userSubscriptionSchema.findOne({ plan: plan._id ,user:user_id});
             if (subscribed) {
-                return { message: 'plan already purchased' }
+                throw { 
+                    status: 400,
+                    message: 'plan already purchased'
+                }
             }
             
             // purchasing the plan
@@ -61,10 +67,11 @@ async function subscribePlan (user_id, plan_id) {
             }
 
             // add daily income instantly
-            await creditIncome(user_id, plan._id.toString(), plan._doc.daily_income, IncomeType.DAILY);
+            await creditIncome(user_id, subscribe._id.toString(), plan._doc.daily_income, IncomeType.DAILY);
             return subscribe;
         }
         throw {
+            status: 400,
             message: 'plan does not exist'
         }
     } catch (error) {
@@ -106,7 +113,12 @@ async function getsubscriptionTransactions (user_id, incomeType) {
         if (incomeType) {
             query['income_type'] = incomeType;
         }
-        const transactions = await subscriptionTransactionSchema.find(query);
+        const transactions = await subscriptionTransactionSchema.find(query)
+        .populate({ 
+            path: 'user_subscription', 
+            model: 'usersubscription',
+            populate: [{ path: 'plan', model: 'subscription_plan' }]
+        })
         return transactions;
     } catch (error) {
         console.log('GET_USER_SUBSCRIPTION_ERROR : ', error);
