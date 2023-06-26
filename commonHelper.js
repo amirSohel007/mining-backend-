@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const app = express();
+const moment = require('moment')
 
 const Status = {
     ALL : 'ALL',
@@ -78,6 +79,14 @@ const createUploadFolder = () => {
     }
 }
 
+const getHours = (startDate, endDate) => {
+    const timerStart = moment(startDate, 'DD-MM-YYYY hh:mm:ss');
+    const timerEnd = moment(endDate, 'DD-MM-YYYY hh:mm:ss');
+    const hours = timerEnd.diff(timerStart, 'hours');
+    console.log('HOURS : ', hours);
+    return hours;
+}
+
 module.exports = { 
     Status, 
     UserFundStatus, 
@@ -88,5 +97,6 @@ module.exports = {
     deleteAllDirectoryFiles,
     getBaseUrl,
     createUploadFolder,
-    getQRCode
+    getQRCode,
+    getHours
 }
