@@ -21,6 +21,7 @@ async function subscribePlan (user_id, plan_id) {
         if (plan) {
             // check if user has enough balance to purchase the plan
             console.log('USER_FUND_CHECK : ', (userFund._doc.fund_balance < plan._doc.price));
+            // console.log({userFund},{plan})
             if (userFund._doc.fund_balance && userFund._doc.fund_balance < plan._doc.price) {
                 console.log('USER_FUND : ', userFund);
                 throw {
@@ -30,7 +31,7 @@ async function subscribePlan (user_id, plan_id) {
             }
 
             // check if user has already purchased the plan
-            const subscribed = await userSubscriptionSchema.findOne({ plan: plan._id });
+            const subscribed = await userSubscriptionSchema.findOne({ plan: plan._id ,user:user_id});
             if (subscribed) {
                 throw { 
                     status: 400,
