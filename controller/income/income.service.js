@@ -4,7 +4,7 @@ const subscriptionTransactionSchema = require('../subscription/transaction/subsc
 const userSchema = require('../user/user.model');
 const { UserFundStatus } = require('../../commonHelper');
 
-async function creditIncome (user_id, plan_id, amount, incomeType) {
+async function creditIncome (user_id, userSubscriptionId, amount, incomeType) {
     try {
         let user = await userSchema.findOne({ _id: user_id });
         if (user && !user.message) {
@@ -14,7 +14,7 @@ async function creditIncome (user_id, plan_id, amount, incomeType) {
             }
             let newTransaction = await subscriptionTransactionSchema.create({
                 user: user_id,
-                user_subscription: plan_id,
+                user_subscription: userSubscriptionId,
                 amount: amount,
                 income_type: incomeType
             });
