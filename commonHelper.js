@@ -56,7 +56,7 @@ const deleteAllDirectoryFiles = async (directoryName = null) => {
 }
 const getBaseUrl = (req) => {
     if (req.hostname != 'localhost') {
-        return `https://hostmarket.in/api/receipt`;
+        return `https://mining-backend.onrender.com/api/receipt`;
     } else {
         return `${req.protocol}://${req.hostname}:${process.env.NODE_PORT}/api/receipt`;
     }
