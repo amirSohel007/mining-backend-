@@ -34,7 +34,8 @@ const FundTransactionType = {
 const IncomeType = {
     DAILY: 'DAILY_INCOME',
     DIRECT: 'DIRECT_INCOME',
-    REWARD: 'REWARD_INCOME'
+    REWARD: 'REWARD_INCOME',
+    PLAN_INSTANT_AMOUNT: 'PLAN_INSTANT_AMOUNT'
 }
 
 const getUserIdFromToken = (token) => {
