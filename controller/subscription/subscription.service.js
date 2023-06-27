@@ -101,7 +101,7 @@ async function subscribePlan (user_id, plan_id) {
             // add instant amount of subscribed plan to parent user
             const amount = parseInt(plan.price) * parseInt(incomeReward.direct_income_instant_percent) / 100;
             if (parentUser) {
-                await creditIncome(parentUser._id, subscribe._id.toString(), amount, IncomeType.PLAN_INSTANT_AMOUNT);
+                await creditIncome(parentUser._id, subscribe._id.toString(), amount, IncomeType.DIRECT);
             }
 
             return subscribe;
