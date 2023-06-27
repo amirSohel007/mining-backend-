@@ -40,7 +40,7 @@ app.get('/', async (req, res) => {
 app.get('/income', async (req, res) => {
     console.log(`url : ${req.protocol}://${req.hostname}:${process.env.NODE_PORT}${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        const { income_type = IncomeType.DAILY } = req.query;
+        const { income_type = null } = req.query;
         const { user_id } = req.user;
         if (user_id) {
             const result = await getsubscriptionTransactions(user_id, income_type);

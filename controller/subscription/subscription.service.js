@@ -145,9 +145,11 @@ async function getUserSubscription (user_id) {
 
 async function getsubscriptionTransactions (user_id, incomeType) {
     try {
-        let query = { user: user_id };
-        if (incomeType) {
-            query['income_type'] = incomeType;
+        let query = {};
+        if (incomeType && IncomeType.DIRECT) {
+            query = { user: user_id, income_type: incomeType };
+        } else {
+            query = { user: user_id, income_type: { $ne: IncomeType.DIRECT } };
         }
         const transactions = await subscriptionTransactionSchema.find(query)
         .populate({ 
