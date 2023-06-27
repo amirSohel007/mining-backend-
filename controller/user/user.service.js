@@ -1,6 +1,7 @@
 const userSchema = require('./user.model');
 const subscriptionTransactionSchema = require('../subscription/transaction/subscription.transaction.model');
-const { IncomeType, getHours } = require('../../commonHelper');
+const incomeTransactionSchema = require('../income/transaction/incometransaction.model');
+const { IncomeType, getHours, Status, UserFundStatus } = require('../../commonHelper');
 const moment = require('moment');
 
 async function getUserDetailsWithPopulatedData (user_id, table_name) {
@@ -35,12 +36,17 @@ async function getUserInfo (user_id) {
     try {
         const result = await userSchema.find({ _id: user_id }, { token: 0, password: 0 }).lean().exec();
         const totalDailyIncome = (await subscriptionTransactionSchema.find({ user: user_id, income_type: IncomeType.DAILY }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
+        const directIncome = (await subscriptionTransactionSchema.find({ user: user_id, income_type: IncomeType.DIRECT }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
+        const withdrawal = (await incomeTransactionSchema.find({ user_id, status: UserFundStatus.ACCEPT }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
         if (result && result.length) {
             let user = result[0];
             user['direct_user_count'] = user.downline_team.length;
             user['down_user_count'] = getTeamMemberCount(user.downline_team, 0);
             user['total_daily_income'] = totalDailyIncome;
             user['reward_time_end'] = getHours(user.created_at, moment());
+            user['direct_income'] = directIncome;
+            user['total_withdrawal'] = withdrawal;
+            user['total_income'] = (totalDailyIncome + directIncome) - withdrawal;
             return user;
         }
         return { 
