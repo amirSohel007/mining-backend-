@@ -18,6 +18,7 @@ const UserSchema = new Schema({
     income: { type: Schema.Types.ObjectId, ref: 'userincome' },
     joining_date : { type: Date, require: true, default: Date.now() },
     status : { type: String, require: true, default: Status.INACTIVE },
+    is_eligibale_for_time_reward: { type: Boolean, default: true },
     role: { type: Number, require: true, default: UserRole.USER },
     created_at : { type: Date, require: true, default: Date.now() },
     updated_at : { type: Date, require: true, default: Date.now() }

@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const app = express();
+const moment = require('moment')
 
 const Status = {
     ALL : 'ALL',
@@ -33,7 +34,9 @@ const FundTransactionType = {
 const IncomeType = {
     DAILY: 'DAILY_INCOME',
     DIRECT: 'DIRECT_INCOME',
-    REWARD: 'REWARD_INCOME'
+    ALL_PLAN_PURCHASE_REWARD: 'ALL_PLAN_PURCHASE_REWARD',
+    PLAN_INSTANT_AMOUNT: 'PLAN_INSTANT_AMOUNT',
+    DOWN_TEAM_PLAN_PURCHASE_REWARD: 'DOWN_TEAM_PLAN_PURCHASE_REWARD'
 }
 
 const getUserIdFromToken = (token) => {
@@ -78,6 +81,14 @@ const createUploadFolder = () => {
     }
 }
 
+const getHours = (startDate, endDate) => {
+    const timerStart = moment(startDate, 'DD-MM-YYYY hh:mm:ss');
+    const timerEnd = moment(endDate, 'DD-MM-YYYY hh:mm:ss');
+    const hours = timerEnd.diff(timerStart, 'hours');
+    console.log('HOURS : ', hours);
+    return hours;
+}
+
 module.exports = { 
     Status, 
     UserFundStatus, 
@@ -88,5 +99,6 @@ module.exports = {
     deleteAllDirectoryFiles,
     getBaseUrl,
     createUploadFolder,
-    getQRCode
+    getQRCode,
+    getHours
 }

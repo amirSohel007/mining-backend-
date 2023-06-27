@@ -1,6 +1,7 @@
 const userSchema = require('./user.model');
 const subscriptionTransactionSchema = require('../subscription/transaction/subscription.transaction.model');
-const { IncomeType } = require('../../commonHelper');
+const { IncomeType, getHours } = require('../../commonHelper');
+const moment = require('moment');
 
 async function getUserDetailsWithPopulatedData (user_id, table_name) {
     try {
@@ -39,6 +40,7 @@ async function getUserInfo (user_id) {
             user['direct_user_count'] = user.downline_team.length;
             user['down_user_count'] = getTeamMemberCount(user.downline_team, 0);
             user['total_daily_income'] = totalDailyIncome;
+            user['reward_time_end'] = getHours(user.created_at, moment());
             return user;
         }
         return { 
