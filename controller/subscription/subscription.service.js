@@ -65,14 +65,20 @@ async function subscribePlan (user_id, plan_id) {
             const user = await userSchema.findOne({ _id: user_id });
             const incomeReward = await incomeRewardSchema.findOne({}).lean().exec();
             
-            if(user.user.is_eligibale_for_time_reward) {
+            if (user.is_eligibale_for_time_reward) {
                 // check for hours and all plan purchased
                 const hours = getHours(user.created_at, moment());
                 if (hours <= incomeReward.all_subscription_active_time) {
                     const subscriptionPlans = await subscriptionPlanSchema.find({}, '_id').lean().exec();
                     const allPlan = await userSubscriptionSchema.find({ user: user_id, plan: { $in: subscriptionPlans } });
                     if (subscriptionPlans.length === allPlan.length) {
-                        await creditIncome(user_id, null, incomeReward.all_subscription_instant_bonus, IncomeType.REWARD);
+                        await creditIncome(user_id, null, incomeReward.all_subscription_instant_bonus, IncomeType.ALL_PLAN_PURCHASE_REWARD);
+
+                        // credit reward to parent user
+                        const parentUser = await userSchema.findOne({ my_reffer_code: user.sponser_id });
+                        if (parentUser) {
+                            await creditIncome(parentUser._id, null, incomeReward.team_reward_instant_bonus, IncomeType.DOWN_TEAM_PLAN_PURCHASE_REWARD);
+                        }
                     }
                 } else {
                     user.is_eligibale_for_time_reward = false;
@@ -89,7 +95,7 @@ async function subscribePlan (user_id, plan_id) {
             await creditIncome(user_id, subscribe._id.toString(), plan._doc.daily_income, IncomeType.DAILY);
 
             // add instant amount of subscribed plan
-            const amount = plan.amount * incomeReward.direct_income_daily_percent / 100;
+            const amount = parseInt(plan.price) * parseInt(incomeReward.direct_income_instant_percent) / 100;
             await creditIncome(user_id, subscribe._id.toString(), amount, IncomeType.PLAN_INSTANT_AMOUNT);
 
             return subscribe;
