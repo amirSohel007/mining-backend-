@@ -1,4 +1,5 @@
 const incomeTransactionSchema = require('../../../controller/income/transaction/incometransaction.model');
+const userIncomeSchema = require('../../../controller/income/income.model');
 const { UserFundStatus } = require('../../../commonHelper');
 const adminUserSchema = require('../admin_user/admin_user.model');
 
@@ -27,6 +28,9 @@ const changeIncomeStatus = (admin_id,transactionId,status) =>{
             if(status == UserFundStatus.ACCEPT && checkUserStatus?.status === UserFundStatus.PENDING){
                 checkUserStatus.status = UserFundStatus.ACCEPT;
                 checkUserStatus.save();
+                const userIncome = await userIncomeSchema.findOne({ user_id: checkUserStatus.user_id });
+                userIncome.balance -= checkUserStatus.amount;
+                await userIncome.save();
                 updateAdminTotalIncome(admin_id,checkUserStatus);
             }
             if(checkUserStatus){

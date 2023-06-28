@@ -12,7 +12,7 @@ app.get('/', async (req, res) => {
             if (team_type === 'DOWN') {
                 result = await getUserAndDownlineTeam(req.user.user_id);
             } else {
-                result = await getUserAndDirectTeam(req.user.user_id);
+                result = await getUserAndDirectTeam(req.user.user_id, team_type);
             }
             responseService.response(req, null, result, res);
         } else {

@@ -65,6 +65,9 @@ async function subscribePlan (user_id, plan_id) {
             const user = await userSchema.findOne({ _id: user_id });
             const incomeReward = await incomeRewardSchema.findOne({}).lean().exec();
             const parentUser = await userSchema.findOne({ my_reffer_code: user.sponser_id });
+
+            // add daily income instantly
+            await creditIncome(user_id, subscribe._id.toString(), plan._doc.daily_income, IncomeType.DAILY);
             
             if (user.is_eligibale_for_time_reward) {
                 // check for hours and all plan purchased
@@ -95,13 +98,10 @@ async function subscribePlan (user_id, plan_id) {
             }
             user.save();
 
-            // add daily income instantly
-            await creditIncome(user_id, subscribe._id.toString(), plan._doc.daily_income, IncomeType.DAILY);
-
             // add instant amount of subscribed plan to parent user
             const amount = parseInt(plan.price) * parseInt(incomeReward.direct_income_instant_percent) / 100;
             if (parentUser) {
-                await creditIncome(parentUser._id, subscribe._id.toString(), amount, IncomeType.DIRECT);
+                await creditIncome(parentUser._id, subscribe._id.toString(), amount, IncomeType.INSTANT_DIRECT);
             }
 
             return subscribe;
@@ -149,7 +149,8 @@ async function getsubscriptionTransactions (user_id, incomeType) {
         if (incomeType && IncomeType.DIRECT) {
             query = { user: user_id, income_type: incomeType };
         } else {
-            query = { user: user_id, income_type: { $ne: IncomeType.DIRECT } };
+            // need to add daily direct income also in $ne condition
+            query = { user: user_id, income_type: { $ne: IncomeType.INSTANT_DIRECT } };
         }
         const transactions = await subscriptionTransactionSchema.find(query)
         .populate({ 

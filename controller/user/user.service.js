@@ -1,6 +1,7 @@
 const userSchema = require('./user.model');
 const subscriptionTransactionSchema = require('../subscription/transaction/subscription.transaction.model');
 const incomeTransactionSchema = require('../income/transaction/incometransaction.model');
+const userIncomeSchema = require('../income/income.model');
 const { IncomeType, getHours, Status, UserFundStatus } = require('../../commonHelper');
 const moment = require('moment');
 
@@ -36,8 +37,10 @@ async function getUserInfo (user_id) {
     try {
         const result = await userSchema.find({ _id: user_id }, { token: 0, password: 0 }).lean().exec();
         const totalDailyIncome = (await subscriptionTransactionSchema.find({ user: user_id, income_type: IncomeType.DAILY }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
-        const directIncome = (await subscriptionTransactionSchema.find({ user: user_id, income_type: IncomeType.DIRECT }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
+        // need to add daily direct also into query
+        const directIncome = (await subscriptionTransactionSchema.find({ user: user_id, income_type: IncomeType.INSTANT_DIRECT }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
         const withdrawal = (await incomeTransactionSchema.find({ user_id, status: UserFundStatus.ACCEPT }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
+        const userIncome = await userIncomeSchema.findOne({ user_id }, 'balance');
         if (result && result.length) {
             let user = result[0];
             user['direct_user_count'] = user.downline_team.length;
@@ -46,7 +49,7 @@ async function getUserInfo (user_id) {
             user['reward_time_end'] = getHours(user.created_at, moment());
             user['direct_income'] = directIncome;
             user['total_withdrawal'] = withdrawal;
-            user['total_income'] = (totalDailyIncome + directIncome) - withdrawal;
+            user['total_income'] = userIncome ? userIncome.balance : 0;
             return user;
         }
         return { 
@@ -122,7 +125,7 @@ async function getUserAndDownlineTeam (user_id) {
     }
 }
 
-async function getUserAndDirectTeam (user_id) {
+async function getUserAndDirectTeam (user_id, team_type) {
     try {
         let user = await userSchema.findOne({ _id: user_id }, '-_id full_name my_reffer_code sponser_id joining_date status')
         .populate({ 
@@ -130,7 +133,7 @@ async function getUserAndDirectTeam (user_id) {
         }).lean().exec();
 
         if (user) {
-            const team = getLevel(user.downline_team, 1);
+            const team = getLevel(user.downline_team, 1, team_type);
             console.log('DOWNLINE_TEAM_LEVEL : ', team);
             user.downline_team = team;
             return user;
@@ -148,10 +151,12 @@ async function getUserAndDirectTeam (user_id) {
     }
 }
 
-function getLevel (arr, level = 1) {
+function getLevel (arr, level = 1, team) {
     if (arr && arr.length > 0) {
         for (let i = 0; i < arr.length; i++) {
-            arr[i].level = level;
+            arr[i].level = (team === 'DIRECT' ? 1 : level);
+        }
+        for (let i = 0; i < arr.length; i++) {
             getLevel(arr[i].downline_team, ++level);
         }
     }

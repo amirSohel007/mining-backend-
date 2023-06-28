@@ -2,7 +2,8 @@ const userIncomeSchema = require('./income.model');
 const incomeTransactionSchema = require('./transaction/incometransaction.model');
 const subscriptionTransactionSchema = require('../subscription/transaction/subscription.transaction.model');
 const userSchema = require('../user/user.model');
-const { UserFundStatus } = require('../../commonHelper');
+const { UserFundStatus, getHours } = require('../../commonHelper');
+const moment = require('moment');
 
 async function creditIncome (user_id, userSubscriptionId, amount, incomeType) {
     try {
@@ -43,6 +44,8 @@ async function withdrawlIncome (user_id, amount) {
     try {
         let userIncome = await userIncomeSchema.findOne({ user_id });
         if (userIncome) {
+            const lastTransaction = await incomeTransactionSchema.find({ user_id, status: UserFundStatus.ACCEPT }).sort({ created_at: 1 });
+            console.log('TRANs : ', lastTransaction);
             if (userIncome.first_withdrawal && amount > 300) {
                 throw {
                     status: 400,
@@ -52,6 +55,16 @@ async function withdrawlIncome (user_id, amount) {
                 throw {
                     status: 400,
                     message: 'insufficient balance'
+                }
+            } else if (parseInt(amount) % 500 != 0) {
+                throw {
+                    status: 400,
+                    message: 'amount should be multiplayer of 500'
+                }
+            } else if (getHours(lastTransaction[0].created_at, moment()) < 24) {
+                throw {
+                    status: 400,
+                    message: ` try after ${24 - getHours(lastTransaction[0].created_at, moment())}  hours`
                 }
             }
 
