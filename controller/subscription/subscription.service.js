@@ -146,11 +146,24 @@ async function getUserSubscription (user_id) {
 async function getsubscriptionTransactions (user_id, incomeType) {
     try {
         let query = {};
-        if (incomeType && IncomeType.DIRECT) {
-            query = { user: user_id, income_type: incomeType };
+        if (incomeType === 'DIRECT_INCOME') {
+            query = { 
+                user: user_id,
+                $or: [
+                    { income_type: IncomeType.INSTANT_DIRECT },
+                    { income_type: IncomeType.DAILY_DIRECT }
+                ]
+            };            
         } else {
-            // need to add daily direct income also in $ne condition
-            query = { user: user_id, income_type: { $ne: IncomeType.INSTANT_DIRECT } };
+            query = { 
+                user: user_id,
+                $or: [
+                    { income_type: IncomeType.DAILY },
+                    { income_type: IncomeType.ALL_PLAN_PURCHASE_REWARD },
+                    { income_type: IncomeType.DOWN_TEAM_PLAN_PURCHASE_REWARD }
+                ]
+                
+            };
         }
         const transactions = await subscriptionTransactionSchema.find(query)
         .populate({ 

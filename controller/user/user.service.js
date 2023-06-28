@@ -36,9 +36,22 @@ async function updateUserDetails (query, data) {
 async function getUserInfo (user_id) {
     try {
         const result = await userSchema.find({ _id: user_id }, { token: 0, password: 0 }).lean().exec();
-        const totalDailyIncome = (await subscriptionTransactionSchema.find({ user: user_id, income_type: IncomeType.DAILY }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
+        const totalDailyIncome = (await subscriptionTransactionSchema.find({ 
+            user: user_id, 
+            $or: [
+                { income_type: IncomeType.DAILY },
+                { income_type: IncomeType.ALL_PLAN_PURCHASE_REWARD },
+                { income_type: IncomeType.DOWN_TEAM_PLAN_PURCHASE_REWARD }
+            ]
+        }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
         // need to add daily direct also into query
-        const directIncome = (await subscriptionTransactionSchema.find({ user: user_id, income_type: IncomeType.INSTANT_DIRECT }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
+        const directIncome = (await subscriptionTransactionSchema.find({ 
+            user: user_id,
+            $or: [
+                { income_type: IncomeType.INSTANT_DIRECT },
+                { income_type: IncomeType.DAILY_DIRECT }
+            ]            
+        }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
         const withdrawal = (await incomeTransactionSchema.find({ user_id, status: UserFundStatus.ACCEPT }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
         const userIncome = await userIncomeSchema.findOne({ user_id }, 'balance');
         if (result && result.length) {
