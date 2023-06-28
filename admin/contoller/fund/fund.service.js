@@ -64,7 +64,7 @@ const updateAdminTotalFund = async (admin_id,transaction) => {
 const getAllFunds = (status, req) => {
     return new Promise(async (resolve,reject) => {
         try{
-            const fund = await fundTransactionSchema.find({}).populate({ path: 'user_id' }).lean().exec();
+            const fund = await fundTransactionSchema.find({transaction_type:"FUND_ADD"}).populate({ path: 'user_id' }).lean().exec();
             if(fund && fund.length > 0){
                 const result = [];
                 for (i = 0; i < fund.length; i++) {
