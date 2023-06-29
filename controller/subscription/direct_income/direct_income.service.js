@@ -1,6 +1,6 @@
 const directIncomeSchema = require('./direct_income.model');
 
-async function createOrUpdate (userId, planId, teamUserId, completedPercent) {
+async function createOrUpdate (userId, planId, teamUserId, completedPercent, subscriptionTransactionId) {
     try {
         let directIncome = await directIncomeSchema.findOne({ plan: planId, user: userId, income_from_user: teamUserId }).lean().exec();
         if (directIncome) {
@@ -17,6 +17,7 @@ async function createOrUpdate (userId, planId, teamUserId, completedPercent) {
                 plan: planId,
                 user: userId,
                 income_from_user: teamUserId,
+                subscription_transaction: subscriptionTransactionId,
                 is_completed: false,
                 complete_percent: completedPercent
             });

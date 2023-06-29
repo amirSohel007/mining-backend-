@@ -9,6 +9,7 @@ const { FundTransactionType, UserFundStatus, IncomeType, Status, getHours } = re
 const moment = require('moment/moment');
 const incomeRewardSchema = require('../../admin/contoller/other_income_and_rewards/income_rewards.model');
 const { createOrUpdate } = require('./direct_income/direct_income.service');
+const directIncomeSchema = require('./direct_income/direct_income.model');
 
 async function subscribePlan (user_id, plan_id) {
     try {
@@ -101,9 +102,9 @@ async function subscribePlan (user_id, plan_id) {
             // add instant amount of subscribed plan to parent user
             const amount = parseInt(plan.price) * parseInt(incomeReward.direct_income_instant_percent) / 100;
             if (parentUser && parentUser.status === Status.ACTIVE) {
-                const directIncome = await createOrUpdate(parentUser._id, subscribe._id, user_id, 15);
+                const income = await creditIncome(parentUser._id, subscribe._id.toString(), amount, IncomeType.INSTANT_DIRECT);
+                const directIncome = await createOrUpdate(parentUser._id, subscribe._id, user_id, 15, income._id);
                 console.log('DIRECT_INCOME : ', directIncome);
-                await creditIncome(parentUser._id, subscribe._id.toString(), amount, IncomeType.INSTANT_DIRECT);
             }
 
             return subscribe;
@@ -145,20 +146,24 @@ async function getUserSubscription (user_id) {
     }
 }
 
-async function getsubscriptionTransactions (user_id, incomeType) {
+async function getsubscriptionTransactions (userId, incomeType) {
     try {
         let query = {};
+        let transactions = [];
         if (incomeType === 'DIRECT_INCOME') {
             query = { 
-                user: user_id,
+                user: userId,
                 $or: [
                     { income_type: IncomeType.INSTANT_DIRECT },
                     { income_type: IncomeType.DAILY_DIRECT }
                 ]
-            };            
+            };
+            transactions = await directIncomeSchema.find({ user: userId})
+            .populate({ path: 'subscription_transaction', model: 'subscription_transaction' })
+            .populate({ path: 'income_from_user', model: 'user' });
         } else {
             query = { 
-                user: user_id,
+                user: userId,
                 $or: [
                     { income_type: IncomeType.DAILY },
                     { income_type: IncomeType.ALL_PLAN_PURCHASE_REWARD },
@@ -166,13 +171,14 @@ async function getsubscriptionTransactions (user_id, incomeType) {
                 ]
                 
             };
-        }
-        const transactions = await subscriptionTransactionSchema.find(query)
-        .populate({ 
+            transactions = await subscriptionTransactionSchema.find(query)
+            .populate({ 
             path: 'user_subscription', 
             model: 'usersubscription',
             populate: [{ path: 'plan', model: 'subscription_plan' }]
         })
+        }
+        
         return transactions;
     } catch (error) {
         console.log('GET_USER_SUBSCRIPTION_ERROR : ', error);
