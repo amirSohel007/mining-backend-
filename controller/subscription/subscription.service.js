@@ -83,7 +83,6 @@ async function subscribePlan (user_id, plan_id) {
                         user.is_eligibale_for_time_reward = false;
 
                         // credit reward to parent user
-                        const parentUser = await userSchema.findOne({ my_reffer_code: user.sponser_id });
                         if (parentUser && parentUser.status === Status.ACTIVE) {
                             await creditIncome(parentUser._id, null, incomeReward.team_reward_instant_bonus, IncomeType.DOWN_TEAM_PLAN_PURCHASE_REWARD);
                         }
@@ -101,7 +100,7 @@ async function subscribePlan (user_id, plan_id) {
 
             // add instant amount of subscribed plan to parent user
             const amount = parseInt(plan.price) * parseInt(incomeReward.direct_income_instant_percent) / 100;
-            if (parentUser) {
+            if (parentUser && parentUser.status === Status.ACTIVE) {
                 const directIncome = await createOrUpdate(parentUser._id, subscribe._id, user_id, 15);
                 console.log('DIRECT_INCOME : ', directIncome);
                 await creditIncome(parentUser._id, subscribe._id.toString(), amount, IncomeType.INSTANT_DIRECT);
