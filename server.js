@@ -6,7 +6,7 @@ const cors = require("cors");
 require("dotenv").config();
 const { deleteAllDirectoryFiles, createUploadFolder } = require('./commonHelper');
 const schedule = require('node-schedule');
-const { getAllSubscribers } = require('./admin/contoller/subscription/subscription.service');
+const { getAllSubscribers, creditDailyDirectIncome } = require('./admin/contoller/subscription/subscription.service');
 
 // defining port, if one is not available then port will be 3000
 const port = process.env.NODE_PORT || 5000;
@@ -58,6 +58,7 @@ console.log(`Server has been started on port : ${port}`);
 schedule.scheduleJob('*/59 * * * *', function() {
   console.log('SCHEDULAR IS RUNNING AT EVERY 1 HOUR');
   getAllSubscribers();
+  creditDailyDirectIncome();
 });
 
 // unhandled error

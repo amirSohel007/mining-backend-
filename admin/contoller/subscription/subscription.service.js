@@ -1,5 +1,6 @@
 const subscriptionPlanSchema = require('../../../controller/subscription/subscription_plan/subscriptionplan.model');
 const userSubscriptionSchema = require('../../../controller/subscription/user_subscription/usersubscription.model');
+const { createOrUpdate, getAllUser } = require('../../../controller/subscription/direct_income/direct_income.service');
 const { creditIncome } = require('../../../controller/income/income.service');
 const { IncomeType } = require('../../../commonHelper');
 const moment = require('moment');
@@ -130,11 +131,29 @@ async function getAllSubscribers () {
     }
 }
 
+async function creditDailyDirectIncome () {
+    try {
+        const users = await getAllUser();
+        for (let i = 0; i < users.length; i++) {
+            const percentage = users[i].complete_percent + 1;
+            const user = await createOrUpdate(users[i].user, users[i].plan, users[i].income_from_user, percentage);
+            const amount = users[i].plan.price * 1 / 100;
+            const income = await creditIncome(users[i].user, users[i].plan, amount, IncomeType.DAILY_DIRECT);
+            console.log('USER : ', user);
+        }
+        console.log('CREDIT_DAILY_DIRECT_INCOME : ', users);
+    } catch (error) {
+        console.log('CREDIT_DAILY_DIRECT_INCOME_ERROR : ', error);
+        return 0;
+    }
+}
+
 module.exports = { 
     addSubscriptionPlan,
     getSubscriptionPlan,
     activeOrDeactiveSubscriptionPlan,
     updateSubscriptionPlan,
     deleteSubscriptionPlan,
-    getAllSubscribers
+    getAllSubscribers,
+    creditDailyDirectIncome
 };
