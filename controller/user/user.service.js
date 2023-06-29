@@ -170,11 +170,16 @@ async function getUserAndDirectTeam (user_id, team_type) {
 
 function getLevel (arr, level = 1, team) {
     if (arr && arr.length > 0) {
+        if (arr[0] && arr[0].level) {
+            level = arr[0].level;
+        }
         for (let i = 0; i < arr.length; i++) {
             arr[i].level = level;
         }
         for (let i = 0; i < arr.length; i++) {
-            getLevel(arr[i].downline_team, ++level);
+            let currentLevel = level;
+            let newLevel = currentLevel + 1;
+            getLevel(arr[i].downline_team, currentLevel + 1);
         }
     }
     return arr;
