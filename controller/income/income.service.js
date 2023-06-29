@@ -56,16 +56,7 @@ async function withdrawlIncome (user_id, amount) {
                 status: 400,
                 message: "insufficient balance",
               };
-            } else if (
-              getHours(lastTransaction[0]?.created_at, moment()) < 24
-            ) {
-              throw {
-                status: 400,
-                message: ` try after ${
-                  24 - getHours(lastTransaction[0]?.created_at, moment())
-                }  hours`,
-              };
-            }
+            } 
             else if (
               parseInt(amount) % 500 != 0 &&
               !userIncome.first_withdrawal
@@ -76,6 +67,16 @@ async function withdrawlIncome (user_id, amount) {
               };
             } 
 
+            else if (
+              getHours(lastTransaction[0]?.created_at, moment()) < 24
+            ) {
+              throw {
+                status: 400,
+                message: ` try after ${
+                  24 - getHours(lastTransaction[0]?.created_at, moment())
+                }  hours`,
+              };
+            }
             const transaction = await incomeTransactionSchema.create({
                 user_id: user_id,
                 amount: amount,
