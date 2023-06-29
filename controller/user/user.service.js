@@ -146,7 +146,11 @@ async function getUserAndDirectTeam (user_id, team_type) {
         }).lean().exec();
 
         if (user) {
-            const team = getLevel(user.downline_team, 1, team_type);
+            // const team = getLevel(user.downline_team, 1, team_type);
+            const team = user.downline_team.map(user => {
+                user['level'] = 1;
+                return user;
+            });
             console.log('DOWNLINE_TEAM_LEVEL : ', team);
             user.downline_team = team;
             return user;
@@ -167,7 +171,7 @@ async function getUserAndDirectTeam (user_id, team_type) {
 function getLevel (arr, level = 1, team) {
     if (arr && arr.length > 0) {
         for (let i = 0; i < arr.length; i++) {
-            arr[i].level = (team === 'DIRECT' ? 1 : level);
+            arr[i].level = level;
         }
         for (let i = 0; i < arr.length; i++) {
             getLevel(arr[i].downline_team, ++level);

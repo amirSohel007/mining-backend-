@@ -24,7 +24,7 @@ async function creditIncome (user_id, userSubscriptionId, amount, incomeType) {
             userIncome.save();
             user.income = userIncome._id;
             user.save();
-            return userIncome;
+            return newTransaction;
         } else {
             throw {
                 status: 400,
