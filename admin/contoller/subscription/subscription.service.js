@@ -2,7 +2,7 @@ const subscriptionPlanSchema = require('../../../controller/subscription/subscri
 const userSubscriptionSchema = require('../../../controller/subscription/user_subscription/usersubscription.model');
 const { createOrUpdate, getAllUser } = require('../../../controller/subscription/direct_income/direct_income.service');
 const { creditIncome } = require('../../../controller/income/income.service');
-const { IncomeType } = require('../../../commonHelper');
+const { IncomeType, getHours } = require('../../../commonHelper');
 const moment = require('moment');
 
 async function addSubscriptionPlan (user_id, plan) {
@@ -111,9 +111,10 @@ async function getAllSubscribers () {
                 const plan = subscriptionPlan.find(p => p._id.toString() == userSubscriptions[i].plan.toString());
                 console.log('PLAN : ', plan);
                 const subscriptionTime = moment(userSubscriptions[i].next_daily_income, 'h:mm:ss a');
-                const currentTime = moment(Date.now(), 'h:mm:ss a');
-                console.log('IS_24_HOURS_COMPLETED : ', currentTime.isAfter(subscriptionTime));
-                if (currentTime.isAfter(subscriptionTime)) {
+                const currentTime = moment(moment(), 'h:mm:ss a');
+                console.log('IS_24_HOURS_COMPLETED : ', getHours(subscriptionTime, currentTime));
+                
+                if (getHours(subscriptionTime, currentTime) > 24) {
                     await dailyIncome(userSubscriptions[i].user.toString(), plan, userSubscriptions[i]._id.toString());
                     userSubscriptions[i].updated_at = Date.now();
                     userSubscriptions[i].next_daily_income = moment(userSubscriptions[i].created_at).add(24, 'hours');
@@ -135,11 +136,16 @@ async function creditDailyDirectIncome () {
     try {
         const users = await getAllUser();
         for (let i = 0; i < users.length; i++) {
-            const percentage = users[i].complete_percent + 1;
-            const user = await createOrUpdate(users[i].user, users[i].plan, users[i].income_from_user, percentage);
-            const amount = users[i].plan.price * 1 / 100;
-            const income = await creditIncome(users[i].user, users[i].plan, amount, IncomeType.DAILY_DIRECT);
-            console.log('USER : ', user);
+            const lastUpdated = moment(users[i].updated_at, 'h:mm:ss a')
+            const currentTime = moment(moment(), 'h:mm:ss a');
+            console.log('HOURS : ', getHours(lastUpdated, currentTime));
+            if (getHours(lastUpdated, currentTime) > 24) {
+                const percentage = users[i].complete_percent + 1;
+                const user = await createOrUpdate(users[i].user, users[i].plan, users[i].income_from_user, percentage);
+                const amount = users[i].plan.price * 1 / 100;
+                const income = await creditIncome(users[i].user, users[i].plan, amount, IncomeType.DAILY_DIRECT);
+                console.log('USER : ', user);
+            }
         }
         console.log('CREDIT_DAILY_DIRECT_INCOME : ', users);
     } catch (error) {

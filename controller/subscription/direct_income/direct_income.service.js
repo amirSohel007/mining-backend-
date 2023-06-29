@@ -1,4 +1,5 @@
 const directIncomeSchema = require('./direct_income.model');
+const moment = require('moment');
 
 async function createOrUpdate (userId, planId, teamUserId, completedPercent, subscriptionTransactionId) {
     try {
@@ -6,6 +7,7 @@ async function createOrUpdate (userId, planId, teamUserId, completedPercent, sub
         if (directIncome) {
             if (directIncome.complete_percent && directIncome.complete_percent < 100) {
                 directIncome.complete_percent += completedPercent;
+                directIncome.updated_at = moment();
             }
             if (directIncome.complete_percent && directIncome.complete_percent == 100) {
                 directIncome.is_completed = true;
