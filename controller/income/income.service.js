@@ -46,27 +46,35 @@ async function withdrawlIncome (user_id, amount) {
         if (userIncome) {
             const lastTransaction = await incomeTransactionSchema.find({ user_id, status: UserFundStatus.ACCEPT }).sort({ created_at: 1 });
             console.log('TRANs : ', lastTransaction);
-            if (userIncome.first_withdrawal && amount > 300) {
-                throw {
-                    status: 400,
-                    message: 'first withdrawal can not be exceed 300'
-                }
-            } else if (userIncome.balance < amount) {
-                throw {
-                    status: 400,
-                    message: 'insufficient balance'
-                }
-            } else if (parseInt(amount) % 500 != 0) {
-                throw {
-                    status: 400,
-                    message: 'amount should be multiplayer of 500'
-                }
-            } else if (getHours(lastTransaction[0].created_at, moment()) < 24) {
-                throw {
-                    status: 400,
-                    message: ` try after ${24 - getHours(lastTransaction[0].created_at, moment())}  hours`
-                }
+            if (userIncome.first_withdrawal && parseInt(amount) > 300) {
+              throw {
+                status: 400,
+                message: "first withdrawal can not be exceed 300",
+              };
+            } else if (userIncome.balance < parseInt(amount)) {
+              throw {
+                status: 400,
+                message: "insufficient balance",
+              };
+            } else if (
+              getHours(lastTransaction[0]?.created_at, moment()) < 24
+            ) {
+              throw {
+                status: 400,
+                message: ` try after ${
+                  24 - getHours(lastTransaction[0]?.created_at, moment())
+                }  hours`,
+              };
             }
+            else if (
+              parseInt(amount) % 500 != 0 &&
+              !userIncome.first_withdrawal
+            ) {
+              throw {
+                status: 400,
+                message: "Amount should be multiplier of 500",
+              };
+            } 
 
             const transaction = await incomeTransactionSchema.create({
                 user_id: user_id,
