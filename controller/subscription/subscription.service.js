@@ -161,7 +161,10 @@ async function getsubscriptionTransactions (userId, incomeType) {
                 $or: [
                     { income_type: IncomeType.DAILY },
                     { income_type: IncomeType.ALL_PLAN_PURCHASE_REWARD },
-                    { income_type: IncomeType.DOWN_TEAM_PLAN_PURCHASE_REWARD }
+                    { income_type: IncomeType.DOWN_TEAM_PLAN_PURCHASE_REWARD },
+                    { income_type: IncomeType.BOOSTING_LEVEL_1 },
+                    { income_type: IncomeType.BOOSTING_LEVEL_2 },
+                    { income_type: IncomeType.BOOSTING_LEVEL_3 }
                 ]
                 
             };
