@@ -102,8 +102,8 @@ async function subscribePlan (user_id, plan_id) {
             // add instant amount of subscribed plan to parent user
             const amount = parseInt(plan.price) * parseInt(incomeReward.direct_income_instant_percent) / 100;
             if (parentUser && parentUser.status === Status.ACTIVE) {
-                const income = await creditIncome(parentUser._id, subscribe._id.toString(), amount, IncomeType.INSTANT_DIRECT);
-                const directIncome = await createOrUpdate(parentUser._id, subscribe._id, user_id, 15, income._id);
+                const income = await creditIncome(parentUser._id, subscribe.plan.toString(), amount, IncomeType.INSTANT_DIRECT);
+                const directIncome = await createOrUpdate(parentUser._id, subscribe.plan, user_id, 15, income._id);
                 console.log('DIRECT_INCOME : ', directIncome);
             }
 
@@ -151,14 +151,8 @@ async function getsubscriptionTransactions (userId, incomeType) {
         let query = {};
         let transactions = [];
         if (incomeType === 'DIRECT_INCOME') {
-            query = { 
-                user: userId,
-                $or: [
-                    { income_type: IncomeType.INSTANT_DIRECT },
-                    { income_type: IncomeType.DAILY_DIRECT }
-                ]
-            };
             transactions = await directIncomeSchema.find({ user: userId})
+            .populate({ path: 'plan', model: 'subscription_plan' })
             .populate({ path: 'subscription_transaction', model: 'subscription_transaction' })
             .populate({ path: 'income_from_user', model: 'user' });
         } else {
@@ -167,7 +161,10 @@ async function getsubscriptionTransactions (userId, incomeType) {
                 $or: [
                     { income_type: IncomeType.DAILY },
                     { income_type: IncomeType.ALL_PLAN_PURCHASE_REWARD },
-                    { income_type: IncomeType.DOWN_TEAM_PLAN_PURCHASE_REWARD }
+                    { income_type: IncomeType.DOWN_TEAM_PLAN_PURCHASE_REWARD },
+                    { income_type: IncomeType.BOOSTING_LEVEL_1 },
+                    { income_type: IncomeType.BOOSTING_LEVEL_2 },
+                    { income_type: IncomeType.BOOSTING_LEVEL_3 }
                 ]
                 
             };

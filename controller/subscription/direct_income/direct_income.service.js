@@ -3,7 +3,7 @@ const moment = require('moment');
 
 async function createOrUpdate (userId, planId, teamUserId, completedPercent, subscriptionTransactionId) {
     try {
-        let directIncome = await directIncomeSchema.findOne({ plan: planId, user: userId, income_from_user: teamUserId }).lean().exec();
+        let directIncome = await directIncomeSchema.findOne({ plan: planId, user: userId, income_from_user: teamUserId });
         if (directIncome) {
             if (directIncome.complete_percent && directIncome.complete_percent < 100) {
                 directIncome.complete_percent += completedPercent;

@@ -7,6 +7,7 @@ require("dotenv").config();
 const { deleteAllDirectoryFiles, createUploadFolder } = require('./commonHelper');
 const schedule = require('node-schedule');
 const { getAllSubscribers, creditDailyDirectIncome } = require('./admin/contoller/subscription/subscription.service');
+const { calculateBoostingIncome } = require('./controller/subscription/boost_income/boost_income.service');
 
 // defining port, if one is not available then port will be 3000
 const port = process.env.NODE_PORT || 5000;
@@ -59,6 +60,7 @@ schedule.scheduleJob('*/59 * * * *', function() {
   console.log('SCHEDULAR IS RUNNING AT EVERY 1 HOUR');
   getAllSubscribers();
   creditDailyDirectIncome();
+  calculateBoostingIncome();
 });
 
 // unhandled error

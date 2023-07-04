@@ -104,7 +104,7 @@ async function dailyIncome (user_id, subscribedPlan, userSubscriptionsId) {
 
 async function getAllSubscribers () {
     try {        
-        const userSubscriptions = await userSubscriptionSchema.find({}).lean().exec();
+        const userSubscriptions = await userSubscriptionSchema.find({});
         const subscriptionPlan = await subscriptionPlanSchema.find({}).lean().exec();
         if (userSubscriptions && userSubscriptions.length) {
             for (let i = 0; i < userSubscriptions.length; i++) {
@@ -142,7 +142,7 @@ async function creditDailyDirectIncome () {
             if (getHours(lastUpdated, currentTime) > 24) {
                 const percentage = users[i].complete_percent + 1;
                 const user = await createOrUpdate(users[i].user, users[i].plan, users[i].income_from_user, percentage);
-                const amount = users[i].plan.price * 1 / 100;
+                const amount = users[i].plan ? users[i].plan.price * 1 / 50 : 0;
                 const income = await creditIncome(users[i].user, users[i].plan, amount, IncomeType.DAILY_DIRECT);
                 console.log('USER : ', user);
             }

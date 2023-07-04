@@ -1,32 +1,24 @@
 const express = require('express');
 const app = express();
-const { addOtherIncomeAndReward, getOtherIncomeAndReward } = require('./income_rewards.service');
+const { addBoostIncomeDetails, getAllBootIncomeDetails } = require('./boost_income.service');
 const responseService = require('../../../response/response.handler');
 
 app.post('/', async (req, res) => {
     console.log(`url : ${req.protocol}://${req.hostname}:${process.env.NODE_PORT}${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
         let {
-            direct_income_id = null, 
-            direct_income_instant_percent = 0,
-            direct_income_daily_percent = 0,
-            all_subscription_active_time = 0,
-            all_subscription_instant_bonus = 0.0,
-            all_subscription_per_day_income = 0.0,
-            team_reward_instant_bonus = 0.0
+            dboost_income_id = null, 
+            duration_hours = 0,
+            direct_team_count = 0,
+            extra_income_percentage = 0
         } = req.body;
 
         const { user_id } = req.user;
         if (user_id) {
-            const result = await addOtherIncomeAndReward(user_id, {
-                direct_income_id,
-                direct_income_instant_percent,
-                direct_income_daily_percent,
-                all_subscription_active_time,
-                all_subscription_instant_bonus,
-                all_subscription_per_day_income,
-                team_reward_instant_bonus,
-                created_at: moment(),
+            const result = await addBoostIncomeDetails(user_id, dboost_income_id, {
+                duration_hours,
+                direct_team_count,
+                extra_income_percentage,
                 created_by: user_id
             });
             responseService.response(req, null, result, res);
@@ -40,11 +32,16 @@ app.post('/', async (req, res) => {
 });
 
 app.get('/', async (req, res) => {
-    console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}, method: ${req.method}`);
+    console.log(`url : ${req.protocol}://${req.hostname}:${process.env.NODE_PORT}${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
         const { user_id } = req.user;
+        const { boost_income_id = null } = req.query;
         if (user_id) {
-            const result = await getOtherIncomeAndReward();
+            let query = {};
+            if (boost_income_id) {
+                query = { _id: boost_income_id };
+            }
+            const result = await getAllBootIncomeDetails(query);
             responseService.response(req, null, result, res);
         } else {
             let error = { status: 400, message: "user not allowed required" }
@@ -55,4 +52,4 @@ app.get('/', async (req, res) => {
     }
 });
 
-module.exports.incomeRewards = app;
+module.exports.boostIncome = app;

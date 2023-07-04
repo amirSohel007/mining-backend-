@@ -17,7 +17,5 @@ const IncomeRewardSchema = new Schema({
     updated_by: { type: Schema.Types.ObjectId, ref: 'user' },
 });
 
-IncomeRewardSchema.index({ user_id: 1, _id: 1 }, { unique: true });
-
 const incomeRewardSchema = mongoose.model('income_reward', IncomeRewardSchema)
 module.exports = incomeRewardSchema;
