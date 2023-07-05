@@ -8,8 +8,8 @@ const moment = require('moment');
 async function calculateBoostingIncome () {
     try {
         // get all users with their direct team
-        const users = await userSchema.find({ status: Status.ACTIVE }).lean().exec();
-        const boostingIncomeDetails = await boostIncomeSchema.find().lean().exec();
+        const users = await userSchema.find({ status: Status.ACTIVE });
+        const boostingIncomeDetails = await boostIncomeSchema.find({});
 
         if (boostingIncomeDetails && boostingIncomeDetails.length === 0) {
             console.log('BOOSTING_INCOME_DETAILS_ARE_MISSING');
