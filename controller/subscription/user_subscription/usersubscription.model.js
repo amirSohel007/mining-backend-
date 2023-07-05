@@ -9,6 +9,7 @@ const UserSubscriptionSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'user' },
     plan: { type: Schema.Types.ObjectId, ref: 'subscription_plan' },
     next_daily_income: { type: Date, require: true },
+    active: { type: Boolean, default: true },
     created_at: { type: Date, require: true, default: Date.now() },
     updated_at: { type: Date, require: true, default: Date.now() }
 });

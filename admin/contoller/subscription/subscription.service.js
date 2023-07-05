@@ -110,15 +110,26 @@ async function getAllSubscribers () {
             for (let i = 0; i < userSubscriptions.length; i++) {
                 const plan = subscriptionPlan.find(p => p._id.toString() == userSubscriptions[i].plan.toString());
                 console.log('PLAN : ', plan);
+                const subscriptionStart = moment(userSubscriptions[i].created_at, 'h:mm:ss a');
                 const subscriptionTime = moment(userSubscriptions[i].next_daily_income, 'h:mm:ss a');
                 const currentTime = moment(moment(), 'h:mm:ss a');
+                const purchaseDaysElapsed = currentTime.diff(subscriptionStart, 'days');
                 console.log('IS_24_HOURS_COMPLETED : ', getHours(subscriptionTime, currentTime));
+                console.log('IS_30_DAYS_COMPLETED : ', purchaseDaysElapsed);
                 
-                if (getHours(subscriptionTime, currentTime) > 24) {
-                    await dailyIncome(userSubscriptions[i].user.toString(), plan, userSubscriptions[i]._id.toString());
-                    userSubscriptions[i].updated_at = Date.now();
-                    userSubscriptions[i].next_daily_income = moment(userSubscriptions[i].created_at).add(24, 'hours');
-                    userSubscriptions[i].save();
+                // check subscription is active
+                if (userSubscriptions[i].active) {
+                    if (getHours(subscriptionTime, currentTime) > 24) {
+                        if (purchaseDaysElapsed < 30) {
+                            await dailyIncome(userSubscriptions[i].user.toString(), plan, userSubscriptions[i]._id.toString());
+                            userSubscriptions[i].updated_at = Date.now();
+                            userSubscriptions[i].next_daily_income = moment(userSubscriptions[i].created_at).add(24, 'hours');
+                            userSubscriptions[i].save();
+                        } else {
+                            userSubscriptions[i].active = false;
+                            userSubscriptions[i].save();
+                        }
+                    }
                 }
                 console.log('INCOME_CREDITED');
             }
@@ -142,7 +153,7 @@ async function creditDailyDirectIncome () {
             if (getHours(lastUpdated, currentTime) > 24) {
                 const percentage = users[i].complete_percent + 1;
                 const user = await createOrUpdate(users[i].user, users[i].plan, users[i].income_from_user, percentage);
-                const amount = users[i].plan ? users[i].plan.price * 1 / 50 : 0;
+                const amount = users[i].plan ? users[i].plan.price * 1.4 / 50 : 0;
                 const income = await creditIncome(users[i].user, users[i].plan, amount, IncomeType.DAILY_DIRECT);
                 console.log('USER : ', user);
             }
