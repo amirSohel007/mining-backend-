@@ -82,7 +82,7 @@ async function calculateBoostingIncome () {
                         const result = await creditExtraIncomeOnAllUserPlan(users[i]._id, subscriptions, firstLevelIncomePercentage, IncomeType.BOOSTING_LEVEL_1);
                         users[i].is_eligibale_for_extra_income = true;
                     }
-                    users[i].save();
+                    await users[i].save();
                 }
             }
         }

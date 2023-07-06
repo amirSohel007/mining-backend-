@@ -23,12 +23,12 @@ async function loginUser(userEmail, myRefferCode, password) {
         if (user && user.password === password) {
             const token = jwt.sign({ user_id: user._id, my_reffer_code: user.my_reffer_code }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
             user.token = token;
-            user.save();
+            await user.save();
             return user;
         }else if(adminUser && adminUser.password === password){
             const token = jwt.sign({ user_id: adminUser._id}, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
             adminUser.token = token;
-            adminUser.save();
+            await adminUser.save();
             return adminUser;
         } 
         

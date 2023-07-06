@@ -40,7 +40,7 @@ async function addFund (user_id, data, transaction_type, imageData) {
         }
         userFund.fund_transaction.push(transaction._id);
         userFund.updated_at = Date.now();
-        userFund.save();
+        await userFund.save();
         return userFund;
     } catch(error) {
         console.error('ADD_FUND_ERROR : ', error);
@@ -140,7 +140,7 @@ async function sendFund (user_id, to_user_id, amount) {
                 // update sender account
                 fromUserFund.fund_balance -= amount;
                 fromUserFund.fund_transaction.push(transaction._id);
-                fromUserFund.save();
+                await fromUserFund.save();
                 return fromUserFund;
             }
             throw {

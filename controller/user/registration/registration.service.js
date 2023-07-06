@@ -33,7 +33,7 @@ async function createUser (data) {
                 if (sponser_user) {
                     user = await userSchema.create(data);
                     sponser_user.downline_team.push(user._id);
-                    sponser_user.save();
+                    await sponser_user.save();
                 } else {
                     console.log('SPONSER_ID_NOT FOUND : ', data.sponser_id);
                     throw {
@@ -48,7 +48,7 @@ async function createUser (data) {
             // adding token 
             const token = jwt.sign({ user_id: user._id, my_reffer_code: user.my_reffer_code }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
             user.token = token;
-            user.save();
+            await user.save();
             return user;
         }
     } catch(error) {

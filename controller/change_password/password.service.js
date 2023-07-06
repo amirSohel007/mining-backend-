@@ -6,7 +6,7 @@ async function changePassword (user_id, old_password, new_password) {
         if (userDetail) {
             if (userDetail.password === old_password) {
                 userDetail.password = new_password;
-                userDetail.save();
+                await userDetail.save();
                 return { message: 'password updated' };
             }
             throw {

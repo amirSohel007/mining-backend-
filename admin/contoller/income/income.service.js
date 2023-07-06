@@ -21,13 +21,13 @@ const changeIncomeStatus = (admin_id,transactionId,status) =>{
             }
             if(status == UserFundStatus.REJECT &&checkUserStatus?.status === UserFundStatus.PENDING){
                 checkUserStatus.status = UserFundStatus.REJECT;
-                checkUserStatus.save();
+                await checkUserStatus.save();
                 resolve({ message: 'status updated'});
                 return;
             }
             if(status == UserFundStatus.ACCEPT && checkUserStatus?.status === UserFundStatus.PENDING){
                 checkUserStatus.status = UserFundStatus.ACCEPT;
-                checkUserStatus.save();
+                await checkUserStatus.save();
                 const userIncome = await userIncomeSchema.findOne({ user_id: checkUserStatus.user_id });
                 userIncome.balance -= checkUserStatus.amount;
                 await userIncome.save();
@@ -51,12 +51,13 @@ const updateAdminTotalIncome = async (admin_id,transaction) => {
     const adminFundUpdate = await adminUserSchema.findById({_id:admin_id});
     console.log(adminFundUpdate,transaction);
     adminFundUpdate.totalWithdrawal = adminFundUpdate.totalWithdrawal + transaction.amount;
-    adminFundUpdate.save();
+    await adminFundUpdate.save();
 }
 
 const getAllIncome = (status) => {
     return new Promise(async (resolve,reject) => {
         try{
+            // let incomes = [];
             const incomes = await incomeTransactionSchema.find({}).populate({ path: 'user_id' }).exec();
             if(incomes && incomes.length > 0){
                 switch(status)
@@ -67,9 +68,8 @@ const getAllIncome = (status) => {
                     case UserFundStatus.REJECT : resolve(filterRejectIncome(incomes));break;
                 }
                 
-            }else{
-                reject(incomes);
             }
+            resolve(incomes);
         }catch(error){
             reject({
                 status: error.status || 500,

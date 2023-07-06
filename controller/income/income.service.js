@@ -21,9 +21,9 @@ async function creditIncome (user_id, userSubscriptionId, amount, incomeType) {
             });
             userIncome.balance += amount;
             userIncome.subscription.push(newTransaction._id);
-            userIncome.save();
+            await userIncome.save();
             user.income = userIncome._id;
-            user.save();
+            await user.save();
             return newTransaction;
         } else {
             throw {
@@ -89,7 +89,7 @@ async function withdrawlIncome (user_id, amount) {
             }
             userIncome.transaction.push(transaction._id);
             // userIncome -= amount;
-            userIncome.save();
+            await userIncome.save();
             return userIncome;
         } else {
             throw {

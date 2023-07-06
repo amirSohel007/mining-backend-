@@ -124,10 +124,10 @@ async function getAllSubscribers () {
                             await dailyIncome(userSubscriptions[i].user.toString(), plan, userSubscriptions[i]._id.toString());
                             userSubscriptions[i].updated_at = Date.now();
                             userSubscriptions[i].next_daily_income = moment(userSubscriptions[i].created_at).add(24, 'hours');
-                            userSubscriptions[i].save();
+                            await userSubscriptions[i].save();
                         } else {
                             userSubscriptions[i].active = false;
-                            userSubscriptions[i].save();
+                            await userSubscriptions[i].save();
                         }
                     }
                 }
