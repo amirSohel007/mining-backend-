@@ -9,7 +9,7 @@ const qrCodeSchema = require('../qr/qr.model');
 const allUsers = (status) => {
     return new Promise(async (resolve,reject) => {
         try{
-            const users = await userSchema.find({});
+            const users = await userSchema.find({}).populate('income');
             console.log(users);
             if(users && users.length > 0){
                 switch(status)
