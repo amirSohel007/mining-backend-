@@ -24,7 +24,7 @@ const changeFundStatus = (admin_id,transactionId,status) =>{
             }
             if(status == UserFundStatus.REJECT &&checkUserStatus?.status === UserFundStatus.PENDING){
                 checkUserStatus.status = UserFundStatus.REJECT;
-                checkUserStatus.save();
+                await checkUserStatus.save();
                 resolve({ message: 'status updated'});
                 return;
             }
@@ -32,7 +32,7 @@ const changeFundStatus = (admin_id,transactionId,status) =>{
                 const updatedFundBalance = await updateUserFundBalance(checkUserStatus.user_fund, checkUserStatus.amount);
                 if (updatedFundBalance) {
                     checkUserStatus.status = UserFundStatus.ACCEPT;
-                    checkUserStatus.save();
+                    await checkUserStatus.save();
                     updateAdminTotalFund(admin_id,checkUserStatus);
                     resolve(checkUserStatus);
                 } else {
@@ -58,7 +58,7 @@ const updateAdminTotalFund = async (admin_id,transaction) => {
     const adminFundUpdate = await adminUserSchema.findById({_id:admin_id});
     console.log(adminFundUpdate,transaction);
     adminFundUpdate.totalFund =  adminFundUpdate.totalFund ? adminFundUpdate.totalFund  + transaction.amount : transaction.amount;
-    adminFundUpdate.save();
+    await adminFundUpdate.save();
 }
 
 const getAllFunds = (status, req) => {
@@ -87,9 +87,8 @@ const getAllFunds = (status, req) => {
                     case UserFundStatus.REJECT : resolve(filterRejectFund(result));break;
                 }
                 
-            }else{
-                reject(fund);
             }
+            resolve(fund);
         }catch(error){
             reject({
                 status: error.status || 500,
@@ -115,7 +114,7 @@ async function updateUserFundBalance (userFundId, amount) {
     try {
         const fund = await userFundSchema.findOne({ _id: userFundId });
         fund.fund_balance += amount;
-        fund.save();
+        await fund.save();
         console.log('USER_FUND : ', fund);
         return fund;
     } catch (error) {

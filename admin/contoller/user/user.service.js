@@ -19,9 +19,8 @@ const allUsers = (status) => {
                     case Status.INACTIVE : resolve(filterInActiveUsers(users));break;
                 }
                 
-            }else{
-                reject(users);
             }
+            resolve(users);
         }catch(error){
             reject({
                 status: error.status || 500,
@@ -83,7 +82,7 @@ const createAdminUser  = (data) => {
             const user = await adminUserSchema.create(data);
             const token = jwt.sign({ user_id: user._id }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
             user.token = token;
-            user.save();
+            await user.save();
             if(user != null || user != undefined){
                 resolve(user);
             }else{
@@ -110,7 +109,7 @@ const saveAdminQr = (admin_id, qrCodeFilePath) => {
             if (qrCode) {
                 qrCode['qr'] = file.key ? file.key : file;
                 qrCode.updated_by = user._id
-                qrCode.save();
+                await qrCode.save();
             } else {
                 qrCodeSchema.create({
                     qr: file.key ? file.key : file,

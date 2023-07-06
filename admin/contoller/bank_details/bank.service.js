@@ -6,11 +6,7 @@ const getAllUsersBankDetails = () =>{
         try{
             const bankDetail = await bankDetailSchema.find({});
             console.log(bankDetail);
-            if(bankDetail && bankDetail.length > 0){
-                resolve(bankDetail);
-            }else{
-                reject(bankDetail);
-            }
+            resolve(bankDetail);
         }catch(error){
             reject({
                 status: error.status || 500,

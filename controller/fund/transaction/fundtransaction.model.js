@@ -7,7 +7,13 @@ const Schema = mongoose.Schema;
 const FundTransactionSchema = new Schema({
     user_id: { type: Schema.Types.ObjectId, require: true, ref: 'user' },
     amount: { type: Number, require: true },
-    transaction_no: { type: String, unique: true },
+    transaction_no: { type: String },
+    transaction_no: {
+        type: String, trim: true, index: {
+          unique: true,
+          partialFilterExpression: { transaction_no: { $type: "string" } }
+        }
+    },
     receipt: { type: String },
     transaction_type: { type: String },
     received_from: { type: Schema.Types.ObjectId, ref: 'user' },
