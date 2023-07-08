@@ -33,6 +33,7 @@ async function createUser (data) {
                 if (sponser_user) {
                     user = await userSchema.create(data);
                     sponser_user.downline_team.push(user._id);
+                    sponser_user.direct_team_size += 1; 
                     await sponser_user.save();
                 } else {
                     console.log('SPONSER_ID_NOT FOUND : ', data.sponser_id);

@@ -8,6 +8,8 @@ const { deleteAllDirectoryFiles, createUploadFolder } = require('./commonHelper'
 const schedule = require('node-schedule');
 const { getAllSubscribers, creditDailyDirectIncome } = require('./admin/contoller/subscription/subscription.service');
 const { calculateBoostingIncome } = require('./controller/subscription/boost_income/boost_income.service');
+const { levelIncome } = require('./controller/user/user.service');
+const scheduler = require('node-schedule');
 
 // defining port, if one is not available then port will be 3000
 const port = process.env.NODE_PORT || 5000;
@@ -56,11 +58,15 @@ app.listen(port);
 console.log(`Server has been started on port : ${port}`);
 
 // start a cron job to credit daily income to user
-schedule.scheduleJob('*/59 * * * *', function() {
+schedule.scheduleJob('*/59 * * * *', async function() {
   console.log('SCHEDULAR IS RUNNING AT EVERY 1 HOUR');
-  getAllSubscribers();
-  creditDailyDirectIncome();
-  calculateBoostingIncome();
+  await getAllSubscribers();
+  await creditDailyDirectIncome();
+  await calculateBoostingIncome();
+});
+
+scheduler.scheduleJob('* */24 * * *', async function() {
+  await levelIncome();
 });
 
 // unhandled error
