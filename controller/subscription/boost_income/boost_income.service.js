@@ -64,19 +64,26 @@ async function calculateBoostingIncome () {
                         }
                     }
                     
-                    if (thirdLevelTeamCount && countOfSamePackageTeamMember >= thirdLevelTeamCount) {
+                    if (
+                        (users[i].is_eligibale_for_extra_income === false && thirdLevelDurationHours <= elapsedHours) || 
+                        (thirdLevelTeamCount && countOfSamePackageTeamMember >= thirdLevelTeamCount)
+                    ) {
                         console.log('TOTAL_USER_LEVEL_3 : ', countOfSamePackageTeamMember);
                         // credit 10% extra of all user subscribed plan
                         const result = await creditExtraIncomeOnAllUserPlan(users[i]._id, subscriptions, thirdLevelIncomePercentage, IncomeType.BOOSTING_LEVEL_3);
                         users[i].is_eligibale_for_extra_income = true;
                     } else if (
-                        (secondLevelTeamCount && countOfSamePackageTeamMember >= secondLevelTeamCount) && (thirdLevelTeamCount && countOfSamePackageTeamMember < thirdLevelTeamCount)
+                        (users[i].is_eligibale_for_extra_income === false && secondLevelDurationHours <= elapsedHours) || 
+                        ((secondLevelTeamCount && countOfSamePackageTeamMember >= secondLevelTeamCount) && (thirdLevelTeamCount && countOfSamePackageTeamMember < thirdLevelTeamCount))
                     ) {
                         console.log('TOTAL_USER_LEVEL_2 : ', countOfSamePackageTeamMember);
                         // credit 15% extra of all user subscribed plan
                         const result = await creditExtraIncomeOnAllUserPlan(users[i]._id, subscriptions, secondLevelIncomePercentage, IncomeType.BOOSTING_LEVEL_2);
                         users[i].is_eligibale_for_extra_income = true;
-                    } else if ((firstLevelTeamCount && countOfSamePackageTeamMember >= firstLevelTeamCount) && (secondLevelTeamCount && countOfSamePackageTeamMember < secondLevelTeamCount)) {
+                    } else if (
+                        (users[i].is_eligibale_for_extra_income === false && firstLevelDurationHours <= elapsedHours) || 
+                        ((firstLevelTeamCount && countOfSamePackageTeamMember >= firstLevelTeamCount) && (secondLevelTeamCount && countOfSamePackageTeamMember < secondLevelTeamCount))
+                    ) {
                         console.log('TOTAL_USER_LEVEL_1 : ', countOfSamePackageTeamMember);
                         // credit 20% extra of all user subscribed plan
                         const result = await creditExtraIncomeOnAllUserPlan(users[i]._id, subscriptions, firstLevelIncomePercentage, IncomeType.BOOSTING_LEVEL_1);
@@ -110,8 +117,11 @@ async function creditExtraIncomeOnAllUserPlan (userId, subscriptions = [], incom
             console.log('INCORRECT_INCOME_PERCENTAGE : ', incomePercent);
         }
         for (let i = 0; i < subscriptions.length; i++) {
-            const amount = subscriptions[i].plan.daily_income * incomePercent / 100;
-            creditIncome(userId, subscriptions[i]._id, amount, typeOfIncome);
+            const elapsedHours = getHours(moment(subscriptions[i].next_daily_income, 'h:mm:ss a'), moment(moment(), 'h:mm:ss a'));
+            if (elapsedHours > 24) {
+                const amount = subscriptions[i].plan.daily_income * incomePercent / 100;
+                creditIncome(userId, subscriptions[i]._id, amount, typeOfIncome);
+            }
         }
         return 1;
     } catch (error) {
