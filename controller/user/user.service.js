@@ -3,6 +3,7 @@ const subscriptionTransactionSchema = require('../subscription/transaction/subsc
 const incomeTransactionSchema = require('../income/transaction/incometransaction.model');
 const userIncomeSchema = require('../income/income.model');
 const { IncomeType, getHours, Status, UserFundStatus } = require('../../commonHelper');
+const { creditIncome } = require('../income/income.service');
 const moment = require('moment');
 
 async function getUserDetailsWithPopulatedData (user_id, table_name) {
@@ -146,7 +147,6 @@ async function getUserAndDirectTeam (user_id, team_type) {
         }).lean().exec();
 
         if (user) {
-            // const team = getLevel(user.downline_team, 1, team_type);
             const team = user.downline_team.map(user => {
                 user['level'] = 1;
                 return user;
@@ -178,7 +178,6 @@ function getLevel (arr, level = 1, team) {
         }
         for (let i = 0; i < arr.length; i++) {
             let currentLevel = level;
-            let newLevel = currentLevel + 1;
             getLevel(arr[i].downline_team, currentLevel + 1);
         }
     }
@@ -192,6 +191,7 @@ function convertNestedArrayToLinearArray (arr = [], linearArray = []) {
             my_reffer_code: arr[i].my_reffer_code,
             sponser_id: arr[i].sponser_id,
             level: arr[i].level,
+            is_level_unlocked: arr[i].is_level_unlocked,
             joining_date: arr[i].joining_date, 
             status: arr[i].status ? arr[i].status : 'INACTIVE'
         });
@@ -210,11 +210,105 @@ function getTeamMemberCount (arr, count = 0) {
     return count;
 }
 
+async function levelIncome () {
+    try {
+        // get all users who have two or more then two direct users
+        const users = await userSchema.find({ direct_team_size: { $gte: 2 } });
+        console.log('LEVEL_INCOME : ', users);
+
+        for (let i = 0; i < users.length; i++) {
+            const user = await getUserAndDownTeam(users[i]._id);
+            const team = getDownTeamLevelForIncome(user.downline_team, 1);
+            const convertedArray = convertNestedArrayToLinearArray(team); 
+            const sortedArray = await filterLevelForIncome(users[i]._id, convertedArray);
+            console.log('USER : ', user);
+            console.log('TEAM : ', team);
+            console.log('CONVERTED : ', convertedArray);
+            console.log('SORTED_DATA : ', sortedArray);
+        }
+    } catch (error) {
+        console.log('LEVEL_INCOME_ERROR : ', error);
+        return 0;
+    }
+}
+
+async function getUserAndDownTeam (userId) {
+    try {
+        let user = await userSchema.findOne({ _id: userId }, '-_id full_name my_reffer_code sponser_id joining_date status')
+        .populate({ 
+            path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                    path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                        path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                            path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_codesponser_id joining_date status', populate: {
+                                path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
+                                    path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status'
+                                }
+                            }
+                        }
+                    }
+                }
+            } 
+        }).lean().exec();
+        return user;
+    } catch (error) {
+        console.log('GET_USER_AND_DOWN_TEAM_ERROR : ', error);
+        return null;
+    }
+}
+
+function getDownTeamLevelForIncome (arr, level = 1, levelUnlocked) {
+    if (arr && arr.length > 0) {
+        if (arr[0] && arr[0].level) {
+            level = arr[0].level;
+            levelUnlocked = arr[0].is_level_unlocked
+        }
+        for (let i = 0; i < arr.length; i++) {
+            arr[i].level = level;
+            arr[i].is_level_unlocked = arr.length >= 2 ? true : false; 
+        }
+        for (let i = 0; i < arr.length; i++) {
+            let currentLevel = level;
+            getDownTeamLevelForIncome(arr[i].downline_team, currentLevel + 1, levelUnlocked);
+        }
+    }
+    return arr;
+}
+
+async function filterLevelForIncome (userId, arr = []) {
+    if (arr.length) {
+
+        const sortedData = arr.sort((a, b) => {
+            const level_a = a.level;
+            const level_b = b.level;
+            if (level_a > level_b) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+
+        const levels = [{ level: 1, income: 5 }, { level: 2, income: 4 }, { level: 3, income: 4 }, { level: 4, income: 3 }, { level: 5, income: 3 }, { level: 6, income: 2 }, { level: 7, income: 1 }];
+
+        for (let i = 0; i < levels.length; i++) {
+            const isLevelUnlocked = arr.find(obj => obj.level == levels[i].level && obj.is_level_unlocked == true);
+            console.log('LEVEL : ', i, 'LEVEL_1 : ', levels[i]);
+            if (isLevelUnlocked) {
+                for (let j = 0; j < arr.length; j++) {
+                    await creditIncome(userId, null, levels[i].income, IncomeType.LEVEL_INCOME[i]);
+                }
+            }
+        }
+        return sortedData;
+    }
+}
+
 module.exports = { 
     getUserDetailsWithPopulatedData,
     updateUserDetails,
     getUserInfo,
     getUserAndDownlineTeam,
     getUser,
-    getUserAndDirectTeam
+    getUserAndDirectTeam,
+    levelIncome
 };

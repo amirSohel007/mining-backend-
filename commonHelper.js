@@ -39,7 +39,16 @@ const IncomeType = {
     DOWN_TEAM_PLAN_PURCHASE_REWARD: 'DOWN_TEAM_PLAN_PURCHASE_REWARD',
     BOOSTING_LEVEL_1: '10%_EXTRA_INCOME',
     BOOSTING_LEVEL_2: '15%_EXTRA_INCOME',
-    BOOSTING_LEVEL_3: '20%_EXTRA_INCOME'
+    BOOSTING_LEVEL_3: '20%_EXTRA_INCOME',
+    LEVEL_INCOME: [
+        'LEVEL_1_INCOME',
+        'LEVEL_2_INCOME',
+        'LEVEL_3_INCOME',
+        'LEVEL_4_INCOME',
+        'LEVEL_5_INCOME',
+        'LEVEL_6_INCOME',
+        'LEVEL_7_INCOME',
+    ] 
 }
 
 const getUserIdFromToken = (token) => {

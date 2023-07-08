@@ -15,6 +15,7 @@ const UserSchema = new Schema({
     token: { type: String },
     bank_detail: { type: Schema.Types.ObjectId, ref: 'bankdetail' },
     downline_team: [{ type: Schema.Types.ObjectId, ref: 'user', default: [] }],
+    direct_team_size: { type: Number, default: 0 }, 
     income: { type: Schema.Types.ObjectId, ref: 'userincome' },
     joining_date : { type: Date, require: true, default: Date.now() },
     status : { type: String, require: true, default: Status.INACTIVE },
