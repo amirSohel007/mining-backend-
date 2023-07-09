@@ -8,7 +8,7 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
     my_reffer_code: { type: String, require: true, unique: true },
     full_name: { type: String, required: true },
-    email: { type: String, require: true, unique: true },
+    email: { type: String, require: true},
     password: { type: String, require: true },
     sponser_id: { type: String, require: false },
     phone: { type: String, require: true },
