@@ -55,6 +55,18 @@ async function getUserInfo (user_id) {
         }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
         const withdrawal = (await incomeTransactionSchema.find({ user_id, status: UserFundStatus.ACCEPT }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
         const userIncome = await userIncomeSchema.findOne({ user_id }, 'balance');
+        const downLevelIncome = (await subscriptionTransactionSchema.find({ 
+            user: user_id,
+            $or: [
+                { income_type: IncomeType.LEVEL_INCOME[0] },
+                { income_type: IncomeType.LEVEL_INCOME[1] },
+                { income_type: IncomeType.LEVEL_INCOME[2] },
+                { income_type: IncomeType.LEVEL_INCOME[3] },
+                { income_type: IncomeType.LEVEL_INCOME[4] },
+                { income_type: IncomeType.LEVEL_INCOME[5] },
+                { income_type: IncomeType.LEVEL_INCOME[6] },
+            ]            
+        }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
         if (result && result.length) {
             let user = result[0];
             user['direct_user_count'] = user.downline_team.length;
@@ -64,6 +76,7 @@ async function getUserInfo (user_id) {
             user['direct_income'] = directIncome;
             user['total_withdrawal'] = withdrawal;
             user['total_income'] = userIncome ? userIncome.balance : 0;
+            user['down_level_income'] = downLevelIncome;
             return user;
         }
         return { 

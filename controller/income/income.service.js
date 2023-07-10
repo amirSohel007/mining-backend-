@@ -2,7 +2,7 @@ const userIncomeSchema = require('./income.model');
 const incomeTransactionSchema = require('./transaction/incometransaction.model');
 const subscriptionTransactionSchema = require('../subscription/transaction/subscription.transaction.model');
 const userSchema = require('../user/user.model');
-const { UserFundStatus, getHours } = require('../../commonHelper');
+const { UserFundStatus, getHours, IncomeType } = require('../../commonHelper');
 const moment = require('moment');
 
 async function creditIncome (user_id, userSubscriptionId, amount, incomeType) {
@@ -145,4 +145,26 @@ async function getIncomeTransaction (user_id, status) {
     }
 }
 
-module.exports = { creditIncome, withdrawlIncome, getIncome, getIncomeTransaction };
+async function getLevelIncome (userId) {
+    try {
+        let query = { user: userId };
+        for (let i = 0; i < IncomeType.LEVEL_INCOME.length;i++) {
+            query['income_type'] = IncomeType.LEVEL_INCOME[i];
+        }
+        const transactions = await subscriptionTransactionSchema.find(query)
+        .populate({ 
+            path: 'user_subscription', 
+            model: 'usersubscription',
+            populate: [{ path: 'plan', model: 'subscription_plan' }]
+        });
+        return transactions;
+    } catch (error) {
+        console.log('GET_LEVEL_INCOME_ERROR : ', error);
+        throw {
+            status: error.status || 500,
+            message: error
+        }
+    }
+}
+
+module.exports = { creditIncome, withdrawlIncome, getIncome, getIncomeTransaction, getLevelIncome };
