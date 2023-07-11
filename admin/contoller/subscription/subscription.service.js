@@ -151,7 +151,7 @@ async function creditDailyDirectIncome () {
             const lastUpdated = moment(users[i].updated_at, 'h:mm:ss a')
             const currentTime = moment(moment(), 'h:mm:ss a');
             console.log('HOURS : ', getHours(lastUpdated, currentTime));
-            // if (getHours(lastUpdated, currentTime) > 24) {
+            if (getHours(lastUpdated, currentTime) > 24) {
                 const incomeReward = await incomeRewardSchema.findOne({}).lean().exec();
                 const userSubscription = await userSubscriptionSchema.findOne({ user: users[i].user, plan: users[i].plan._id });
                 const remaningAmount = users[i].plan.price - (users[i].plan.price * incomeReward.direct_income_instant_percent / 100);
@@ -160,7 +160,7 @@ async function creditDailyDirectIncome () {
                 const percentage = users[i].complete_percent + 1;
                 const user = await createOrUpdate(users[i].user, users[i].plan, users[i].income_from_user, percentage, income._id);
                 console.log('USER : ', user);
-            // }
+            }
         }
         console.log('CREDIT_DAILY_DIRECT_INCOME : ', users);
     } catch (error) {
