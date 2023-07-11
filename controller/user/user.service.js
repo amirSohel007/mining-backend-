@@ -311,7 +311,7 @@ async function filterLevelForIncome (userId, arr = []) {
             if (isLevelUnlocked) {
                 for (let j = 0; j < arr.length; j++) {
                     const subscriptionTransaction = await creditIncome(userId, null, levels[i].income, IncomeType.LEVEL_INCOME[i]);
-                    const result = await addLevelIncome(userId, isLevelUnlocked._id, subscriptionTransaction._id);
+                    const result = await addLevelIncome(userId, isLevelUnlocked._id, isLevelUnlocked.level, subscriptionTransaction._id);
                     ///
                 }
             }
@@ -320,11 +320,12 @@ async function filterLevelForIncome (userId, arr = []) {
     }
 }
 
-async function addLevelIncome (userId, incomeFromUser, subscriptionTransactionId) {
+async function addLevelIncome (userId, incomeFromUser, childUserLevel, subscriptionTransactionId) {
     try {
         const levelIncome = await levelIncomeSchema.create({
             user: userId,
             income_from_user: incomeFromUser,
+            child_user_level: childUserLevel,
             subscription_transaction: subscriptionTransactionId
         })
         return levelIncome;
