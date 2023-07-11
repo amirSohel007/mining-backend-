@@ -151,10 +151,11 @@ async function creditDailyDirectIncome () {
             const currentTime = moment(moment(), 'h:mm:ss a');
             console.log('HOURS : ', getHours(lastUpdated, currentTime));
             if (getHours(lastUpdated, currentTime) > 24) {
-                const percentage = users[i].complete_percent + 1;
-                const user = await createOrUpdate(users[i].user, users[i].plan, users[i].income_from_user, percentage);
+                const userSubscription = await userSubscriptionSchema.findOne({ user: users[i].user, plan: users[i].plan });
                 const amount = users[i].plan ? users[i].plan.price * 1.4 / 50 : 0;
-                const income = await creditIncome(users[i].user, users[i].plan, amount, IncomeType.DAILY_DIRECT);
+                const income = await creditIncome(users[i].user, userSubscription._id, amount, IncomeType.DAILY_DIRECT);
+                const percentage = users[i].complete_percent + 1;
+                const user = await createOrUpdate(users[i].user, users[i].plan, users[i].income_from_user, percentage, income._id);
                 console.log('USER : ', user);
             }
         }

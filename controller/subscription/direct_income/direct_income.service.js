@@ -7,6 +7,7 @@ async function createOrUpdate (userId, planId, teamUserId, completedPercent, sub
         if (directIncome) {
             if (directIncome.complete_percent && directIncome.complete_percent < 100) {
                 directIncome.complete_percent += completedPercent;
+                directIncome.subscription_transaction.push(subscriptionTransactionId);
                 directIncome.updated_at = moment();
             }
             if (directIncome.complete_percent && directIncome.complete_percent == 100) {
@@ -19,7 +20,7 @@ async function createOrUpdate (userId, planId, teamUserId, completedPercent, sub
                 plan: planId,
                 user: userId,
                 income_from_user: teamUserId,
-                subscription_transaction: subscriptionTransactionId,
+                subscription_transaction: [subscriptionTransactionId],
                 is_completed: false,
                 complete_percent: completedPercent
             });
