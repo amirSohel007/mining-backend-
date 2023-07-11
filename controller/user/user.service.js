@@ -2,6 +2,7 @@ const userSchema = require('./user.model');
 const subscriptionTransactionSchema = require('../subscription/transaction/subscription.transaction.model');
 const incomeTransactionSchema = require('../income/transaction/incometransaction.model');
 const userIncomeSchema = require('../income/income.model');
+const levelIncomeSchema = require('./levelincome.model');
 const { IncomeType, getHours, Status, UserFundStatus } = require('../../commonHelper');
 const { creditIncome } = require('../income/income.service');
 const moment = require('moment');
@@ -200,6 +201,7 @@ function getLevel (arr, level = 1, team) {
 function convertNestedArrayToLinearArray (arr = [], linearArray = []) {
     for (let i = 0; i < arr.length; i++) {
         linearArray.push({
+            _id: arr[i]._id,
             full_name: arr[i].full_name,
             my_reffer_code: arr[i].my_reffer_code,
             sponser_id: arr[i].sponser_id,
@@ -249,13 +251,13 @@ async function getUserAndDownTeam (userId) {
     try {
         let user = await userSchema.findOne({ _id: userId }, '-_id full_name my_reffer_code sponser_id joining_date status')
         .populate({ 
-            path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
-                path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
-                    path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
-                        path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
-                            path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_codesponser_id joining_date status', populate: {
-                                path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status', populate: {
-                                    path: 'downline_team', model: 'user', select: '-_id full_name my_reffer_code sponser_id joining_date status'
+            path: 'downline_team', model: 'user', select: 'full_name my_reffer_code sponser_id joining_date status', populate: {
+                path: 'downline_team', model: 'user', select: 'full_name my_reffer_code sponser_id joining_date status', populate: {
+                    path: 'downline_team', model: 'user', select: 'full_name my_reffer_code sponser_id joining_date status', populate: {
+                        path: 'downline_team', model: 'user', select: 'full_name my_reffer_code sponser_id joining_date status', populate: {
+                            path: 'downline_team', model: 'user', select: 'full_name my_reffer_codesponser_id joining_date status', populate: {
+                                path: 'downline_team', model: 'user', select: 'full_name my_reffer_code sponser_id joining_date status', populate: {
+                                    path: 'downline_team', model: 'user', select: 'full_name my_reffer_code sponser_id joining_date status'
                                 }
                             }
                         }
@@ -308,11 +310,27 @@ async function filterLevelForIncome (userId, arr = []) {
             console.log('LEVEL : ', i, 'LEVEL_1 : ', levels[i]);
             if (isLevelUnlocked) {
                 for (let j = 0; j < arr.length; j++) {
-                    await creditIncome(userId, null, levels[i].income, IncomeType.LEVEL_INCOME[i]);
+                    const subscriptionTransaction = await creditIncome(userId, null, levels[i].income, IncomeType.LEVEL_INCOME[i]);
+                    const result = await addLevelIncome(userId, isLevelUnlocked._id, subscriptionTransaction._id);
+                    ///
                 }
             }
         }
         return sortedData;
+    }
+}
+
+async function addLevelIncome (userId, incomeFromUser, subscriptionTransactionId) {
+    try {
+        const levelIncome = await levelIncomeSchema.create({
+            user: userId,
+            income_from_user: incomeFromUser,
+            subscription_transaction: subscriptionTransactionId
+        })
+        return levelIncome;
+    } catch (error) {
+        console.log('ADD_LEVEL_INCOME_ERROR : ', error);
+        return null;
     }
 }
 
