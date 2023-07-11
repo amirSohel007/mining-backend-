@@ -2,6 +2,7 @@ const userIncomeSchema = require('./income.model');
 const incomeTransactionSchema = require('./transaction/incometransaction.model');
 const subscriptionTransactionSchema = require('../subscription/transaction/subscription.transaction.model');
 const userSchema = require('../user/user.model');
+const levelIncomeSchema = require('../user/levelincome.model');
 const { UserFundStatus, getHours, IncomeType } = require('../../commonHelper');
 const moment = require('moment');
 
@@ -147,17 +148,41 @@ async function getIncomeTransaction (user_id, status) {
 
 async function getLevelIncome (userId) {
     try {
-        let query = { user: userId };
-        for (let i = 0; i < IncomeType.LEVEL_INCOME.length;i++) {
-            query['income_type'] = IncomeType.LEVEL_INCOME[i];
-        }
-        const transactions = await subscriptionTransactionSchema.find(query)
+        // let type = [];
+        // let query = { user: userId };
+        // for (let i = 0; i < IncomeType.LEVEL_INCOME.length;i++) {
+        //     type.push({ income_type: IncomeType.LEVEL_INCOME[i] });
+        // }
+        // query['$or'] = type;
+        const levelIncome = await levelIncomeSchema.find({ user: userId })
+        .populate({ path: 'user', model: 'user', select: '-downline_team _id email my_reffer_code full_name' })
+        .populate({ path: 'income_from_user', model: 'user', select: '-downline_team _id email my_reffer_code full_name' })
         .populate({ 
-            path: 'user_subscription', 
-            model: 'usersubscription',
-            populate: [{ path: 'plan', model: 'subscription_plan' }]
+            path: 'subscription_transaction', 
+            model: 'subscription_transaction'
+        }).lean().exec();
+        // const transactions = await subscriptionTransactionSchema.find(query)
+        // .populate({ 
+        //     path: 'user_subscription', 
+        //     model: 'usersubscription',
+        //     populate: [{ path: 'plan', model: 'subscription_plan' }]
+        // });
+        const filteredData = levelIncome.map(obj => {
+            let newObj = {
+                _id: obj._id,
+                user: {
+                    _id: obj.user._id,
+                    my_reffer_code: obj.user.my_reffer_code,
+                    full_name: obj.user.full_name,
+                    email: obj.user.email,
+                },
+                from_user: obj.income_from_user.full_name,
+                amount: obj.subscription_transaction.amount,
+                income_type: obj.subscription_transaction.income_type
+            }
+            return newObj;
         });
-        return transactions;
+        return filteredData;
     } catch (error) {
         console.log('GET_LEVEL_INCOME_ERROR : ', error);
         throw {
