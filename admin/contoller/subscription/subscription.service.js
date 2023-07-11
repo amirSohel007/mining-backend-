@@ -1,5 +1,6 @@
 const subscriptionPlanSchema = require('../../../controller/subscription/subscription_plan/subscriptionplan.model');
 const userSubscriptionSchema = require('../../../controller/subscription/user_subscription/usersubscription.model');
+const incomeRewardSchema = require('../other_income_and_rewards/income_rewards.model');
 const { createOrUpdate, getAllUser } = require('../../../controller/subscription/direct_income/direct_income.service');
 const { creditIncome } = require('../../../controller/income/income.service');
 const { IncomeType, getHours } = require('../../../commonHelper');
@@ -150,14 +151,16 @@ async function creditDailyDirectIncome () {
             const lastUpdated = moment(users[i].updated_at, 'h:mm:ss a')
             const currentTime = moment(moment(), 'h:mm:ss a');
             console.log('HOURS : ', getHours(lastUpdated, currentTime));
-            if (getHours(lastUpdated, currentTime) > 24) {
+            // if (getHours(lastUpdated, currentTime) > 24) {
+                const incomeReward = await incomeRewardSchema.findOne({}).lean().exec();
                 const userSubscription = await userSubscriptionSchema.findOne({ user: users[i].user, plan: users[i].plan._id });
-                const amount = users[i].plan ? users[i].plan.price * 1.4 / 50 : 0;
+                const remaningAmount = users[i].plan.price - (users[i].plan.price * incomeReward.direct_income_instant_percent / 100);
+                const amount = remaningAmount > 0 ? remaningAmount * 1.4 / 50 : 0;
                 const income = await creditIncome(users[i].user, userSubscription._id, amount, IncomeType.DAILY_DIRECT);
                 const percentage = users[i].complete_percent + 1;
                 const user = await createOrUpdate(users[i].user, users[i].plan, users[i].income_from_user, percentage, income._id);
                 console.log('USER : ', user);
-            }
+            // }
         }
         console.log('CREDIT_DAILY_DIRECT_INCOME : ', users);
     } catch (error) {
