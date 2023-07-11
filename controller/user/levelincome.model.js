@@ -7,6 +7,7 @@ const Schema = mongoose.Schema;
 const LevelIncomeSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'user', require: true },
     income_from_user: { type: Schema.Types.ObjectId, ref: 'user', require: true },
+    child_user_level: { type: Number, default: 1 },
     subscription_transaction: { type: Schema.Types.ObjectId, ref: 'subscription_transaction', require: true },
     created_at : { type: Date, require: true, default: Date.now() },
     updated_at : { type: Date, require: true, default: Date.now() }
