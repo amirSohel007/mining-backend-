@@ -176,9 +176,11 @@ async function getLevelIncome (userId) {
                     full_name: obj.user.full_name,
                     email: obj.user.email,
                 },
+                level: '',
                 from_user: obj.income_from_user.full_name,
                 amount: obj.subscription_transaction.amount,
-                income_type: obj.subscription_transaction.income_type
+                income_type: obj.subscription_transaction.income_type,
+                created_at: obj.created_at
             }
             return newObj;
         });

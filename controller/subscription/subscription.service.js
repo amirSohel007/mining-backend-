@@ -102,7 +102,7 @@ async function subscribePlan (user_id, plan_id) {
             const amount = parseInt(plan.price) * parseInt(incomeReward.direct_income_instant_percent) / 100;
             if (parentUser && parentUser.status === Status.ACTIVE) {
                 const income = await creditIncome(parentUser._id, subscribe.plan.toString(), amount, IncomeType.INSTANT_DIRECT);
-                const directIncome = await createOrUpdate(parentUser._id, subscribe.plan, user_id, 15, income._id);
+                const directIncome = await createOrUpdate(parentUser._id, subscribe.plan, user_id, incomeReward.direct_income_instant_percent, income._id);
                 console.log('DIRECT_INCOME : ', directIncome);
             }
 
