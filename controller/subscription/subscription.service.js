@@ -51,9 +51,8 @@ async function subscribePlan (user_id, plan_id) {
             });
 
             // deduct the user balance
-            userFund._doc.fund_balance -= plan._doc.price;
+            userFund.fund_balance -= plan.price;
             await userFund.save();
-            userFund.markModified('fund_balance');
 
             // create transaction for purchase subscribption plan
             await fundTransactionSchema.create({
