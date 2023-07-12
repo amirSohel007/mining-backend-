@@ -9,7 +9,6 @@ const SubscriptionPlanSchema = new Schema({
   plan_description: { type: String, default: "" },
   active: { type: Boolean, default: true },
   price: { type: Number, default: 0.0, require: true },
-  daily_income: { type: Number, default: 0.0, require: true },
   daily_mining_coin: { type: Number, default: 0.0, require: true },
   created_at: { type: Date, require: true, default: Date.now() },
   created_by: { type: Schema.Types.ObjectId },
