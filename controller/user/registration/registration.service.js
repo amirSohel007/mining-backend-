@@ -5,15 +5,15 @@ const config = require('../../../config').config();
 
 async function createUser (data) {
     try {
-        if (data && data.full_name) {
+        if (data) {
             // check if user exist in db
-            const existingUser = await userSchema.findOne({ email: data.email });
-            if (existingUser) {
-                throw {
-                    status: 409,
-                    message: 'user already exist'
-                }
-            }
+            // const existingUser = await userSchema.findOne({ email: data.email });
+            // if (existingUser) {
+            //     throw {
+            //         status: 409,
+            //         message: 'user already exist'
+            //     }
+            // }
 
             // generate refer code
             let myRefferCode = ''
