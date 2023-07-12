@@ -80,8 +80,8 @@ async function getUserInfo (user_id) {
             user['total_withdrawal'] = withdrawal;
             user['total_income'] = userIncome ? userIncome.balance : 0;
             user['down_level_income'] = downLevelIncome;
-            user['coin_balance'] = coinBalance.coin_balance;
-            user['next_mining'] = getHours(moment(), coinBalance.next_mining);
+            user['coin_balance'] = coinBalance ? coinBalance.coin_balance : 0;
+            user['next_mining'] = coinBalance ? getHours(moment(), coinBalance.next_mining) : null;
             return user;
         }
         return { 
