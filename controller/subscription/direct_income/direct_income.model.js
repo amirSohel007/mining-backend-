@@ -9,7 +9,7 @@ const DirectIncomeSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'user', require: true },
     income_from_user: { type: Schema.Types.ObjectId, ref: 'user', require: true },
     subscription_transaction: { type: Schema.Types.ObjectId, ref: 'subscription_transaction', require: true },
-    complete_percent: { type: Number, default: 0 },
+    complete_percent: { type: String, default: "0.0" },
     is_completed: { type: Boolean, default: false },
     created_at : { type: Date, require: true, default: Date.now() },
     updated_at : { type: Date, require: true, default: Date.now() }

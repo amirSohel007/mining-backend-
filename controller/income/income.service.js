@@ -45,12 +45,12 @@ async function withdrawlIncome (user_id, amount) {
     try {
         let userIncome = await userIncomeSchema.findOne({ user_id });
         if (userIncome) {
-            const lastTransaction = await incomeTransactionSchema.find({ user_id, status: UserFundStatus.ACCEPT }).sort({ created_at: 1 });
+            const lastTransaction = await incomeTransactionSchema.find({ user_id }).sort({ created_at: 1 });
             console.log('TRANs : ', lastTransaction);
-            if (userIncome.first_withdrawal && parseInt(amount) > 300) {
+            if (userIncome.first_withdrawal && parseInt(amount) > 250) {
               throw {
                 status: 400,
-                message: "first withdrawal can not be exceed 300",
+                message: "first withdrawal can not be exceed 250",
               };
             } else if (userIncome.balance < parseInt(amount)) {
               throw {
@@ -69,12 +69,12 @@ async function withdrawlIncome (user_id, amount) {
             } 
 
             else if (
-              getHours(lastTransaction[0]?.created_at, moment()) < 24
+              getHours(lastTransaction[lastTransaction.length - 1]?.created_at, moment()) < 24
             ) {
               throw {
                 status: 400,
                 message: ` try after ${
-                  24 - getHours(lastTransaction[0]?.created_at, moment())
+                  24 - getHours(lastTransaction[lastTransaction.length - 1]?.created_at, moment())
                 }  hours`,
               };
             }
