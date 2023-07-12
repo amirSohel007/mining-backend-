@@ -2,6 +2,7 @@ const coinWalletSchema = require('./coinwallet/coinwallet.model');
 const coinTransactionSchema = require('./transaction/cointransaction.model');
 const subscriptionPlanSchema = require('../subscription/subscription_plan/subscriptionplan.model');
 const userSubscriptionSchema = require('../subscription/user_subscription/usersubscription.model');
+const subscriptionCoinSchema = require('./subscription-coin/subscriptioncoin.model');
 const { Coin, getHours } = require('../../commonHelper');
 const moment = require('moment');
 
@@ -15,14 +16,23 @@ async function generateCoin (userId, subscriptionId) {
                 message: 'no subscription plan found'
             };
         }
-        const start =  wallet ? moment(wallet.next_mining, 'h:mm:ss a') : moment(moment(), 'h:mm:ss a');
+        
+        let subscriptionCoin = await subscriptionCoinSchema.findOne({ user: userId, subscription: subscriptionId });
+        if (!subscriptionCoin) {
+            subscriptionCoin = await subscriptionCoinSchema.create({
+                user: userId,
+                subscription: subscriptionId,
+                coin_transaction: [],
+            });
+        }
+
+        const start =  subscriptionCoin ? moment(subscriptionCoin.next_mining, 'h:mm:ss a') : moment(moment(), 'h:mm:ss a');
         const end = moment(moment(), 'h:mm:ss a');
         const hours = getHours(start, end);
-        if ((!wallet) || (hours >= 24)) {
+        if ((!wallet) || (subscriptionCoin && !subscriptionCoin.next_mining ) || (hours >= 24)) {
             if (!wallet) {
                 wallet = await coinWalletSchema.create({
                     user: userId,
-                    coin_balance: plan.daily_mining_coin,
                     coin_transaction: [],
                     next_mining: moment().add(24, 'hours'),
                 });
@@ -34,16 +44,19 @@ async function generateCoin (userId, subscriptionId) {
                 coin: plan.daily_mining_coin,
                 transaction_type: Coin.DAILY
             });
-            wallet.coin_transaction.push(coinTransaction._id);
-            wallet.coin_balance += plan.daily_mining_coin;
-            wallet.next_mining = moment().add(24, 'hours');
+            
+            subscriptionCoin.coin_wallet = wallet._id;
+            subscriptionCoin.coin_transaction.push(coinTransaction._id);
+            subscriptionCoin.next_mining = moment().add(24, 'hours');;
+            await subscriptionCoin.save();
+
+            wallet.coin_balance = parseFloat(wallet.coin_balance) + parseFloat(plan.daily_mining_coin);
+            console.log('MINING : ', parseFloat(plan.daily_mining_coin));
+            console.log('WALLET_BALANCE : ', wallet.coin_balance);
             await wallet.save();
             return coinTransaction;
         } else {
-            throw {
-                status: 400,
-                message: 'coin can not be mine before 24 hours'
-            }
+            return 0;
         }
     } catch (error) {
         console.log('GENERATE_COIN_ERROR : ', error);

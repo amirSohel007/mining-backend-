@@ -7,9 +7,8 @@ const Schema = mongoose.Schema;
 // define user schema
 const CoinWalletSchema = new Schema({
     user: { type: Schema.Types.ObjectId, require: true, ref: 'user' },
-    coin_balance: { type: Number, require: true, default: 0.0 },
-    coin_transaction: [{ type: Schema.Types.ObjectId, ref: 'coin_transaction' }],
-    next_mining: { type: Date, require: true },
+    coin_balance: { type: String, require: true, default: "0.0" },
+    coin_subscription: [{ type: Schema.Types.ObjectId, ref: 'subscription_coin' }],
     created_at: { type: Date, require: true, default: moment() },
     updated_at: { type: Date, require: true, default: moment() }
 });
