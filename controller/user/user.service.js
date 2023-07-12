@@ -4,6 +4,7 @@ const incomeTransactionSchema = require('../income/transaction/incometransaction
 const userIncomeSchema = require('../income/income.model');
 const levelIncomeSchema = require('./levelincome.model');
 const coinWalletSchema = require('../coin/coinwallet/coinwallet.model');
+const subscriptionCoinSchema = require('../coin/subscription-coin/subscriptioncoin.model');
 const { IncomeType, getHours, Status, UserFundStatus } = require('../../commonHelper');
 const { creditIncome } = require('../income/income.service');
 const moment = require('moment');
@@ -70,6 +71,7 @@ async function getUserInfo (user_id) {
             ]            
         }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
         const coinBalance = await coinWalletSchema.findOne({ user: user_id });
+        const subscriptionCoin = await subscriptionCoinSchema.findOne({ user: user_id });
         if (result && result.length) {
             let user = result[0];
             user['direct_user_count'] = user.downline_team.length;
@@ -81,7 +83,7 @@ async function getUserInfo (user_id) {
             user['total_income'] = userIncome ? userIncome.balance : 0;
             user['down_level_income'] = downLevelIncome;
             user['coin_balance'] = coinBalance ? parseFloat(coinBalance.coin_balance) : 0;
-            user['next_mining'] = coinBalance ? getHours(moment(), coinBalance.next_mining) : 0;
+            user['next_mining'] = subscriptionCoin ? getHours(moment(), subscriptionCoin.next_mining) : 0;
             return user;
         }
         return { 
