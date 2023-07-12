@@ -15,10 +15,10 @@ async function generateCoin (userId, subscriptionId) {
                 message: 'no subscription plan found'
             };
         }
-        const start =  moment(wallet.next_mining, 'h:mm:ss a');
+        const start =  wallet ? moment(wallet.next_mining, 'h:mm:ss a') : moment(moment(), 'h:mm:ss a');
         const end = moment(moment(), 'h:mm:ss a');
         const hours = getHours(start, end);
-        if (hours >= 24) {
+        if ((!wallet) || (hours >= 24)) {
             if (!wallet) {
                 wallet = await coinWalletSchema.create({
                     user: userId,

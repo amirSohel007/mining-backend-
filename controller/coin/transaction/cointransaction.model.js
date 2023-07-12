@@ -10,7 +10,7 @@ const CoinTransactionSchema = new Schema({
     coin_wallet: { type: Schema.Types.ObjectId, ref: 'coin_wallet' },
     subscription: { type: Schema.Types.ObjectId, ref: 'subscription_plan' },
     transaction_type: { type: String, require: true },
-    coin: { type: Schema.Types.Decimal128, default: 0.0 },
+    coin: { type: Number, default: 0.0 },
     created_at: { type: Date, require: true, default: moment() },
     updated_at: { type: Date, require: true, default: moment() }
 });
