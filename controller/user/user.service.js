@@ -3,6 +3,7 @@ const subscriptionTransactionSchema = require('../subscription/transaction/subsc
 const incomeTransactionSchema = require('../income/transaction/incometransaction.model');
 const userIncomeSchema = require('../income/income.model');
 const levelIncomeSchema = require('./levelincome.model');
+const coinWalletSchema = require('../coin/coinwallet/coinwallet.model');
 const { IncomeType, getHours, Status, UserFundStatus } = require('../../commonHelper');
 const { creditIncome } = require('../income/income.service');
 const moment = require('moment');
@@ -68,6 +69,7 @@ async function getUserInfo (user_id) {
                 { income_type: IncomeType.LEVEL_INCOME[6] },
             ]            
         }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
+        const coinBalance = await coinWalletSchema.findOne({ user: user_id });
         if (result && result.length) {
             let user = result[0];
             user['direct_user_count'] = user.downline_team.length;
@@ -78,6 +80,7 @@ async function getUserInfo (user_id) {
             user['total_withdrawal'] = withdrawal;
             user['total_income'] = userIncome ? userIncome.balance : 0;
             user['down_level_income'] = downLevelIncome;
+            user['coin_balance'] = coinBalance.coin_balance;
             return user;
         }
         return { 

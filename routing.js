@@ -22,4 +22,5 @@ module.exports.route = (app) => {
     app.use('/api/admin/subscription', verifyToken, require('./admin/contoller/subscription/subscription.route').adminSubscription);
     app.use('/api/admin/income-reward', verifyToken, require('./admin/contoller/other_income_and_rewards/income_rewards.route').incomeRewards);
     app.use('/api/admin/boosting-income', verifyToken, require('./admin/contoller/boost_income/boost_income.route').boostIncome);
+    app.use('/api/coin-mining', verifyToken, require('./controller/coin/coin.route').coin);
 }

@@ -13,15 +13,15 @@ const responseService = require('../../../response/response.handler');
 app.post('/', async (req, res) => {
     console.log(`url : ${req.protocol}://${req.hostname}:${process.env.NODE_PORT}${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        let { title = null, description, price = 0, daily_income = 0, active = true, plan_id = null, daily_coin= 0.0} = req.body;
-        if (title == null || price == 0, daily_income == 0) {
-            let error = { status: 400, message: "missing required fields title, price, daily_income" };
+        let { title = null, description, price = 0, daily_income = 0, active = true, plan_id = null, daily_coin= 0.0, daily_mining_coin = 0.0 } = req.body;
+        if (title == null || price == 0, daily_income == 0 || daily_mining_coin == 0) {
+            let error = { status: 400, message: "missing required fields title, price, daily_income, daily_mining_coin" };
             responseService.response(req, error, null, res);
         }
         const { user_id } = req.user;
         if (user_id) {
             if (plan_id) {
-                const result = await updateSubscriptionPlan(user_id, plan_id, { title, description, price, active, daily_income, daily_coin });
+                const result = await updateSubscriptionPlan(user_id, plan_id, { title, description, price, active, daily_income, daily_coin, daily_mining_coin });
                 responseService.response(req, null, result, res);
             } else {
                 const result = await addSubscriptionPlan(user_id, { title, description, price, active, daily_income });

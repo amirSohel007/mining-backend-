@@ -51,6 +51,10 @@ const IncomeType = {
     ] 
 }
 
+const Coin = {
+    DAILY: 'DAILY_COIN_MINING'
+}
+
 const getUserIdFromToken = (token) => {
     const tokenUser =  jwt.decode(token);
     return tokenUser?.user_id;
@@ -106,7 +110,8 @@ module.exports = {
     UserFundStatus, 
     UserRole, 
     FundTransactionType, 
-    IncomeType, 
+    IncomeType,
+    Coin, 
     getUserIdFromToken, 
     deleteAllDirectoryFiles,
     getBaseUrl,
