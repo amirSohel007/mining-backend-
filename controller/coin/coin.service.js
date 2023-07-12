@@ -35,7 +35,7 @@ async function generateCoin (userId, subscriptionId) {
                 transaction_type: Coin.DAILY
             });
             wallet.coin_transaction.push(coinTransaction._id);
-            wallet.coin_balance = plan.daily_mining_coin;
+            wallet.coin_balance += plan.daily_mining_coin;
             wallet.next_mining = moment().add(24, 'hours');
             await wallet.save();
             return coinTransaction;
