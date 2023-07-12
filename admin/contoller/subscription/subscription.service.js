@@ -14,6 +14,7 @@ async function addSubscriptionPlan (user_id, plan) {
             active: true,
             price: plan.price,
             daily_income: plan.daily_income,
+            daily_mining_coin: plan.daily_mining_coin,
             created_by: user_id,
             updated_by: user_id
         })
