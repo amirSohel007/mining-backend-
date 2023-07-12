@@ -6,14 +6,14 @@ const adminUserSchema = require('../../admin/contoller/admin_user/admin_user.mod
 async function loginUser(userEmail, myRefferCode, password) {
     
     try {
-        if (!((userEmail || myRefferCode) && password)) {
+        if (!(myRefferCode && password)) {
           throw {
             status: 400,
-            message: "email and password is required",
+            message: "referal code and password is required",
           };
         }
         const user = await userSchema.findOne({
-          $or: [{ email: userEmail }, { my_reffer_code: myRefferCode }],
+          my_reffer_code: myRefferCode,
           password: password,
         });
         const adminUser = await adminUserSchema.findOne({

@@ -41,15 +41,25 @@ const IncomeType = {
     BOOSTING_LEVEL_2: '15%_EXTRA_INCOME',
     BOOSTING_LEVEL_3: '20%_EXTRA_INCOME',
     LEVEL_INCOME: [
-        'LEVEL_1_INCOME',
-        'LEVEL_2_INCOME',
-        'LEVEL_3_INCOME',
-        'LEVEL_4_INCOME',
-        'LEVEL_5_INCOME',
-        'LEVEL_6_INCOME',
-        'LEVEL_7_INCOME',
+        { level: 1, text: 'LEVEL_1_INCOME' },
+        { level: 2, text: 'LEVEL_2_INCOME' },
+        { level: 3, text: 'LEVEL_3_INCOME' },
+        { level: 4, text: 'LEVEL_4_INCOME' },
+        { level: 5, text: 'LEVEL_5_INCOME' },
+        { level: 6, text: 'LEVEL_6_INCOME' },
+        { level: 7, text: 'LEVEL_7_INCOME' }
     ] 
 }
+
+
+        // 'LEVEL_1_INCOME',
+        // 'LEVEL_2_INCOME',
+        // 'LEVEL_3_INCOME',
+        // 'LEVEL_4_INCOME',
+        // 'LEVEL_5_INCOME',
+        // 'LEVEL_6_INCOME',
+        // 'LEVEL_7_INCOME',
+    
 
 const Coin = {
     DAILY: 'DAILY_COIN_MINING'

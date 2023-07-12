@@ -60,13 +60,13 @@ async function getUserInfo (user_id) {
         const downLevelIncome = (await subscriptionTransactionSchema.find({ 
             user: user_id,
             $or: [
-                { income_type: IncomeType.LEVEL_INCOME[0] },
-                { income_type: IncomeType.LEVEL_INCOME[1] },
-                { income_type: IncomeType.LEVEL_INCOME[2] },
-                { income_type: IncomeType.LEVEL_INCOME[3] },
-                { income_type: IncomeType.LEVEL_INCOME[4] },
-                { income_type: IncomeType.LEVEL_INCOME[5] },
-                { income_type: IncomeType.LEVEL_INCOME[6] },
+                { income_type: IncomeType.LEVEL_INCOME[0].text },
+                { income_type: IncomeType.LEVEL_INCOME[1].text },
+                { income_type: IncomeType.LEVEL_INCOME[2].text },
+                { income_type: IncomeType.LEVEL_INCOME[3].text },
+                { income_type: IncomeType.LEVEL_INCOME[4].text },
+                { income_type: IncomeType.LEVEL_INCOME[5].text },
+                { income_type: IncomeType.LEVEL_INCOME[6].text },
             ]            
         }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
         const coinBalance = await coinWalletSchema.findOne({ user: user_id });
@@ -81,6 +81,7 @@ async function getUserInfo (user_id) {
             user['total_income'] = userIncome ? userIncome.balance : 0;
             user['down_level_income'] = downLevelIncome;
             user['coin_balance'] = coinBalance.coin_balance;
+            user['next_mining'] = getHours(moment(), coinBalance.next_mining);
             return user;
         }
         return { 
@@ -308,15 +309,14 @@ async function filterLevelForIncome (userId, arr = []) {
 
         const levels = [{ level: 1, income: 5 }, { level: 2, income: 4 }, { level: 3, income: 4 }, { level: 4, income: 3 }, { level: 5, income: 3 }, { level: 6, income: 2 }, { level: 7, income: 1 }];
 
-        for (let i = 0; i < levels.length; i++) {
-            const isLevelUnlocked = arr.find(obj => obj.level == levels[i].level && obj.is_level_unlocked == true);
-            console.log('LEVEL : ', i, 'LEVEL_1 : ', levels[i]);
-            if (isLevelUnlocked) {
-                for (let j = 0; j < arr.length; j++) {
-                    const subscriptionTransaction = await creditIncome(userId, null, levels[i].income, IncomeType.LEVEL_INCOME[i]);
-                    const result = await addLevelIncome(userId, isLevelUnlocked._id, isLevelUnlocked.level, subscriptionTransaction._id);
-                    ///
-                }
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i].is_level_unlocked && arr[i].status == Status.ACTIVE) {
+                console.log('index : ', i, ' name : ', arr[i].full_name, 'level : ', arr[i].level, 'level unlocked : ', arr[i].is_level_unlocked)
+                const level = levels.find(obj => arr[i].level == obj.level);
+                const type = IncomeType.LEVEL_INCOME.find(obj => obj.level == level.level);
+                const subscriptionTransaction = await creditIncome(userId, null, level.income, type.text);
+                const result = await addLevelIncome(userId, arr[i]._id, arr[i].level, subscriptionTransaction._id);
+                ///
             }
         }
         return sortedData;
