@@ -3,6 +3,7 @@ const incomeTransactionSchema = require('./transaction/incometransaction.model')
 const subscriptionTransactionSchema = require('../subscription/transaction/subscription.transaction.model');
 const userSchema = require('../user/user.model');
 const levelIncomeSchema = require('../user/levelincome.model');
+const bankDetailSchema = require('../user/bankdetail/bankdetail.model');
 const { UserFundStatus, getHours, IncomeType } = require('../../commonHelper');
 const moment = require('moment');
 
@@ -44,6 +45,13 @@ async function creditIncome (user_id, userSubscriptionId, amount, incomeType) {
 async function withdrawlIncome (user_id, amount) {
     try {
         let userIncome = await userIncomeSchema.findOne({ user_id });
+        let bankDetails = await bankDetailSchema.findOne({ user_id });
+        if (!bankDetails) {
+            throw {
+                status: 400,
+                message: "Please add bank details."
+            }
+        }
         if (userIncome) {
             const lastTransaction = await incomeTransactionSchema.find({ user_id }).sort({ created_at: 1 });
             console.log('TRANs : ', lastTransaction);

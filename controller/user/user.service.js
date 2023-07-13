@@ -337,6 +337,19 @@ async function addLevelIncome (userId, incomeFromUser, childUserLevel, subscript
     }
 }
 
+async function getUserName (userId) {
+    try {
+        const user = await userSchema.findOne({ _id: userId }, 'full_name my_reffer_code');
+        return user;
+    } catch (error) {
+        console.log('GET_USER_NAME_ERROR : ', error);
+        throw {
+            status: error.status || 500,
+            message: error
+        }
+    }
+}
+
 module.exports = { 
     getUserDetailsWithPopulatedData,
     updateUserDetails,
@@ -344,5 +357,6 @@ module.exports = {
     getUserAndDownlineTeam,
     getUser,
     getUserAndDirectTeam,
-    levelIncome
+    levelIncome,
+    getUserName
 };
