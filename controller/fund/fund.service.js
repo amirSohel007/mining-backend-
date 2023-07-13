@@ -7,6 +7,14 @@ const config = require('../../config').config();
 
 async function addFund (user_id, data, transaction_type, imageData) {
     try {
+        const fundTransactionData = await fundTransactionSchema.find({ transaction_no: data.transaction_no });
+        if (fundTransactionData && fundTransactionData.length) {
+            throw {
+                status: 400,
+                message: 'Transaction number already exist'
+            }
+        }
+
         let userFund = await userFundSchema.findOne({ user_id });
         if (userFund == null) {
             userFund = await userFundSchema.create({
