@@ -13,7 +13,7 @@ app.post('/', async (req, res) => {
             const result = await subscribePlan(user_id, plan_id);
             responseService.response(req, null, result, res);
         } else {
-            let error = { status: 400, message: "plan id is required" }
+            let error = { status: 400, message: "Plan id is required" }
             responseService.response(req, error, null, res);    
         }
     } catch (error) {
@@ -29,7 +29,7 @@ app.get('/', async (req, res) => {
             const result = await getUserSubscription(user_id);
             responseService.response(req, null, result, res);
         } else {
-            let error = { status: 400, message: "user id is required" }
+            let error = { status: 400, message: "User id is required" }
             responseService.response(req, error, null, res);    
         }
     } catch (error) {
@@ -46,7 +46,7 @@ app.get('/income', async (req, res) => {
             const result = await getsubscriptionTransactions(user_id, income_type);
             responseService.response(req, null, result, res);
         } else {
-            let error = { status: 400, message: "user id is required" }
+            let error = { status: 400, message: "User id is required" }
             responseService.response(req, error, null, res);    
         }
     } catch (error) {

@@ -118,9 +118,9 @@ const saveAdminQr = (admin_id, qrCodeFilePath) => {
                 })
             }
             if(user != null || user != undefined){
-                resolve({ message: 'qr code saved' });
+                resolve({ message: 'QR code saved' });
             }else{
-                reject({ message: 'admin user not found' });
+                reject({ message: 'Admin user not found' });
             }
         }catch(error){
             reject({

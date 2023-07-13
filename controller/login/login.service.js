@@ -9,7 +9,7 @@ async function loginUser(userEmail, myRefferCode, password) {
         if (!(myRefferCode && password)) {
           throw {
             status: 400,
-            message: "referal code and password is required",
+            message: "Referal code and password is required",
           };
         }
         const user = await userSchema.findOne({
@@ -34,7 +34,7 @@ async function loginUser(userEmail, myRefferCode, password) {
         
         throw {
             status: 401,
-            message: 'invalid credential'
+            message: 'Invalid credential'
         }
     } catch(error) {
         console.log('LOGIN_ERROR : ', error);

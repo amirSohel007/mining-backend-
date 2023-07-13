@@ -11,7 +11,7 @@ app.get('/', async (req, res) => {
             const result = await getUserInfo(user_id);
             responseService.response(req, null, result, res);
         } else {
-            responseService.response(req, { status: 400, message: { status: 400, message: 'user id is missing' } }, null, res);
+            responseService.response(req, { status: 400, message: { status: 400, message: 'User id is missing' } }, null, res);
         }
     } catch (error) {
         console.log('GET_USER_DETAIL_ERROR : ', error);
@@ -27,7 +27,7 @@ app.post('/', async (req, res) => {
             const result = await updateUserDetails({ _id: user_id }, req.body);
             responseService.response(req, null, result, res);
         } else {
-            responseService.response(req, { status: 400, message: { status: 400, message: 'user id is missing' } }, null, res);
+            responseService.response(req, { status: 400, message: { status: 400, message: 'User id is missing' } }, null, res);
         }
     } catch (error) {
         console.log('UPDATE_USER_DETAIL_ERROR : ', error);

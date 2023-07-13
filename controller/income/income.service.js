@@ -29,7 +29,7 @@ async function creditIncome (user_id, userSubscriptionId, amount, incomeType) {
         } else {
             throw {
                 status: 400,
-                message: 'incorrect user id'
+                message: 'Incorrect user id'
             }
         }
     } catch(error) {
@@ -50,12 +50,12 @@ async function withdrawlIncome (user_id, amount) {
             if (userIncome.first_withdrawal && parseInt(amount) > 250) {
               throw {
                 status: 400,
-                message: "first withdrawal can not be exceed 250",
+                message: "First withdrawal can not be exceed 250",
               };
             } else if (userIncome.balance < parseInt(amount)) {
               throw {
                 status: 400,
-                message: "insufficient balance",
+                message: "Insufficient balance",
               };
             } 
             else if (
@@ -73,7 +73,7 @@ async function withdrawlIncome (user_id, amount) {
             ) {
               throw {
                 status: 400,
-                message: ` try after ${
+                message: ` Try after ${
                   24 - getHours(lastTransaction[lastTransaction.length - 1]?.created_at, moment())
                 }  hours`,
               };
@@ -95,7 +95,7 @@ async function withdrawlIncome (user_id, amount) {
         } else {
             throw {
                 status: 400,
-                message: 'incorrect user id'
+                message: 'Incorrect user id'
             }
         }
     } catch(error) {
@@ -113,7 +113,7 @@ async function getIncome (user_id) {
         if (income) {
             return income;
         } else {
-            return { message: 'record not found' };
+            return { message: 'Record not found' };
         }
     } catch (error) {
         console.log('GET_INCOME_ERROR : ', error);
@@ -135,7 +135,7 @@ async function getIncomeTransaction (user_id, status) {
         if (incomeTransaction) {
             return incomeTransaction;
         } else {
-            return { message: 'record not found' };
+            return { message: 'Record not found' };
         }
     } catch (error) {
         console.log('GET_INCOME_TRANSACTION_ERROR : ', error);

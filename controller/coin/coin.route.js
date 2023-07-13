@@ -28,7 +28,7 @@ app.get('/', async (req, res) => {
             const result = await getMining(user_id);
             responseService.response(req, null, result, res);
         } else {
-            responseService.response(req, { status: 400, message: { status: 400, message: 'user id is missing' } }, null, res);
+            responseService.response(req, { status: 400, message: { status: 400, message: 'User id is missing' } }, null, res);
         }
     } catch (error) {
         console.log('GET_FUND_ERROR : ', error);

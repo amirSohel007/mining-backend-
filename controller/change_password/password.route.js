@@ -13,7 +13,7 @@ app.post('/', async (req, res) => {
             console.log('BANK : ', result);
             responseService.response(req, null, result, res);
         } else {
-            let error = { status: 400, message: "required field is missing" }
+            let error = { status: 400, message: "Required field is missing" }
             responseService.response(req, error, null, res);    
         }
     } catch (error) {

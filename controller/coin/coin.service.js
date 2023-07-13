@@ -13,7 +13,7 @@ async function generateCoin (userId, subscriptionId) {
         if (!plan) {
             throw {
                 status: 400,
-                message: 'no subscription plan found'
+                message: 'No subscription plan found'
             };
         }
         

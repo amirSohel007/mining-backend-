@@ -15,7 +15,7 @@ app.post('/', async (req, res) => {
     try {
         let { title = null, description, price = 0, daily_income = 0, active = true, plan_id = null,daily_mining_coin = 0.0 } = req.body;
         if (title == null || price == 0, daily_income == 0 || daily_mining_coin == 0) {
-            let error = { status: 400, message: "missing required fields title, price, daily_income, daily_mining_coin" };
+            let error = { status: 400, message: "Missing required fields title, price, daily_income, daily_mining_coin" };
             responseService.response(req, error, null, res);
         }
         const { user_id } = req.user;
@@ -28,7 +28,7 @@ app.post('/', async (req, res) => {
                 responseService.response(req, null, result, res);
             }
         } else {
-            let error = { status: 401, message: "only admin user is allowed" };
+            let error = { status: 401, message: "Only admin user is allowed" };
             responseService.response(req, error, null, res);    
         }
     } catch (error) {
@@ -53,14 +53,14 @@ app.delete('/', async (req, res) => {
         const { plan_id = null } = req.query;
         const { user_id } = req.user;
         if (plan_id == null) {
-            let error = { status: 400, message: "plan id is missing" };
+            let error = { status: 400, message: "Plan id is missing" };
             responseService.response(req, error, null, res);
         }
         if (user_id) {
             const result = await deleteSubscriptionPlan(plan_id);
             responseService.response(req, null, result, res);
         } else {
-            let error = { status: 401, message: "only admin user is allowed" };
+            let error = { status: 401, message: "Only admin user is allowed" };
             responseService.response(req, error, null, res); 
         }
     } catch (error) {
@@ -74,14 +74,14 @@ app.post('/activation', async (req, res) => {
         let { plan_id = null, active = null } = req.query;
         const { user_id } = req.user;
         if (plan_id == null || active == null) {
-            let error = { status: 400, message: "plan id or active params missing" };
+            let error = { status: 400, message: "Plan id or active params missing" };
             responseService.response(req, error, null, res);
         } else {
             if (user_id) {
                 const result = await activeOrDeactiveSubscriptionPlan(user_id, plan_id, active);
                 responseService.response(req, null, result, res);
             } else {
-                let error = { status: 401, message: "only admin user is allowed" };
+                let error = { status: 401, message: "Only admin user is allowed" };
                 responseService.response(req, error, null, res);    
             }
         }

@@ -7,15 +7,15 @@ async function changePassword (user_id, old_password, new_password) {
             if (userDetail.password === old_password) {
                 userDetail.password = new_password;
                 await userDetail.save();
-                return { message: 'password updated' };
+                return { message: 'Password updated' };
             }
             throw {
                 status: 400,
-                message: 'old password is not matching'
+                message: 'Old password is not matching'
             }
         }
         return {
-            message: 'user not found, unable to update'
+            message: 'User not found, unable to update'
         }
     } catch(error) {
         console.log('CHANGE_PASSWORD : ', error)
