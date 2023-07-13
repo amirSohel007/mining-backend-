@@ -39,7 +39,7 @@ async function createUser (data) {
                     console.log('SPONSER_ID_NOT FOUND : ', data.sponser_id);
                     throw {
                         status: 400,
-                        message: 'invalid sponser id'
+                        message: 'Invalid sponser id'
                     }
                 }
             } else {

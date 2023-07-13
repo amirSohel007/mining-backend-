@@ -31,13 +31,13 @@ app.post('/', upload, async (req, res) => {
                     const result = await addFund(user_id, data, 'FUND_ADD', req.file.filename);
                     responseService.response(req, null, result, res);
                 } else {
-                    responseService.response(req, { status: 400, message: { status: 400, message: "sender dose not exist" } }, null, res);
+                    responseService.response(req, { status: 400, message: { status: 400, message: "Sender dose not exist" } }, null, res);
                 }
             } else {
-                responseService.response(req, { status: 400, message: { status: 400, message: "amount can't be 0" } }, null, res);
+                responseService.response(req, { status: 400, message: { status: 400, message: "Amount can't be 0" } }, null, res);
             }
         } else {
-            responseService.response(req, { status: 400, message: { status: 400, message: 'user id is missing' } }, null, res);
+            responseService.response(req, { status: 400, message: { status: 400, message: 'User id is missing' } }, null, res);
         }
     } catch (error) {
         console.log('ADD_FUND_ERROR : ', error);
@@ -53,7 +53,7 @@ app.get('/', async (req, res) => {
             const result = await getUserFund(user_id);
             responseService.response(req, null, result, res);
         } else {
-            responseService.response(req, { status: 400, message: { status: 400, message: 'user id is missing' } }, null, res);
+            responseService.response(req, { status: 400, message: { status: 400, message: 'User id is missing' } }, null, res);
         }
     } catch (error) {
         console.log('GET_FUND_ERROR : ', error);
@@ -70,7 +70,7 @@ app.get('/history', async (req, res) => {
             const result = await getUserFundTransaction(user_id, fund_request_type, req);
             responseService.response(req, null, result, res);
         } else {
-            responseService.response(req, { status: 400, message: { status: 400, message: 'user id is missing' } }, null, res);
+            responseService.response(req, { status: 400, message: { status: 400, message: 'User id is missing' } }, null, res);
         }
     } catch (error) {
         console.log('GET_FUND_ERROR : ', error);
@@ -88,18 +88,18 @@ app.post('/send', async (req, res) => {
                 const receiver = await getUser({ my_reffer_code: receiver_id });
                 const sender = await getUser({ _id: user_id });
                 if (receiver && receiver.message) {
-                    responseService.response(req, { status: 400, message: { status: 400, message: "fund receiver is not exists" } }, null, res);    
+                    responseService.response(req, { status: 400, message: { status: 400, message: "Fund receiver is not exists" } }, null, res);    
                 } else if (sender && sender.message) {
-                    responseService.response(req, { status: 400, message: { status: 400, message: "fund sender is not exists" } }, null, res);    
+                    responseService.response(req, { status: 400, message: { status: 400, message: "Fund sender is not exists" } }, null, res);    
                 } else {
                     const result = await sendFund(user_id, receiver._id, amount);
                     responseService.response(req, null, result, res);
                 }
             } else {
-                responseService.response(req, { status: 400, message: { status: 400, message: "amount can't not be 0" } }, null, res);    
+                responseService.response(req, { status: 400, message: { status: 400, message: "Amount can't not be 0" } }, null, res);    
             }
         } else {
-            responseService.response(req, { status: 400, message: { status: 400, message: 'user id or receiver id is missing' } }, null, res);
+            responseService.response(req, { status: 400, message: { status: 400, message: 'User id or receiver id is missing' } }, null, res);
         }
     } catch (error) {
         console.log('ADD_FUND_ERROR : ', error);

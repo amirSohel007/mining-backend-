@@ -24,7 +24,7 @@ async function getBankDetail (user_id) {
         if (bankDetail) {
             return bankDetail;
         }
-        return { message: 'record not found'};
+        return { message: 'Record not found'};
     } catch (error) {
         console.error('GET_BANK_DETAIL_ERROR : ', error);
         throw {

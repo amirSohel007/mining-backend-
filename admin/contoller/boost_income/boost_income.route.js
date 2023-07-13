@@ -23,7 +23,7 @@ app.post('/', async (req, res) => {
             });
             responseService.response(req, null, result, res);
         } else {
-            let error = { status: 400, message: "user id is required" }
+            let error = { status: 400, message: "User id is required" }
             responseService.response(req, error, null, res);    
         }
     } catch (error) {
@@ -44,7 +44,7 @@ app.get('/', async (req, res) => {
             const result = await getAllBootIncomeDetails(query);
             responseService.response(req, null, result, res);
         } else {
-            let error = { status: 400, message: "user not allowed required" }
+            let error = { status: 400, message: "User id is required" }
             responseService.response(req, error, null, res);    
         }
     } catch (error) {

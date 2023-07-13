@@ -58,7 +58,7 @@ async function getUserFund (user_id) {
         if (userFund) {
             return userFund;
         }
-        return { message: 'record not found'};
+        return { message: 'Record not found'};
     } catch (error) {
         console.error('GET_BANK_DETAIL_ERROR : ', error);
         throw {
@@ -106,7 +106,7 @@ async function getUserFundTransaction (user_id, fund_request_type, req) {
             }
             return result;
         }
-        return { message: 'record not found'};
+        return { message: 'Record not found'};
     } catch (error) {
         console.error('GET_USER_FUND_TRANSACTION_ERROR : ', error);
         throw {
@@ -145,12 +145,12 @@ async function sendFund (user_id, to_user_id, amount) {
             }
             throw {
                 status: 500,
-                message: 'error in transferring balance to receiver'
+                message: 'Error in transferring balance to receiver'
             }
         }
         throw {
             status: 400,
-            message: 'insufficient fund'
+            message: 'Insufficient fund'
         }
     } catch (error) {
         console.error('SEND_FUND_ERROR : ', error);

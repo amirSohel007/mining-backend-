@@ -13,7 +13,7 @@ app.post('/', async (req, res) => {
             const result = await loginUser(req.body.email, req.body.my_reffer_code, req.body.password);
             responseService.response(req, null, result, res);
         } else {
-            let error = { status: 400, message: "email or password is missing" }
+            let error = { status: 400, message: "Reffer code or password is missing" }
             responseService.response(req, error, null, res);    
         }
     } catch (error) {

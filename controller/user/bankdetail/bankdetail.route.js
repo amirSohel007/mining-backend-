@@ -12,7 +12,7 @@ app.post('/', async (req, res) => {
             const result = await createOrUpdateBankDetail(req.body);
             responseService.response(req, null, result, res);
         } else {
-            responseService.response(req, { status: 400, message: 'user id is missing' }, null, res);
+            responseService.response(req, { status: 400, message: 'User id is missing' }, null, res);
         }
     } catch (error) {
         console.log('BANK_DETAIL_ERROR : ', error);
@@ -28,7 +28,7 @@ app.get('/', async (req, res) => {
             const result = await getBankDetail(user_id);
             responseService.response(req, null, result, res);
         } else {
-            responseService.response(req, { status: 400, message: 'user id is missing' }, null, res);
+            responseService.response(req, { status: 400, message: 'User id is missing' }, null, res);
         }
     } catch (error) {
         console.log('BANK_DETAIL_ERROR : ', error);

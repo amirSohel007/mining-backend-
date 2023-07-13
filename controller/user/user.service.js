@@ -87,7 +87,7 @@ async function getUserInfo (user_id) {
             return user;
         }
         return { 
-            message: 'record not found'
+            message: 'Record not found'
         }
     } catch(error) {
         console.log('GET_USER_DETAILS : ', error);
@@ -106,7 +106,7 @@ async function getUser (query) {
                 return user;
             }
             return { 
-                message: 'record not found'
+                message: 'Record not found'
             }
         } catch(error) {
             console.log('GET_USER_DETAILS : ', error);
@@ -147,7 +147,7 @@ async function getUserAndDownlineTeam (user_id) {
             return linearTeam;
         } else {
             return { 
-                message: 'record not found'
+                message: 'Record not found'
             }
         }
     } catch (error) {
@@ -176,7 +176,7 @@ async function getUserAndDirectTeam (user_id, team_type) {
             return user;
         } else {
             return { 
-                message: 'record not found'
+                message: 'Record not found'
             }
         }
     } catch (error) {

@@ -22,9 +22,9 @@ const resetUserBankDetails = (bankDetails) =>{
             const bankDetail = await createOrUpdateBankDetail(bankDetails);
             console.log(bankDetail);
             if(bankDetail){
-                resolve({ message: 'bank details reset'})
+                resolve({ message: 'Bank details reset'})
             }else{
-                reject({ message: 'user not found'})
+                reject({ message: 'User not found'})
             }
         }catch(error){
             reject({

@@ -130,9 +130,4 @@ async function creditExtraIncomeOnAllUserPlan (userId, subscriptions = [], incom
     }
 }
 
-async function checkElegibility (user) {
-    
-    
-}
-
 module.exports = { calculateBoostingIncome }

@@ -12,7 +12,7 @@ app.post('/withdrawal', async (req, res) => {
             const result = await withdrawlIncome(user_id, amount);
             responseService.response(req, null, result, res);
         } else {
-            let error = { status: 400, message: "user id or amount is required" }
+            let error = { status: 400, message: "User id or amount is required" }
             responseService.response(req, error, null, res);    
         }
     } catch (error) {
@@ -45,7 +45,7 @@ app.get('/', async (req, res) => {
             const result = await getIncome(user_id);
             responseService.response(req, null, result, res);
         } else {
-            let error = { status: 400, message: "user id or amount is required" }
+            let error = { status: 400, message: "User id is required" }
             responseService.response(req, error, null, res);    
         }
     } catch (error) {
@@ -61,7 +61,7 @@ app.get('/history', async (req, res) => {
             const result = await getIncomeTransaction(user_id);
             responseService.response(req, null, result, res);
         } else {
-            let error = { status: 400, message: "user id is required" }
+            let error = { status: 400, message: "User id is required" }
             responseService.response(req, error, null, res);    
         }
     } catch (error) {
@@ -77,7 +77,7 @@ app.get('/down-level-income', async (req, res) => {
             const result = await getLevelIncome(user_id);
             responseService.response(req, null, result, res);
         } else {
-            let error = { status: 400, message: "user id is required" }
+            let error = { status: 400, message: "User id is required" }
             responseService.response(req, error, null, res);    
         }
     } catch (error) {

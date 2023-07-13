@@ -11,21 +11,21 @@ const changeFundStatus = (admin_id,transactionId,status) =>{
             const checkUserStatus = await fundTransactionSchema.findById({ _id: transactionId });
             console.log({checkUserStatus});
             if(status == UserFundStatus.ACCEPT && checkUserStatus?.status === UserFundStatus.ACCEPT){
-                resolve({ message: 'status Already Approved'});
+                resolve({ message: 'Status Already Approved'});
                 return;
             }
             if(status == UserFundStatus.ACCEPT && checkUserStatus?.status === UserFundStatus.REJECT){
-                resolve({ message: 'status Already REJECTED'});
+                resolve({ message: 'Status Already REJECTED'});
                 return;
             }
             if(status == UserFundStatus.REJECT && checkUserStatus?.status === UserFundStatus.REJECT){
-                resolve({ message: 'status Already Rejected'});
+                resolve({ message: 'Status Already Rejected'});
                 return;
             }
             if(status == UserFundStatus.REJECT &&checkUserStatus?.status === UserFundStatus.PENDING){
                 checkUserStatus.status = UserFundStatus.REJECT;
                 await checkUserStatus.save();
-                resolve({ message: 'status updated'});
+                resolve({ message: 'Status updated'});
                 return;
             }
             if(status == UserFundStatus.ACCEPT && checkUserStatus?.status === UserFundStatus.PENDING){
@@ -36,13 +36,13 @@ const changeFundStatus = (admin_id,transactionId,status) =>{
                     updateAdminTotalFund(admin_id,checkUserStatus);
                     resolve(checkUserStatus);
                 } else {
-                    reject({ message: 'unable to add fund' });
+                    reject({ message: 'Unable to add fund' });
                 }
             }
             if(checkUserStatus){
-                resolve({ message: 'status updated'})
+                resolve({ message: 'Status updated'})
             }else{
-                reject({ message: 'user not found'})
+                reject({ message: 'User not found'})
             }
         }catch(error){
             console.log({error})

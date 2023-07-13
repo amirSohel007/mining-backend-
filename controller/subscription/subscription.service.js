@@ -18,7 +18,7 @@ async function subscribePlan (user_id, plan_id) {
         if (!userFund) {
             throw {
                 status: 400,
-                message: 'please add fund balance'
+                message: 'Please add fund balance'
             }
         }
 
@@ -30,7 +30,7 @@ async function subscribePlan (user_id, plan_id) {
                 console.log('USER_FUND : ', userFund);
                 throw {
                     status: 400,
-                    message: 'user fund balance is insufficient'
+                    message: 'User fund balance is insufficient'
                 }
             }
 
@@ -39,7 +39,7 @@ async function subscribePlan (user_id, plan_id) {
             if (subscribed) {
                 throw { 
                     status: 400,
-                    message: 'plan already purchased'
+                    message: 'Plan already purchased'
                 }
             }
             
@@ -110,7 +110,7 @@ async function subscribePlan (user_id, plan_id) {
         }
         throw {
             status: 400,
-            message: 'plan does not exist'
+            message: 'Plan does not exist'
         }
     } catch (error) {
         console.log('SUBSCRIBE_PLAN_ERROR : ', error);
