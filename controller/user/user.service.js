@@ -221,13 +221,10 @@ function convertNestedArrayToLinearArray (arr = [], linearArray = []) {
     return linearArray;
 }
 
-function getTeamMemberCount (arr, count = 0) {
-    if (arr && arr.length > 0) {
-        for (let i = 0; i < arr.length; i++) {
-            count += arr.length;
-            return getTeamMemberCount(arr[i].downline_team, count);
-        }
-    }
+function getTeamMemberCount (arr) {
+    const teamLevel = getLevel(arr, 1);
+    const linearArray = convertNestedArrayToLinearArray(teamLevel);
+    const count = linearArray.length;
     return count;
 }
 
