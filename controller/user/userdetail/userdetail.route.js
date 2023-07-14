@@ -35,15 +35,24 @@ app.post('/', async (req, res) => {
     }
 });
 
-app.get('/username', async (req, res) => {
+app.post('/username', async (req, res) => {
     console.log(`url : ${req.protocol}://${req.hostname}:3000${req.baseUrl}${req.path}, method: ${req.method}`);
     try {
-        const { user_id } = req.user;
-        if (user_id) {
-            const result = await getUserName(user_id);
-            responseService.response(req, null, result, res);
+        const { senderID } = req.body;
+
+        if (senderID) {
+          const result = await getUserName(senderID);
+          responseService.response(req, null, result, res);
         } else {
-            responseService.response(req, { status: 400, message: { status: 400, message: 'User id is missing' } }, null, res);
+          responseService.response(
+            req,
+            {
+              status: 400,
+              message: { status: 400, message: "User id is missing" },
+            },
+            null,
+            res
+          );
         }
     } catch (error) {
         console.log('GET_USER_DETAIL_ERROR : ', error);

@@ -337,9 +337,13 @@ async function addLevelIncome (userId, incomeFromUser, childUserLevel, subscript
     }
 }
 
-async function getUserName (userId) {
+async function getUserName(userId) {
+    
     try {
-        const user = await userSchema.findOne({ _id: userId }, 'full_name my_reffer_code');
+        const user = await userSchema.findOne(
+          { my_reffer_code: userId },
+          "full_name my_reffer_code"
+        );
         return user;
     } catch (error) {
         console.log('GET_USER_NAME_ERROR : ', error);
