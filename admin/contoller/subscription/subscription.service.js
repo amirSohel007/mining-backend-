@@ -155,12 +155,12 @@ async function creditDailyDirectIncome () {
             if (getHours(lastUpdated, currentTime) > 24) {
                 const incomeReward = await incomeRewardSchema.findOne({}).lean().exec();
                 const userSubscription = await userSubscriptionSchema.findOne({ user: users[i].user, plan: users[i].plan._id });
-                const remaningAmount = users[i].plan.price - (users[i].plan.price * incomeReward.direct_income_instant_percent / 100);
-                const amount = remaningAmount > 0 ? remaningAmount * incomeReward.direct_income_daily_percent / 100 : 0;
-                const percentage = parseFloat(users[i].complete_percent) + incomeReward.direct_income_daily_percent;
-                if (percentage < 100) {
+                const amount = (users[i].plan.price * incomeReward.direct_income_daily_percent / 100);
+                // we are not considring percentage anymore, we will check our logic by days here percentage will be unit of days
+                const days = users[i].complete_percent + 1;
+                if (days < 30) {
                     const income = await creditIncome(users[i].user, userSubscription._id, amount, IncomeType.DAILY_DIRECT);
-                    const user = await createOrUpdate(users[i].user, users[i].plan, users[i].income_from_user, percentage, income._id);
+                    const user = await createOrUpdate(users[i].user, users[i].plan, users[i].income_from_user, days, income._id);
                 }
             }
         }

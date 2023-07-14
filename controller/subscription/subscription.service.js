@@ -102,7 +102,9 @@ async function subscribePlan (user_id, plan_id) {
             const amount = parseInt(plan.price) * parseInt(incomeReward.direct_income_instant_percent) / 100;
             if (parentUser && parentUser.status === Status.ACTIVE) {
                 const income = await creditIncome(parentUser._id, subscribe.plan.toString(), amount, IncomeType.INSTANT_DIRECT);
-                const directIncome = await createOrUpdate(parentUser._id, subscribe.plan, user_id, incomeReward.direct_income_instant_percent, income._id);
+                // logic updated, now insted of passing the percentage we will pass days as we need to credit only for 30 days in
+                // total so 1 is day 1 and rest amount will be credited with in 29 days, in schedular we will increase days by 1 till 30
+                const directIncome = await createOrUpdate(parentUser._id, subscribe.plan, user_id, 1, income._id);
                 console.log('DIRECT_INCOME : ', directIncome);
             }
 
