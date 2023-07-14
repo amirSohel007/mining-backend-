@@ -235,14 +235,37 @@ async function levelIncome () {
         console.log('LEVEL_INCOME : ', users);
 
         for (let i = 0; i < users.length; i++) {
-            const user = await getUserAndDownTeam(users[i]._id);
-            const team = getDownTeamLevelForIncome(user.downline_team, 1);
-            const convertedArray = convertNestedArrayToLinearArray(team); 
-            const sortedArray = await filterLevelForIncome(users[i]._id, convertedArray);
-            console.log('USER : ', user);
-            console.log('TEAM : ', team);
-            console.log('CONVERTED : ', convertedArray);
-            console.log('SORTED_DATA : ', sortedArray);
+            const lastTransaction = await subscriptionTransactionSchema.find({ 
+                user: users[i]._id,
+                $or: [
+                    { income_type: IncomeType.LEVEL_INCOME[0].text },
+                    { income_type: IncomeType.LEVEL_INCOME[1].text },
+                    { income_type: IncomeType.LEVEL_INCOME[2].text },
+                    { income_type: IncomeType.LEVEL_INCOME[3].text },
+                    { income_type: IncomeType.LEVEL_INCOME[4].text },
+                    { income_type: IncomeType.LEVEL_INCOME[5].text },
+                    { income_type: IncomeType.LEVEL_INCOME[6].text },
+                ]
+            }).sort({ created_at: -1 }).exec();
+            
+            let hours = 0;
+            if (lastTransaction && lastTransaction.length) {
+                const lastTransactionTime = moment(lastTransaction[0].created_at, 'h:mm:ss a');
+                const currentTime = moment(moment(), 'h:mm:ss a');
+                hours = getHours(lastTransactionTime, currentTime);
+            }
+
+            // eighter it is users first record or 24 hours completed then only we will credit
+            if ((lastTransaction && lastTransaction.length == 0) || hours > 24) {
+                const user = await getUserAndDownTeam(users[i]._id);
+                const team = getDownTeamLevelForIncome(user.downline_team, 1);
+                const convertedArray = convertNestedArrayToLinearArray(team); 
+                const sortedArray = await filterLevelForIncome(users[i]._id, convertedArray);
+                console.log('USER : ', user);
+                console.log('TEAM : ', team);
+                console.log('CONVERTED : ', convertedArray);
+                console.log('SORTED_DATA : ', sortedArray);
+            }
         }
     } catch (error) {
         console.log('LEVEL_INCOME_ERROR : ', error);
