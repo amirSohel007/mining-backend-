@@ -58,7 +58,15 @@ const getAllIncome = (status) => {
     return new Promise(async (resolve,reject) => {
         try{
             // let incomes = [];
-            const incomes = await incomeTransactionSchema.find({}).populate({ path: 'user_id' }).exec();
+            const incomes = await incomeTransactionSchema.find({})
+            .populate({ 
+                path: 'user_id',
+                model: 'user',
+                populate: [{
+                    path: 'bank_detail',
+                    model: 'bankdetail'
+                }]
+            }).exec();
             if(incomes && incomes.length > 0){
                 switch(status)
                 {
