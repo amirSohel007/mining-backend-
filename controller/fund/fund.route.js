@@ -91,7 +91,9 @@ app.post('/send', async (req, res) => {
             if (amount > 0) {
                 const receiver = await getUser({ my_reffer_code: receiver_id });
                 const sender = await getUser({ _id: user_id });
-                if (receiver && receiver.message) {
+                if (receiver && receiver._id.toString() === user_id) {
+                    responseService.response(req, { status: 400, message: { status: 400, message: "Self fund transfer is prohibited" } }, null, res);    
+                } else if (receiver && receiver.message) {
                     responseService.response(req, { status: 400, message: { status: 400, message: "Fund receiver is not exists" } }, null, res);    
                 } else if (sender && sender.message) {
                     responseService.response(req, { status: 400, message: { status: 400, message: "Fund sender is not exists" } }, null, res);    

@@ -149,7 +149,7 @@ async function sendFund (user_id, to_user_id, amount) {
                 });
 
                 // update sender account
-                fromUserFund.fund_balance -= amount;
+                fromUserFund.fund_balance -= parseFloat(amount);
                 fromUserFund.fund_transaction.push(transaction._id);
                 await fromUserFund.save();
                 return fromUserFund;

@@ -26,7 +26,7 @@ async function subscribePlan (user_id, plan_id) {
             // check if user has enough balance to purchase the plan
             console.log('USER_FUND_CHECK : ', (userFund._doc.fund_balance < plan._doc.price));
             // console.log({userFund},{plan})
-            if (userFund._doc.fund_balance && userFund._doc.fund_balance < plan._doc.price) {
+            if (userFund && userFund._doc.fund_balance < plan._doc.price) {
                 console.log('USER_FUND : ', userFund);
                 throw {
                     status: 400,
