@@ -58,14 +58,24 @@ app.listen(port);
 console.log(`Server has been started on port : ${port}`);
 
 // start a cron job to credit daily income to user
-schedule.scheduleJob('*/59 * * * *', async function() {
+const rule = new schedule.RecurrenceRule();
+rule.hour = 0;
+rule.minute = 0;
+rule.tz = 'asia/kolkata';
+
+schedule.scheduleJob(rule, async function() {
   console.log('SCHEDULAR IS RUNNING AT EVERY 1 HOUR');
   await getAllSubscribers();
   await creditDailyDirectIncome();
   await calculateBoostingIncome();
 });
 
-scheduler.scheduleJob('* */24 * * *', async function() {
+const rule_1 = new scheduler.RecurrenceRule();
+rule_1.hour = 0;
+rule_1.minute = 0;
+rule_1.tz = 'asia/kolkata';
+
+scheduler.scheduleJob(rule, async function() {
   await levelIncome();
 });
 

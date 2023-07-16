@@ -4,13 +4,13 @@ const subscriptionTransactionSchema = require('../subscription/transaction/subsc
 const userSchema = require('../user/user.model');
 const levelIncomeSchema = require('../user/levelincome.model');
 const bankDetailSchema = require('../user/bankdetail/bankdetail.model');
-const { UserFundStatus, getHours, IncomeType } = require('../../commonHelper');
+const { UserFundStatus, getHours, IncomeType, Status } = require('../../commonHelper');
 const moment = require('moment');
 
 async function creditIncome (user_id, userSubscriptionId, amount, incomeType) {
     try {
-        let user = await userSchema.findOne({ _id: user_id });
-        if (user && !user.message) {
+        let user = await userSchema.findOne({ _id: user_id, status: Status.ACTIVE });
+        if (user) {
             let userIncome = await userIncomeSchema.findOne({ user_id });
             if (!userIncome) {
                 userIncome = await userIncomeSchema.create({ user_id, balance: 0.0 });
@@ -30,7 +30,7 @@ async function creditIncome (user_id, userSubscriptionId, amount, incomeType) {
         } else {
             throw {
                 status: 400,
-                message: 'Incorrect user id'
+                message: 'User not found or inactive'
             }
         }
     } catch(error) {

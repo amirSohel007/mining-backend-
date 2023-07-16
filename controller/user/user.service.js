@@ -231,7 +231,7 @@ function getTeamMemberCount (arr) {
 async function levelIncome () {
     try {
         // get all users who have two or more then two direct users
-        const users = await userSchema.find({ direct_team_size: { $gte: 2 } });
+        const users = await userSchema.find({ status: Status.ACTIVE, direct_team_size: { $gte: 2 } });
         console.log('LEVEL_INCOME : ', users);
 
         for (let i = 0; i < users.length; i++) {
