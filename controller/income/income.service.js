@@ -55,10 +55,10 @@ async function withdrawlIncome (user_id, amount) {
         if (userIncome) {
             const lastTransaction = await incomeTransactionSchema.find({ user_id }).sort({ created_at: 1 });
             console.log('TRANs : ', lastTransaction);
-            if (userIncome.first_withdrawal && parseInt(amount) > 250) {
+            if (userIncome.first_withdrawal && parseInt(amount) !== 250) {
               throw {
                 status: 400,
-                message: "First withdrawal can not be exceed 250",
+                message: "On first withdrawal only 250 rupees is allowed",
               };
             } else if (userIncome.balance < parseInt(amount)) {
               throw {
