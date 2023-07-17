@@ -121,17 +121,18 @@ async function getAllSubscribers () {
                 
                 // check subscription is active
                 if (userSubscriptions[i].active) {
-                    // if (getHours(subscriptionTime, currentTime) > 24) {
+                    if (getHours(subscriptionTime, currentTime) > 24) {
                         if (purchaseDaysElapsed < 30) {
+                            console.log('BEFORE_DAILY_INCOME : ', userSubscriptions[i].user.toString());
                             await dailyIncome(userSubscriptions[i].user.toString(), plan, userSubscriptions[i]._id.toString());
                             userSubscriptions[i].updated_at = Date.now();
-                            userSubscriptions[i].next_daily_income = moment(userSubscriptions[i].created_at).add(24, 'hours');
+                            userSubscriptions[i].next_daily_income = moment(userSubscriptions[i].updated_at).add(24, 'hours');
                             await userSubscriptions[i].save();
                         } else {
                             userSubscriptions[i].active = false;
                             await userSubscriptions[i].save();
                         }
-                    // }
+                    }
                 }
                 console.log('INCOME_CREDITED');
             }
@@ -152,7 +153,7 @@ async function creditDailyDirectIncome () {
             const lastUpdated = moment(users[i].updated_at, 'h:mm:ss a')
             const currentTime = moment(moment(), 'h:mm:ss a');
             console.log('HOURS : ', getHours(lastUpdated, currentTime));
-            // if (getHours(lastUpdated, currentTime) > 24) {
+            if (getHours(lastUpdated, currentTime) > 24) {
                 const incomeReward = await incomeRewardSchema.findOne({}).lean().exec();
                 const userSubscription = await userSubscriptionSchema.findOne({ user: users[i].user, plan: users[i].plan._id });
                 const amount = (users[i].plan.price * parseFloat(incomeReward.direct_income_daily_percent) / 100);
@@ -162,7 +163,7 @@ async function creditDailyDirectIncome () {
                     const income = await creditIncome(users[i].user, userSubscription._id, amount, IncomeType.DAILY_DIRECT);
                     const user = await createOrUpdate(users[i].user, users[i].plan, users[i].income_from_user, days, income._id);
                 }
-            // }
+            }
         }
         console.log('CREDIT_DAILY_DIRECT_INCOME : ', users);
     } catch (error) {
