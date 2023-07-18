@@ -61,7 +61,7 @@ console.log(`Server has been started on port : ${port}`);
 // start a cron job to credit daily income to user
 const rule = new schedule.RecurrenceRule();
 rule.hour = 0;
-rule.minute = 0;
+rule.minute = 30;
 rule.tz = 'asia/kolkata';
 
 schedule.scheduleJob(rule, async function() {
@@ -81,7 +81,7 @@ schedule.scheduleJob(rule, async function() {
 
 const rule_1 = new scheduler.RecurrenceRule();
 rule_1.hour = 0;
-rule_1.minute = 0;
+rule_1.minute = 30;
 rule_1.tz = 'asia/kolkata';
 
 scheduler.scheduleJob(rule, async function() {
