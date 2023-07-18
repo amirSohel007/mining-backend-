@@ -81,7 +81,7 @@ schedule.scheduleJob(rule, async function() {
 
 const rule_1 = new scheduler.RecurrenceRule();
 rule_1.hour = 0;
-rule_1.minute = 30;
+rule_1.minute = 0;
 rule_1.tz = 'asia/kolkata';
 
 scheduler.scheduleJob(rule, async function() {
