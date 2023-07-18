@@ -10,6 +10,7 @@ const { getAllSubscribers, creditDailyDirectIncome } = require('./admin/contolle
 const { calculateBoostingIncome } = require('./controller/subscription/boost_income/boost_income.service');
 const { levelIncome } = require('./controller/user/user.service');
 const scheduler = require('node-schedule');
+const { logSchedularActivity } = require('./admin/contoller/schedular/schedular.service');
 
 // defining port, if one is not available then port will be 3000
 const port = process.env.NODE_PORT || 5000;
@@ -64,10 +65,18 @@ rule.minute = 0;
 rule.tz = 'asia/kolkata';
 
 schedule.scheduleJob(rule, async function() {
-  console.log('SCHEDULAR IS RUNNING AT EVERY 1 HOUR');
-  await getAllSubscribers();
-  await creditDailyDirectIncome();
-  await calculateBoostingIncome();
+  console.log('SCHEDULAR IS RUNNING AT 12:00 AM');
+  try {
+    const run = await logSchedularActivity();
+    if (run) {
+      await getAllSubscribers();
+      await creditDailyDirectIncome();
+      await calculateBoostingIncome();
+      await levelIncome();
+    }
+  } catch (error) {
+    console.log('SCHEDULAR_ERROR : ', error);
+  }
 });
 
 const rule_1 = new scheduler.RecurrenceRule();
@@ -76,10 +85,13 @@ rule_1.minute = 0;
 rule_1.tz = 'asia/kolkata';
 
 scheduler.scheduleJob(rule, async function() {
-  await levelIncome();
+  // await levelIncome();
 });
 
 // unhandled error
 process.on('uncaughtException', (err) => {
     console.log(`uncaughtException : ${err}`);
 });
+
+
+// agendash npm
