@@ -9,7 +9,7 @@ const moment = require('moment');
 
 async function creditIncome (user_id, userSubscriptionId, amount, incomeType) {
     try {
-        let user = await userSchema.findOne({ _id: user_id, status: Status.ACTIVE });
+        let user = await userSchema.findOne({ _id: user_id });
         if (user) {
             let userIncome = await userIncomeSchema.findOne({ user_id });
             if (!userIncome) {
@@ -186,8 +186,8 @@ async function getLevelIncome (userId) {
                 },
                 level: obj.child_user_level,
                 from_user: obj.income_from_user.full_name,
-                amount: obj.subscription_transaction.amount,
-                income_type: obj.subscription_transaction.income_type,
+                amount: obj.subscription_transaction?.amount,
+                income_type: obj.subscription_transaction?.income_type,
                 created_at: obj.created_at
             }
             return newObj;
