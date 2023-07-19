@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const moment = require('moment-timezone');
-moment.tz('Asia/Kolkata');
 
 // define a schema
 const Schema = mongoose.Schema;
@@ -12,8 +11,8 @@ const SubscriptionCoinSchema = new Schema({
     subscription: { type: Schema.Types.ObjectId, ref: 'subscription_plan' },
     coin_transaction: [{ type: Schema.Types.ObjectId, ref: 'coin_transaction' }],
     next_mining: { type: Date },
-    created_at: { type: Date, require: true, default: moment() },
-    updated_at: { type: Date, require: true, default: moment() }
+    created_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
+    updated_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') }
 });
 
 SubscriptionCoinSchema.index({ user_id: 1, _id: 1 }, { unique: true })

@@ -92,6 +92,3 @@ scheduler.scheduleJob(rule, async function() {
 process.on('uncaughtException', (err) => {
     console.log(`uncaughtException : ${err}`);
 });
-
-
-// agendash npm

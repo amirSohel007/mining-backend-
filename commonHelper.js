@@ -4,7 +4,6 @@ const path = require('path');
 const express = require('express');
 const app = express();
 const moment = require('moment-timezone')
-moment.tz('Asia/Kolkata');
 
 const Status = {
     ALL : 'ALL',
@@ -109,11 +108,20 @@ const createUploadFolder = () => {
 }
 
 const getHours = (startDate, endDate) => {
-    const timerStart = moment(startDate, 'DD-MM-YYYY hh:mm:ss a');
-    const timerEnd = moment(endDate, 'DD-MM-YYYY hh:mm:ss a');
+    const timerStart = moment(startDate, 'DD-MM-YYYY hh:mm:ss a').tz('Asia/Kolkata');
+    const timerEnd = moment(endDate, 'DD-MM-YYYY hh:mm:ss a').tz('Asia/Kolkata');
     const hours = timerEnd.diff(timerStart, 'hours');
     console.log('HOURS : ', hours);
     return hours;
+}
+
+const getTimeInIST = (date) => {
+    try {
+        return moment(date).tz('Asia/Kolkata');
+    } catch (error) {
+        console.log('GET_TIME_IST_ERROR : ', error);
+        return false;
+    }
 }
 
 module.exports = { 
@@ -128,5 +136,6 @@ module.exports = {
     getBaseUrl,
     createUploadFolder,
     getQRCode,
-    getHours
+    getHours,
+    getTimeInIST
 }

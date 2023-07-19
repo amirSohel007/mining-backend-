@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const moment = require('moment-timezone');
-moment.tz('Asia/Kolkata');
 
 // define a schema
 const Schema = mongoose.Schema;
@@ -13,8 +12,8 @@ const DirectIncomeSchema = new Schema({
     subscription_transaction: { type: Schema.Types.ObjectId, ref: 'subscription_transaction', require: true },
     complete_percent: { type: Number, default: 1 },
     is_completed: { type: Boolean, default: false },
-    created_at : { type: Date, require: true, default: moment() },
-    updated_at : { type: Date, require: true, default: moment() }
+    created_at : { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
+    updated_at : { type: Date, require: true, default: moment().tz('Asia/Kolkata') }
 });
 
 DirectIncomeSchema.index({ user: 1, plan: 1, income_from_user: 1, is_completed: 1, _id: 1 }, { unique: true });

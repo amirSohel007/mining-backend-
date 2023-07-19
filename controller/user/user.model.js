@@ -24,8 +24,8 @@ const UserSchema = new Schema({
     is_eligibale_for_time_reward: { type: Boolean, default: true },
     is_eligibale_for_extra_income: { type: Boolean, default: false },
     role: { type: Number, require: true, default: UserRole.USER },
-    created_at : { type: Date, require: true, default: moment() },
-    updated_at : { type: Date, require: true, default: moment() }
+    created_at : { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
+    updated_at : { type: Date, require: true, default: moment().tz('Asia/Kolkata') }
 });
 
 UserSchema.index({ my_reffer_code: 1, _id: 1 }, { unique: true });
