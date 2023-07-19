@@ -2,6 +2,8 @@ const AWS = require('aws-sdk');
 const fs = require('fs');
 const path = require('path');
 const config = require('../config').config();
+const moment = require('moment-timezone');
+moment.tz('Asia/Kolkata');
 
 //configuring the AWS environment
 AWS.config.update({
@@ -17,7 +19,7 @@ async function upload_file_to_s3 (filePath) {
           const params = {
             Bucket: config.s3Bucket.bucket_name,
             Body : fs.createReadStream(filePath),
-            Key : "receipts/"+Date.now()+"_"+path.basename(filePath)
+            Key : "receipts/"+moment()+"_"+path.basename(filePath)
           };
           s3.upload(params, function (err, data) {
             //handle error

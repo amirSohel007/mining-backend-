@@ -1,12 +1,13 @@
 const schedularSchema = require('./schedular.model');
-const moment = require('moment');
+const moment = require('moment-timezone');
+moment.tz('Asia/Kolkata');
 
 async function logSchedularActivity () {
     try {
         let schedular = await schedularSchema.findOne({});
         let run = false;
         if (schedular) {
-            if (schedular.last_executed === moment().utcOffset("+05:30").format('d/mm/yyyy')) {
+            if (schedular.last_executed === moment().format('d/mm/yyyy')) {
                 schedular.is_executed_today = true;
                 run = false;
             } else {
@@ -15,7 +16,7 @@ async function logSchedularActivity () {
 
             if (schedular.is_executed_today === false) {
                 schedular.counter += 1;
-                schedular.last_executed = moment().utcOffset("+05:30").format('d/mm/yyyy');
+                schedular.last_executed = moment().format('d/mm/yyyy');
                 is_executed_today = true;
                 run = true;
             }
@@ -24,7 +25,7 @@ async function logSchedularActivity () {
         } else {
             schedular = await schedularSchema.create({
                 counter: 1,
-                last_executed: moment().utcOffset("+05:30").format('d/mm/yyyy'),
+                last_executed: moment().format('d/mm/yyyy'),
                 is_executed_today: true,
             });
             run = true;

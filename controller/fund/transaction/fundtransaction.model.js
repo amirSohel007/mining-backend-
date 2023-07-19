@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const moment = require('moment-timezone');
+moment.tz('Asia/Kolkata');
 
 // define a schema
 const Schema = mongoose.Schema;
@@ -16,8 +18,8 @@ const FundTransactionSchema = new Schema({
     status: { type: String, required: true },
     user_fund: { type: Schema.Types.ObjectId, require: true, ref: 'userfund' },
     fund_receipt: { type: String },
-    created_at: { type: Date, require: true, default: Date.now() },
-    updated_at: { type: Date, require: true, default: Date.now() }
+    created_at: { type: Date, require: true, default: moment() },
+    updated_at: { type: Date, require: true, default: moment() }
 });
 
 FundTransactionSchema.index({ user_id: 1, _id: 1, user_fund: 1 }, { unique: true })

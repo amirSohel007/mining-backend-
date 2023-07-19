@@ -4,7 +4,8 @@ const incomeRewardSchema = require('../other_income_and_rewards/income_rewards.m
 const { createOrUpdate, getAllUser } = require('../../../controller/subscription/direct_income/direct_income.service');
 const { creditIncome } = require('../../../controller/income/income.service');
 const { IncomeType, getHours } = require('../../../commonHelper');
-const moment = require('moment');
+const moment = require('moment-timezone');
+moment.tz('Asia/Kolkata');
 
 async function addSubscriptionPlan (user_id, plan) {
     try {
@@ -50,7 +51,7 @@ async function activeOrDeactiveSubscriptionPlan (user_id, plan_id = '', active =
         const updateData = {
             active,
             updated_by: user_id,
-            updated_at: Date.now()
+            updated_at: moment()
         }
         const plan = await subscriptionPlanSchema.findOneAndUpdate({ _id: plan_id }, updateData, { returnOriginal: false });
         return plan;
@@ -65,7 +66,7 @@ async function activeOrDeactiveSubscriptionPlan (user_id, plan_id = '', active =
 
 async function updateSubscriptionPlan (user_id, plan_id = '', planData) {
     try {
-        planData.updated_at = Date.now();
+        planData.updated_at = moment();
         planData.updated_by = user_id;
         const plan = await subscriptionPlanSchema.findOneAndUpdate({ _id: plan_id }, planData, { returnOriginal: false });
         return plan;
@@ -125,7 +126,7 @@ async function getAllSubscribers () {
                         if (purchaseDaysElapsed < 30) {
                             console.log('BEFORE_DAILY_INCOME : ', userSubscriptions[i].user.toString());
                             await dailyIncome(userSubscriptions[i].user.toString(), plan, userSubscriptions[i]._id.toString());
-                            userSubscriptions[i].updated_at = Date.now();
+                            userSubscriptions[i].updated_at = moment();
                             userSubscriptions[i].next_daily_income = moment(userSubscriptions[i].updated_at).add(24, 'hours');
                             await userSubscriptions[i].save();
                         } else {

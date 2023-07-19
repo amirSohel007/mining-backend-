@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const app = express();
-const moment = require('moment')
+const moment = require('moment-timezone')
+moment.tz('Asia/Kolkata');
 
 const Status = {
     ALL : 'ALL',
@@ -108,8 +109,8 @@ const createUploadFolder = () => {
 }
 
 const getHours = (startDate, endDate) => {
-    const timerStart = moment(startDate, 'DD-MM-YYYY hh:mm:ss');
-    const timerEnd = moment(endDate, 'DD-MM-YYYY hh:mm:ss');
+    const timerStart = moment(startDate, 'DD-MM-YYYY hh:mm:ss a');
+    const timerEnd = moment(endDate, 'DD-MM-YYYY hh:mm:ss a');
     const hours = timerEnd.diff(timerStart, 'hours');
     console.log('HOURS : ', hours);
     return hours;

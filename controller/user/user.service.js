@@ -7,7 +7,8 @@ const coinWalletSchema = require('../coin/coinwallet/coinwallet.model');
 const subscriptionCoinSchema = require('../coin/subscription-coin/subscriptioncoin.model');
 const { IncomeType, getHours, Status, UserFundStatus } = require('../../commonHelper');
 const { creditIncome } = require('../income/income.service');
-const moment = require('moment');
+const moment = require('moment-timezone');
+moment.tz('Asia/Kolkata');
 
 async function getUserDetailsWithPopulatedData (user_id, table_name) {
     try {
@@ -25,7 +26,7 @@ async function getUserDetailsWithPopulatedData (user_id, table_name) {
 
 async function updateUserDetails (query, data) {
     try {
-        data['updated_at'] = Date.now();
+        data['updated_at'] = moment();
         const res = await userSchema.findOneAndUpdate(query, data, { returnOriginal: false });
         return res;
     } catch(error) {
@@ -72,7 +73,10 @@ async function getUserInfo (user_id) {
         }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
         const coinBalance = await coinWalletSchema.findOne({ user: user_id });
         const subscriptionCoin = await subscriptionCoinSchema.findOne({ user: user_id });
-        const miningHours = subscriptionCoin ? getHours(moment(), subscriptionCoin.next_mining) : 0
+        // const next = moment;
+        const next = moment(subscriptionCoin.next_mining).format('DD-MM-YYYY');
+        const current = moment().format('DD-MM-YYYY h:mm:ss a');
+        const miningHours = subscriptionCoin ? getHours(current, next) : 0
         if (result && result.length) {
             let user = result[0];
             user['direct_user_count'] = user.downline_team.length;

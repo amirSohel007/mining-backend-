@@ -6,10 +6,11 @@ const userFundSchema = require('../fund/userfund/userfund.model');
 const userSchema = require('../user/user.model');
 const { creditIncome } = require('../income/income.service');
 const { FundTransactionType, UserFundStatus, IncomeType, Status, getHours } = require('../../commonHelper');
-const moment = require('moment/moment');
 const incomeRewardSchema = require('../../admin/contoller/other_income_and_rewards/income_rewards.model');
 const { createOrUpdate } = require('./direct_income/direct_income.service');
 const directIncomeSchema = require('./direct_income/direct_income.model');
+const moment = require('moment-timezone');
+moment.tz('Asia/Kolkata');
 
 async function subscribePlan (user_id, plan_id) {
     try {
@@ -47,7 +48,7 @@ async function subscribePlan (user_id, plan_id) {
             const subscribe = await userSubscriptionSchema.create({
                 user: user_id,
                 plan: plan._id,
-                next_daily_income: Date.now()
+                next_daily_income: moment()
             });
 
             // deduct the user balance

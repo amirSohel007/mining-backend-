@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const moment = require('moment');
+const moment = require('moment-timezone');
+moment.tz('Asia/Kolkata');
 
 // define a schema
 const Schema = mongoose.Schema;

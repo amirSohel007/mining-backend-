@@ -5,7 +5,8 @@ const userSchema = require('../user/user.model');
 const levelIncomeSchema = require('../user/levelincome.model');
 const bankDetailSchema = require('../user/bankdetail/bankdetail.model');
 const { UserFundStatus, getHours, IncomeType, Status } = require('../../commonHelper');
-const moment = require('moment');
+const moment = require('moment-timezone');
+moment.tz('Asia/Kolkata');
 
 async function creditIncome (user_id, userSubscriptionId, amount, incomeType) {
     try {

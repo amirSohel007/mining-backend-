@@ -3,7 +3,8 @@ const userSubscriptionSchema = require('../user_subscription/usersubscription.mo
 const boostIncomeSchema = require('../../../admin/contoller/boost_income/boost_income.model');
 const { creditIncome } = require('../../income/income.service');
 const { Status, getHours, IncomeType } = require('../../../commonHelper');
-const moment = require('moment');
+const moment = require('moment-timezone');
+moment.tz('Asia/Kolkata');
 
 async function calculateBoostingIncome () {
     try {

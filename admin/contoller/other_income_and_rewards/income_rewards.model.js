@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const moment = require('moment-timezone');
+moment.tz('Asia/Kolkata');
 
 // define schema
 const Schema = mongoose.Schema;
@@ -11,9 +13,9 @@ const IncomeRewardSchema = new Schema({
     all_subscription_instant_bonus: { type: Number, default: 0.0 },
     all_subscription_per_day_income: { type: Number, default: 0.0 },
     team_reward_instant_bonus: { type: Number, default: 0.0 },
-    created_at: { type: Date, require: true, default: Date.now() },
+    created_at: { type: Date, require: true, default: moment() },
     created_by: { type: Schema.Types.ObjectId, ref: 'user' },
-    updated_at: { type: Date, require: true, default: Date.now() },
+    updated_at: { type: Date, require: true, default: moment() },
     updated_by: { type: Schema.Types.ObjectId, ref: 'user' },
 });
 

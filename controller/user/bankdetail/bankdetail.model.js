@@ -11,8 +11,8 @@ const BankDetailSchema = new Schema({
     account_holder_name: {type: String, require: true },
     branch: {type: String, require: true },
     user_id: {type: Schema.Types.ObjectId, require: true, ref: 'user' },
-    created_at: { type: Date, require: true, default: Date.now() },
-    updated_at: { type: Date, require: true, default: Date.now() }
+    created_at: { type: Date, require: true, default: moment() },
+    updated_at: { type: Date, require: true, default: moment() }
 });
 
 BankDetailSchema.index({ user_id: 1, _id: 1 }, { unique: true })
