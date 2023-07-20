@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 // define a schema
 const Schema = mongoose.Schema;
@@ -9,8 +9,8 @@ const CoinWalletSchema = new Schema({
     user: { type: Schema.Types.ObjectId, require: true, ref: 'user' },
     coin_balance: { type: String, require: true, default: "0.0" },
     coin_subscription: [{ type: Schema.Types.ObjectId, ref: 'subscription_coin' }],
-    created_at: { type: Date, require: true, default: moment() },
-    updated_at: { type: Date, require: true, default: moment() }
+    created_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
+    updated_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') }
 });
 
 CoinWalletSchema.index({ user_id: 1, _id: 1 }, { unique: true })

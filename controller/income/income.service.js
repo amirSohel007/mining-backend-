@@ -5,7 +5,7 @@ const userSchema = require('../user/user.model');
 const levelIncomeSchema = require('../user/levelincome.model');
 const bankDetailSchema = require('../user/bankdetail/bankdetail.model');
 const { UserFundStatus, getHours, IncomeType, Status } = require('../../commonHelper');
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 async function creditIncome (user_id, userSubscriptionId, amount, incomeType) {
     try {
@@ -77,12 +77,12 @@ async function withdrawlIncome (user_id, amount) {
             } 
 
             else if (
-              getHours(lastTransaction[lastTransaction.length - 1]?.created_at, moment()) < 24
+              getHours(lastTransaction[lastTransaction.length - 1]?.created_at, moment().tz('Asia/Kolkata')) < 24
             ) {
               throw {
                 status: 400,
                 message: ` Try after ${
-                  24 - getHours(lastTransaction[lastTransaction.length - 1]?.created_at, moment())
+                  24 - getHours(lastTransaction[lastTransaction.length - 1]?.created_at, moment().tz('Asia/Kolkata'))
                 }  hours`,
               };
             }

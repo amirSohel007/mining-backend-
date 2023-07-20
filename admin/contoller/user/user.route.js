@@ -5,6 +5,7 @@ const responseService = require('../../../response/response.handler');
 const { getUserIdFromToken, getQRCode, deleteAllDirectoryFiles, getBaseUrl } = require('../../../commonHelper');
 const multer = require('multer');
 const fs = require('fs-extra');
+const moment = require('moment-timezone');
 
 // const Stroage = multer.diskStorage({
 //     destination : 'uploads',
@@ -41,7 +42,7 @@ const Stroage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const ext = file.mimetype.split('/')[1];
-        cb(null, `${req.user.user_id}_${Date.now()}.${ext}`);
+        cb(null, `${req.user.user_id}_${moment()}.${ext}`);
     } 
 });
 

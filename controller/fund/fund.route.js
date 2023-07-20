@@ -5,6 +5,7 @@ const { getUserInfo, getUser } = require('../user/user.service');
 const responseService = require('../../response/response.handler');
 const multer = require('multer');
 const uuid  = require('uuid');
+const moment = require('moment-timezone');
 
 //Configuration for Multer
 const Stroage = multer.diskStorage({ 
@@ -13,7 +14,7 @@ const Stroage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const ext = file.mimetype.split('/')[1];
-        cb(null, `${req.user.user_id}_${Date.now()}.${ext}`);
+        cb(null, `${req.user.user_id}_${moment().format('DD-MM-YYYY')}_${moment().get('hours')}_${moment().get('milliseconds')}.${ext}`);
     } 
 });
 

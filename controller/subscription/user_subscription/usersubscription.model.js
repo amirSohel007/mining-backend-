@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Status, UserRole } = require('../../../commonHelper');
+const moment = require('moment-timezone');
 
 // define a schema
 const Schema = mongoose.Schema;
@@ -10,8 +11,8 @@ const UserSubscriptionSchema = new Schema({
     plan: { type: Schema.Types.ObjectId, ref: 'subscription_plan' },
     next_daily_income: { type: Date, require: true },
     active: { type: Boolean, default: true },
-    created_at: { type: Date, require: true, default: Date.now() },
-    updated_at: { type: Date, require: true, default: Date.now() }
+    created_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
+    updated_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') }
 });
 
 UserSubscriptionSchema.index({ _id: 1, user: 1, plan: 1 }, { unique: true });

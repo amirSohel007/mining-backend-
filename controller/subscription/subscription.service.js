@@ -6,10 +6,10 @@ const userFundSchema = require('../fund/userfund/userfund.model');
 const userSchema = require('../user/user.model');
 const { creditIncome } = require('../income/income.service');
 const { FundTransactionType, UserFundStatus, IncomeType, Status, getHours } = require('../../commonHelper');
-const moment = require('moment/moment');
 const incomeRewardSchema = require('../../admin/contoller/other_income_and_rewards/income_rewards.model');
 const { createOrUpdate } = require('./direct_income/direct_income.service');
 const directIncomeSchema = require('./direct_income/direct_income.model');
+const moment = require('moment-timezone');
 
 async function subscribePlan (user_id, plan_id) {
     try {
@@ -47,7 +47,7 @@ async function subscribePlan (user_id, plan_id) {
             const subscribe = await userSubscriptionSchema.create({
                 user: user_id,
                 plan: plan._id,
-                next_daily_income: Date.now()
+                next_daily_income: moment().tz('Asia/Kolkata')
             });
 
             // deduct the user balance
@@ -72,7 +72,7 @@ async function subscribePlan (user_id, plan_id) {
             
             if (user.is_eligibale_for_time_reward) {
                 // check for hours and all plan purchased
-                const hours = getHours(user.created_at, moment());
+                const hours = getHours(user.created_at, moment().tz('Asia/Kolkata'));
                 if (hours <= incomeReward.all_subscription_active_time) {
                     const subscriptionPlans = await subscriptionPlanSchema.find({}, '_id').lean().exec();
                     const allPlan = await userSubscriptionSchema.find({ user: user_id, plan: { $in: subscriptionPlans } });

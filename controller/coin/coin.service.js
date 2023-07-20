@@ -4,7 +4,7 @@ const subscriptionPlanSchema = require('../subscription/subscription_plan/subscr
 const userSubscriptionSchema = require('../subscription/user_subscription/usersubscription.model');
 const subscriptionCoinSchema = require('./subscription-coin/subscriptioncoin.model');
 const { Coin, getHours } = require('../../commonHelper');
-const moment = require('moment');
+const moment = require('moment-timezone')
 
 async function generateCoin (userId, subscriptionId) {
     try {
@@ -26,15 +26,15 @@ async function generateCoin (userId, subscriptionId) {
             });
         }
 
-        const start =  subscriptionCoin ? moment(subscriptionCoin.next_mining, 'h:mm:ss a') : moment(moment(), 'h:mm:ss a');
-        const end = moment(moment(), 'h:mm:ss a');
+        const start =  subscriptionCoin ? moment(subscriptionCoin.next_mining, 'h:mm:ss a').tz('Asia/Kolkata') : moment(moment().tz('Asia/Kolkata'), 'h:mm:ss a').tz('Asia/Kolkata');
+        const end = moment(moment().tz('Asia/Kolkata'), 'h:mm:ss a');
         const hours = getHours(start, end);
-        if ((!wallet) || (subscriptionCoin && !subscriptionCoin.next_mining ) || (hours >= 24)) {
+        // if ((!wallet) || (subscriptionCoin && !subscriptionCoin.next_mining ) || (hours >= 24)) {
+        if ((!wallet) || (subscriptionCoin && !subscriptionCoin.next_mining ) || (hours)) {
             if (!wallet) {
                 wallet = await coinWalletSchema.create({
                     user: userId,
-                    coin_transaction: [],
-                    next_mining: moment().add(24, 'hours'),
+                    coin_transaction: []
                 });
             }
             const coinTransaction = await coinTransactionSchema.create({
@@ -47,11 +47,11 @@ async function generateCoin (userId, subscriptionId) {
             
             subscriptionCoin.coin_wallet = wallet._id;
             subscriptionCoin.coin_transaction.push(coinTransaction._id);
-            subscriptionCoin.next_mining = moment().add(24, 'hours');
+            subscriptionCoin.next_mining =  moment().utc().add(1, 'days');
             await subscriptionCoin.save();
 
             wallet.coin_balance = parseFloat(wallet.coin_balance) + parseFloat(plan.daily_mining_coin);
-            wallet.updated_at = moment(moment(), 'h:mm:ss a');
+            wallet.updated_at = moment().utc();
             console.log('MINING : ', parseFloat(plan.daily_mining_coin));
             console.log('WALLET_BALANCE : ', wallet.coin_balance);
             await wallet.save();

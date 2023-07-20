@@ -1,31 +1,10 @@
+const { Status, IncomeType } = require('../../../commonHelper');
+const userSchema = require('../../user/user.model');
+const subscriptionTransactionSchema = require('../transaction/subscription.transaction.model');
 const directIncomeSchema = require('./direct_income.model');
-const moment = require('moment');
 
 async function createOrUpdate (userId, planId, teamUserId, completedPercent, subscriptionTransactionId) {
     try {
-        // let directIncome = await directIncomeSchema.findOne({ plan: planId, user: userId, income_from_user: teamUserId });
-        // if (directIncome) {
-        //     if (directIncome.complete_percent && directIncome.complete_percent < 100) {
-        //         directIncome.complete_percent += completedPercent;
-        //         directIncome.subscription_transaction.push(subscriptionTransactionId);
-        //         directIncome.updated_at = moment();
-        //     }
-        //     if (directIncome.complete_percent && directIncome.complete_percent == 100) {
-        //         directIncome.is_completed = true;
-        //     }
-        //     await directIncome.save();
-        //     return directIncome;
-        // } else {
-        //     directIncome = await directIncomeSchema.create({
-        //         plan: planId,
-        //         user: userId,
-        //         income_from_user: teamUserId,
-        //         subscription_transaction: [subscriptionTransactionId],
-        //         is_completed: false,
-        //         complete_percent: completedPercent
-        //     });
-        //     return directIncome;
-        // }
         directIncome = await directIncomeSchema.create({
             plan: planId,
             user: userId,
@@ -53,8 +32,11 @@ async function getAllUserDirectIncomeDetails (userId) {
 
 async function getAllUser () {
     try {
-        const users = await directIncomeSchema.find({ is_completed: false })
-        .populate({ path: 'plan', model: 'subscription_plan' }).lean().exec();
+        const transactions = await subscriptionTransactionSchema.find({ income_type: IncomeType.INSTANT_DIRECT }, '_id');
+        const users = await directIncomeSchema.find({ is_completed: false, subscription_transaction: { $in: transactions } })
+        .populate({ path: 'plan', model: 'subscription_plan' })
+        .populate({ path: 'income_from_user', model: 'user' })
+        .populate({ path: 'subscription_transaction', model: 'subscription_transaction' }).lean().exec();
         return users;
     } catch (error) {
         console.log('GET_ALL_DIRECT_INCOME_DETAILS_ERROR : ', error);

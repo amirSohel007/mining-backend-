@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment-timezone');
 
 // define a schema
 const Schema = mongoose.Schema;
@@ -10,9 +11,9 @@ const SubscriptionPlanSchema = new Schema({
   active: { type: Boolean, default: true },
   price: { type: Number, default: 0.0, require: true },
   daily_mining_coin: { type: Number, default: 0.0, require: true },
-  created_at: { type: Date, require: true, default: Date.now() },
+  created_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
   created_by: { type: Schema.Types.ObjectId },
-  updated_at: { type: Date, require: true, default: Date.now() },
+  updated_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
   updated_by: { type: Schema.Types.ObjectId },
 });
 

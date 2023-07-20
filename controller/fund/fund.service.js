@@ -4,6 +4,7 @@ const { getUserInfo } = require('../user/user.service');
 const { upload_file_to_s3, get_s3_file } = require('../../s3_confif');
 const { FundTransactionType, getBaseUrl, UserFundStatus } = require('../../commonHelper');
 const config = require('../../config').config();
+const moment = require('moment-timezone');
 
 async function addFund (user_id, data, transaction_type, imageData) {
     try {
@@ -50,7 +51,7 @@ async function addFund (user_id, data, transaction_type, imageData) {
             userFund.fund_balance += transaction.amount;
         }
         userFund.fund_transaction.push(transaction._id);
-        userFund.updated_at = Date.now();
+        userFund.updated_at = moment().tz('Asia/Kolkata');
         await userFund.save();
         return userFund;
     } catch(error) {

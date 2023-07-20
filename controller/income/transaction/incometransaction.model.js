@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { UserFundStatus } = require('../../../commonHelper');
+const moment = require('moment-timezone');
 
 // define a schema
 const Schema = mongoose.Schema;
@@ -9,8 +10,8 @@ const IncomeTransactionSchema = new Schema({
     amount: { type: Number, default: 0.0, require: true },
     status: { type: String, require: true , default: UserFundStatus.PENDING},
     user_id: { type: Schema.Types.ObjectId, ref: 'user', require: true },
-    created_at: { type: Date, require: true, default: Date.now() },
-    updated_at: { type: Date, require: true, default: Date.now() }
+    created_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
+    updated_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') }
     
 });
 

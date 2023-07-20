@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { UserRole } = require('../../../commonHelper');
+const moment = require('moment-timezone');
 
 // define a schema
 const Schema = mongoose.Schema;
@@ -13,9 +14,9 @@ const AdminUserSchema = new Schema({
     qr:{ type: String },
     totalFund:{type:SchemaTypes.Mixed,default: 0.00},
     totalWithdrawal:{type:SchemaTypes.Mixed,default: 0.00},
-    joining_date : {type: Date,require: true, default : Date.now()},
-    created_at : {type: Date,require: true,default : Date.now()},
-    updated_at : {type: Date,require: true,default : Date.now()},
+    joining_date : {type: Date,require: true, default : moment().tz('Asia/Kolkata')},
+    created_at : {type: Date,require: true,default : moment().tz('Asia/Kolkata')},
+    updated_at : {type: Date,require: true,default : moment().tz('Asia/Kolkata')},
 
 });
 
