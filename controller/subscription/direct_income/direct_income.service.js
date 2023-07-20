@@ -1,3 +1,6 @@
+const { Status, IncomeType } = require('../../../commonHelper');
+const userSchema = require('../../user/user.model');
+const subscriptionTransactionSchema = require('../transaction/subscription.transaction.model');
 const directIncomeSchema = require('./direct_income.model');
 
 async function createOrUpdate (userId, planId, teamUserId, completedPercent, subscriptionTransactionId) {
@@ -29,8 +32,11 @@ async function getAllUserDirectIncomeDetails (userId) {
 
 async function getAllUser () {
     try {
-        const users = await directIncomeSchema.find({ is_completed: false })
-        .populate({ path: 'plan', model: 'subscription_plan' }).lean().exec();
+        const transactions = await subscriptionTransactionSchema.find({ income_type: IncomeType.INSTANT_DIRECT }, '_id');
+        const users = await directIncomeSchema.find({ is_completed: false, subscription_transaction: { $in: transactions } })
+        .populate({ path: 'plan', model: 'subscription_plan' })
+        .populate({ path: 'income_from_user', model: 'user' })
+        .populate({ path: 'subscription_transaction', model: 'subscription_transaction' }).lean().exec();
         return users;
     } catch (error) {
         console.log('GET_ALL_DIRECT_INCOME_DETAILS_ERROR : ', error);

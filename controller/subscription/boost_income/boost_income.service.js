@@ -4,7 +4,6 @@ const boostIncomeSchema = require('../../../admin/contoller/boost_income/boost_i
 const { creditIncome } = require('../../income/income.service');
 const { Status, getHours, IncomeType } = require('../../../commonHelper');
 const moment = require('moment-timezone');
-moment.tz('Asia/Kolkata');
 
 async function calculateBoostingIncome () {
     try {
@@ -31,7 +30,7 @@ async function calculateBoostingIncome () {
 
         for (let i = 0; i < users.length; i++) {
 
-            const elapsedHours = getHours(moment(users[i].created_at, 'h:mm:ss a'),  moment(moment(), 'h:mm:ss a'));
+            const elapsedHours = getHours(moment(users[i].created_at, 'h:mm:ss a').tz('Asia/Kolkata'),  moment(moment().tz('Asia/Kolkata'), 'h:mm:ss a').tz('Asia/Kolkata'));
             const allowedHours = boostingIncomeDetails[boostingIncomeDetails.length - 1].duration_hours;
             console.log('HOURS : ', elapsedHours, 'MAX_ALLOWED_HOURS', allowedHours);
 
@@ -118,7 +117,7 @@ async function creditExtraIncomeOnAllUserPlan (userId, subscriptions = [], incom
             console.log('INCORRECT_INCOME_PERCENTAGE : ', incomePercent);
         }
         for (let i = 0; i < subscriptions.length; i++) {
-            const elapsedHours = getHours(moment(subscriptions[i].next_daily_income, 'h:mm:ss a'), moment(moment(), 'h:mm:ss a'));
+            const elapsedHours = getHours(moment(subscriptions[i].next_daily_income, 'h:mm:ss a').tz('Asia/Kolkata'), moment(moment().tz('Asia/Kolkata'), 'h:mm:ss a').tz('Asia/Kolkata'));
             if (elapsedHours > 24) {
                 const amount = subscriptions[i].plan.daily_income * incomePercent / 100;
                 creditIncome(userId, subscriptions[i]._id, amount, typeOfIncome);

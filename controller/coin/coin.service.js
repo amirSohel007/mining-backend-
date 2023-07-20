@@ -5,8 +5,6 @@ const userSubscriptionSchema = require('../subscription/user_subscription/usersu
 const subscriptionCoinSchema = require('./subscription-coin/subscriptioncoin.model');
 const { Coin, getHours } = require('../../commonHelper');
 const moment = require('moment-timezone')
-moment.tz('Asia/Kolkata');
-
 
 async function generateCoin (userId, subscriptionId) {
     try {
@@ -28,8 +26,8 @@ async function generateCoin (userId, subscriptionId) {
             });
         }
 
-        const start =  subscriptionCoin ? moment(subscriptionCoin.next_mining, 'h:mm:ss a') : moment(moment(), 'h:mm:ss a');
-        const end = moment(moment(), 'h:mm:ss a');
+        const start =  subscriptionCoin ? moment(subscriptionCoin.next_mining, 'h:mm:ss a').tz('Asia/Kolkata') : moment(moment().tz('Asia/Kolkata'), 'h:mm:ss a').tz('Asia/Kolkata');
+        const end = moment(moment().tz('Asia/Kolkata'), 'h:mm:ss a');
         const hours = getHours(start, end);
         // if ((!wallet) || (subscriptionCoin && !subscriptionCoin.next_mining ) || (hours >= 24)) {
         if ((!wallet) || (subscriptionCoin && !subscriptionCoin.next_mining ) || (hours)) {

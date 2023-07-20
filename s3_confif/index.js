@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 const config = require('../config').config();
 const moment = require('moment-timezone');
-moment.tz('Asia/Kolkata');
 
 //configuring the AWS environment
 AWS.config.update({

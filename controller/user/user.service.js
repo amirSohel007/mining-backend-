@@ -73,7 +73,7 @@ async function getUserInfo (user_id) {
         const coinBalance = await coinWalletSchema.findOne({ user: user_id });
         const subscriptionCoin = await subscriptionCoinSchema.findOne({ user: user_id });
         // const next = moment;
-        const next = moment(subscriptionCoin.next_mining).tz('Asia/Kolkata').format('DD-MM-YYYY');
+        const next = subscriptionCoin && subscriptionCoin.next_mining ? moment(subscriptionCoin.next_mining).tz('Asia/Kolkata').format('DD-MM-YYYY') : moment().tz('Asia/Kolkata').format('DD-MM-YYYY h:mm:ss a');
         const current = moment().tz('Asia/Kolkata').format('DD-MM-YYYY h:mm:ss a');
         const miningHours = subscriptionCoin ? getHours(current, next) : 0
         if (result && result.length) {

@@ -65,14 +65,16 @@ rule.minute = 0;
 rule.tz = 'asia/kolkata';
 
 schedule.scheduleJob(rule, async function() {
-  console.log('SCHEDULAR IS RUNNING AT 12:00 AM');
   try {
     const run = await logSchedularActivity();
     if (run) {
+      console.log('SCHEDULAR IS RUNNING AT 12:00 AM');
       await getAllSubscribers();
       await creditDailyDirectIncome();
       await calculateBoostingIncome();
       await levelIncome();
+    } else {
+      console.log('SCHEDULAR IS RUNNING AT 12:00 AM ELSE');
     }
   } catch (error) {
     console.log('SCHEDULAR_ERROR : ', error);

@@ -6,7 +6,6 @@ const { getUserIdFromToken, getQRCode, deleteAllDirectoryFiles, getBaseUrl } = r
 const multer = require('multer');
 const fs = require('fs-extra');
 const moment = require('moment-timezone');
-moment.tz('Asia/Kolkata');
 
 // const Stroage = multer.diskStorage({
 //     destination : 'uploads',
