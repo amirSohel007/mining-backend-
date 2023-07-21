@@ -108,7 +108,7 @@ async function onlineWithdrawal (admin_id, id, status, data) {
             return;
         }
 
-        if (status == UserFundStatus.ACCEPT && checkUserStatus?.status === UserFundStatus.PENDING) {
+        if (status == UserFundStatus.ACCEPT && incomeTransaction?.status === UserFundStatus.PENDING) {
             // find the document in DB for withdrawal request document
             incomeTransaction.payment_type = UserFundStatus.ONLINE;
             incomeTransaction.status = UserFundStatus.ACCEPT;
