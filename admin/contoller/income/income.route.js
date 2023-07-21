@@ -34,7 +34,6 @@ app.get('/:status',(req,res) => {
 app.post("/pay-online", async (req, res) => {
   try {
     const { transactionId, status, payment_details } = req.body;
-    console.log(body);
     const { user_id } = req.user;
     const result = await onlineWithdrawal(user_id, transactionId, status, payment_details);
     responseService.response(req, null, result, res);
