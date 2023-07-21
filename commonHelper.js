@@ -16,7 +16,9 @@ const UserFundStatus = {
     PENDING:'PENDING',
     REJECT:'REJECT',
     ALL:'ALL',
-    DEDUCTE: 'FUND_DEDUCTED'
+    DEDUCTE: 'FUND_DEDUCTED',
+    ONLINE: 'ONLINE',
+    OFFLINE: 'OFFLINE'
 }
 
 const UserRole = {
