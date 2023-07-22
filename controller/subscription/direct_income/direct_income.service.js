@@ -5,7 +5,7 @@ const directIncomeSchema = require('./direct_income.model');
 
 async function createOrUpdate (userId, planId, teamUserId, completedPercent, subscriptionTransactionId) {
     try {
-        directIncome = await directIncomeSchema.create({
+        const directIncome = await directIncomeSchema.create({
             plan: planId,
             user: userId,
             income_from_user: teamUserId,
