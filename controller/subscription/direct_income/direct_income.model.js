@@ -12,6 +12,7 @@ const DirectIncomeSchema = new Schema({
     subscription_transaction: { type: Schema.Types.ObjectId, ref: 'subscription_transaction', require: true },
     complete_percent: { type: Number, default: 1 },
     is_completed: { type: Boolean, default: false },
+    date: { type: String, default: moment().tz('Asia/Kolkata').format('DD-MM-YYYY') },
     created_at : { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
     updated_at : { type: Date, require: true, default: moment().tz('Asia/Kolkata') }
 });
