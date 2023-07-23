@@ -60,21 +60,21 @@ console.log(`Server has been started on port : ${port}`);
 
 // start a cron job to credit daily income to user
 const rule = new schedule.RecurrenceRule();
-rule.hour = 0;
-rule.minute = 0;
+rule.hour = 1;
+rule.minute = 1;
 rule.tz = 'asia/kolkata';
 
 schedule.scheduleJob(rule, async function() {
   try {
     const run = await logSchedularActivity();
     if (run) {
-      console.log('SCHEDULAR IS RUNNING AT 12:00 AM');
+      console.log('SCHEDULAR IS RUNNING AT 1:01 AM');
       await getAllSubscribers();
       await creditDailyDirectIncome();
       await calculateBoostingIncome();
       await levelIncome();
     } else {
-      console.log('SCHEDULAR IS RUNNING AT 12:00 AM ELSE');
+      console.log('SCHEDULAR IS RUNNING AT 1:01 AM ELSE');
     }
   } catch (error) {
     console.log('SCHEDULAR_ERROR : ', error);
