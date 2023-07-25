@@ -15,8 +15,8 @@ const IncomeTransactionSchema = new Schema({
     paid_amount:{type:Number},
     status: { type: String, require: true , default: UserFundStatus.PENDING},
     user_id: { type: Schema.Types.ObjectId, ref: 'user', require: true },
-    created_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
-    updated_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') }
+    created_at: { type: Date, require: true, default: new moment().utc() },
+    updated_at: { type: Date, require: true, default: new moment().utc() }
     
 });
 

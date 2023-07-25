@@ -9,8 +9,8 @@ const SchemaTypes = mongoose.Schema.Types;
 // define QR schema
 const QRCodeSchema = new Schema({
     qr:{ type: String },
-    created_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
-    updated_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
+    created_at: { type: Date, require: true, default: new moment().utc() },
+    updated_at: { type: Date, require: true, default: new moment().utc() },
     created_by: { type: Schema.Types.ObjectId, require: true, ref: 'AdminUser' },
     updated_by: { type: Schema.Types.ObjectId, require: true, ref: 'AdminUser' }
 });
