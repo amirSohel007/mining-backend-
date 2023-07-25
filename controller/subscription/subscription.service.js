@@ -47,7 +47,7 @@ async function subscribePlan (user_id, plan_id) {
             const subscribe = await userSubscriptionSchema.create({
                 user: user_id,
                 plan: plan._id,
-                next_daily_income: moment().tz('Asia/Kolkata')
+                next_daily_income: new moment().utc()
             });
 
             // deduct the user balance

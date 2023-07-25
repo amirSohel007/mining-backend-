@@ -11,8 +11,8 @@ const CoinTransactionSchema = new Schema({
     subscription: { type: Schema.Types.ObjectId, ref: 'subscription_plan' },
     transaction_type: { type: String, require: true },
     coin: { type: Number, default: 0.0 },
-    created_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
-    updated_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') }
+    created_at: { type: Date, require: true, default: new moment().utc() },
+    updated_at: { type: Date, require: true, default: new moment().utc() }
 });
 
 CoinTransactionSchema.index({ user_id: 1, _id: 1 }, { unique: true })

@@ -11,8 +11,8 @@ const UserIncomeSchema = new Schema({
     user_id: { type: Schema.Types.ObjectId, ref: 'user' },
     transaction: [{ type: Schema.Types.ObjectId, ref: 'incometransaction' }],
     subscription: [{ type: Schema.Types.ObjectId, ref: 'subscription_transaction' }],
-    created_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
-    updated_at: { type: Date, require: true, default: moment().tz('Asia/Kolkata') }
+    created_at: { type: Date, require: true, default: new moment().utc() },
+    updated_at: { type: Date, require: true, default: new moment().utc() }
 });
 
 UserIncomeSchema.index({ user_id: 1, _id: 1 }, { unique: true });

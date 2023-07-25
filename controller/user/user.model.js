@@ -18,13 +18,13 @@ const UserSchema = new Schema({
     downline_team: [{ type: Schema.Types.ObjectId, ref: 'user', default: [] }],
     direct_team_size: { type: Number, default: 0 }, 
     income: { type: Schema.Types.ObjectId, ref: 'userincome' },
-    joining_date : { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
+    joining_date : { type: Date, require: true, default: new moment().utc() },
     status : { type: String, require: true, default: Status.INACTIVE },
     is_eligibale_for_time_reward: { type: Boolean, default: true },
     is_eligibale_for_extra_income: { type: Boolean, default: false },
     role: { type: Number, require: true, default: UserRole.USER },
-    created_at : { type: Date, require: true, default: moment().tz('Asia/Kolkata') },
-    updated_at : { type: Date, require: true, default: moment().tz('Asia/Kolkata') }
+    created_at : { type: Date, require: true, default: new moment().utc() },
+    updated_at : { type: Date, require: true, default: new moment().utc() }
 });
 
 UserSchema.index({ my_reffer_code: 1, _id: 1 }, { unique: true });

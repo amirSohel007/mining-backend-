@@ -9,7 +9,8 @@ const schedule = require('node-schedule');
 const { getAllSubscribers, creditDailyDirectIncome } = require('./admin/contoller/subscription/subscription.service');
 const { calculateBoostingIncome } = require('./controller/subscription/boost_income/boost_income.service');
 const { levelIncome } = require('./controller/user/user.service');
-const scheduler = require('node-schedule');
+// const scheduler = require('node-schedule');
+const scheduler = require('node-schedule-tz');
 const { logSchedularActivity } = require('./admin/contoller/schedular/schedular.service');
 
 // defining port, if one is not available then port will be 3000
@@ -60,7 +61,7 @@ console.log(`Server has been started on port : ${port}`);
 
 // start a cron job to credit daily income to user
 const rule = new schedule.RecurrenceRule();
-rule.hour = 1;
+rule.hour = 2;
 rule.minute = 1;
 rule.tz = 'asia/kolkata';
 

@@ -25,7 +25,7 @@ async function getUserDetailsWithPopulatedData (user_id, table_name) {
 
 async function updateUserDetails (query, data) {
     try {
-        data['updated_at'] = moment().tz('Asia/Kolkata');
+        data['updated_at'] = new moment().utc();
         const res = await userSchema.findOneAndUpdate(query, data, { returnOriginal: false });
         return res;
     } catch(error) {
