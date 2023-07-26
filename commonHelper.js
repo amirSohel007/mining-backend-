@@ -51,17 +51,7 @@ const IncomeType = {
         { level: 6, text: 'LEVEL_6_INCOME' },
         { level: 7, text: 'LEVEL_7_INCOME' }
     ] 
-}
-
-
-        // 'LEVEL_1_INCOME',
-        // 'LEVEL_2_INCOME',
-        // 'LEVEL_3_INCOME',
-        // 'LEVEL_4_INCOME',
-        // 'LEVEL_5_INCOME',
-        // 'LEVEL_6_INCOME',
-        // 'LEVEL_7_INCOME',
-    
+}   
 
 const Coin = {
     DAILY: 'DAILY_COIN_MINING'
