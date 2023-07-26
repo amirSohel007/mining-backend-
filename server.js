@@ -5,12 +5,10 @@ const bodyParser = require('body-parser');
 const cors = require("cors");
 require("dotenv").config();
 const { deleteAllDirectoryFiles, createUploadFolder } = require('./commonHelper');
-const schedule = require('node-schedule');
 const { getAllSubscribers, creditDailyDirectIncome } = require('./admin/contoller/subscription/subscription.service');
 const { calculateBoostingIncome } = require('./controller/subscription/boost_income/boost_income.service');
 const { levelIncome } = require('./controller/user/user.service');
-// const scheduler = require('node-schedule');
-const scheduler = require('node-schedule-tz');
+// const scheduler = require('node-schedule-tz');
 const { logSchedularActivity } = require('./admin/contoller/schedular/schedular.service');
 
 // defining port, if one is not available then port will be 3000
@@ -59,13 +57,12 @@ app.get("/", (req, res) => {
 app.listen(port);
 console.log(`Server has been started on port : ${port}`);
 
-// start a cron job to credit daily income to user
-const rule = new schedule.RecurrenceRule();
-rule.hour = 2;
-rule.minute = 1;
-rule.tz = 'asia/kolkata';
 
-schedule.scheduleJob(rule, async function() {
+//
+const nodeCron = require('node-cron');
+
+const job = nodeCron.schedule("30 30 6 * * *", async () => {
+  console.log(`This has been triggred at ${new Date().toLocaleString()}`);
   try {
     const run = await logSchedularActivity();
     if (run) {
@@ -80,16 +77,33 @@ schedule.scheduleJob(rule, async function() {
   } catch (error) {
     console.log('SCHEDULAR_ERROR : ', error);
   }
-});
+}, { timezone: 'Asia/Kolkata' });
 
-const rule_1 = new scheduler.RecurrenceRule();
-rule_1.hour = 0;
-rule_1.minute = 0;
-rule_1.tz = 'asia/kolkata';
 
-scheduler.scheduleJob(rule, async function() {
-  // await levelIncome();
-});
+
+
+// start a cron job to credit daily income to user
+// const rule = new scheduler.RecurrenceRule();
+// rule.hour = 16;
+// rule.minute = 51;
+// rule.tz = 'Asia/Kolkata';
+
+// scheduler.scheduleJob(rule, async function() {
+  // try {
+  //   const run = await logSchedularActivity();
+  //   if (run) {
+  //     console.log('SCHEDULAR IS RUNNING AT 1:01 AM');
+  //     // await getAllSubscribers();
+  //     // await creditDailyDirectIncome();
+  //     // await calculateBoostingIncome();
+  //     // await levelIncome();
+  //   } else {
+  //     console.log('SCHEDULAR IS RUNNING AT 1:01 AM ELSE');
+  //   }
+  // } catch (error) {
+  //   console.log('SCHEDULAR_ERROR : ', error);
+  // }
+// });
 
 // unhandled error
 process.on('uncaughtException', (err) => {
