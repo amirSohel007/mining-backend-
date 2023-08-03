@@ -13,9 +13,9 @@ const DirectIncomeSchema = new Schema({
     complete_percent: { type: Number, default: 1 },
     is_completed: { type: Boolean, default: false },
     date: { type: String, default: moment().tz('Asia/Kolkata').format('DD-MM-YYYY') },
-    created_at : { type: Date, require: true, default: new moment().utc() },
-    updated_at : { type: Date, require: true, default: new moment().utc() }
-});
+    // created_at : { type: Date, require: true, default: new moment().utc() },
+    // updated_at : { type: Date, require: true, default: new moment().utc() }
+}, {timestamps: true});
 
 DirectIncomeSchema.index({ user: 1, plan: 1, income_from_user: 1, is_completed: 1, _id: 1 }, { unique: true });
 

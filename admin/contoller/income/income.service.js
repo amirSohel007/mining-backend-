@@ -23,18 +23,18 @@ const changeIncomeStatus = (admin_id,transactionId,status) =>{
             if(status == UserFundStatus.REJECT &&checkUserStatus?.status === UserFundStatus.PENDING){
                 checkUserStatus.status = UserFundStatus.REJECT;
                 checkUserStatus.payment_type = UserFundStatus.OFFLINE;
-                checkUserStatus.updated_at = new moment().utc();
+                // checkUserStatus.updated_at = new moment().utc();
                 await checkUserStatus.save();
                 resolve({ message: 'Status updated'});
                 return;
             }
             if(status == UserFundStatus.ACCEPT && checkUserStatus?.status === UserFundStatus.PENDING){
                 checkUserStatus.status = UserFundStatus.ACCEPT;
-                checkUserStatus.updated_at = new moment().utc();
+                // checkUserStatus.updated_at = new moment().utc();
                 await checkUserStatus.save();
                 const userIncome = await userIncomeSchema.findOne({ user_id: checkUserStatus.user_id });
                 userIncome.balance -= checkUserStatus.amount;
-                userIncome.updated_at = new moment().utc();
+                // userIncome.updated_at = new moment().utc();
                 await userIncome.save();
                 updateAdminTotalIncome(admin_id,checkUserStatus);
             }
@@ -116,12 +116,12 @@ async function onlineWithdrawal (admin_id, id, status, data) {
             incomeTransaction.client_id = data.client_id;
             incomeTransaction.transaction_id = data.transaction_id;
             incomeTransaction.paid_amount = data.amount;
-            incomeTransaction.updated_at = new moment().utc();
+            // incomeTransaction.updated_at = new moment().utc();
             await incomeTransaction.save();
 
             const userIncome = await userIncomeSchema.findOne({ user_id: incomeTransaction.user_id });
             userIncome.balance -= incomeTransaction.amount;
-            userIncome.updated_at = new moment().utc();
+            // userIncome.updated_at = new moment().utc();
             await userIncome.save();
             await updateAdminTotalIncome(admin_id, incomeTransaction);
         }

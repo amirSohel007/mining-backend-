@@ -26,7 +26,6 @@ app.post('/', async (req, res) => {
                 all_subscription_instant_bonus,
                 all_subscription_per_day_income,
                 team_reward_instant_bonus,
-                created_at: moment(),
                 created_by: user_id
             });
             responseService.response(req, null, result, res);

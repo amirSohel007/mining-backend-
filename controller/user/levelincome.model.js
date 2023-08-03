@@ -10,9 +10,9 @@ const LevelIncomeSchema = new Schema({
     income_from_user: { type: Schema.Types.ObjectId, ref: 'user', require: true },
     child_user_level: { type: Number, default: 1 },
     subscription_transaction: { type: Schema.Types.ObjectId, ref: 'subscription_transaction', require: true },
-    created_at : { type: Date, require: true, default: new moment().utc() },
-    updated_at : { type: Date, require: true, default: new moment().utc() }
-});
+    // created_at : { type: Date, require: true, default: new moment().utc() },
+    // updated_at : { type: Date, require: true, default: new moment().utc() }
+}, {timestamps: true});
 
 LevelIncomeSchema.index({ user: 1, income_from_user: 1, _id: 1 }, { unique: true });
 

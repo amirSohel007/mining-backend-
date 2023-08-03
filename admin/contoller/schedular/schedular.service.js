@@ -24,7 +24,7 @@ async function logSchedularActivity () {
 
 async function getSchedularTime () {
     try {
-        const schedular = await schedularSchema.find({}).sort({ created_at: -1 });
+        const schedular = await schedularSchema.find({}).sort({ createdAt: -1 });
         if (schedular && schedular.length) {
             return schedular[0];
         }

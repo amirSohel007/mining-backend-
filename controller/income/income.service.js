@@ -53,7 +53,7 @@ async function withdrawlIncome (user_id, amount) {
             }
         }
         if (userIncome) {
-            const lastTransaction = await incomeTransactionSchema.find({ user_id }).sort({ created_at: 1 });
+            const lastTransaction = await incomeTransactionSchema.find({ user_id }).sort({ createdAt: 1 });
             console.log('TRANs : ', lastTransaction);
             if (userIncome.first_withdrawal && parseInt(amount) !== 250) {
               throw {
@@ -77,12 +77,12 @@ async function withdrawlIncome (user_id, amount) {
             } 
 
             else if (
-              getHours(lastTransaction[lastTransaction.length - 1]?.created_at, moment().tz('Asia/Kolkata')) < 24
+              getHours(lastTransaction[lastTransaction.length - 1]?.createdAt, moment().tz('Asia/Kolkata')) < 24
             ) {
               throw {
                 status: 400,
                 message: ` Try after ${
-                  24 - getHours(lastTransaction[lastTransaction.length - 1]?.created_at, moment().tz('Asia/Kolkata'))
+                  24 - getHours(lastTransaction[lastTransaction.length - 1]?.createdAt, moment().tz('Asia/Kolkata'))
                 }  hours`,
               };
             }
@@ -188,7 +188,7 @@ async function getLevelIncome (userId) {
                 from_user: obj.income_from_user.full_name,
                 amount: obj.subscription_transaction?.amount,
                 income_type: obj.subscription_transaction?.income_type,
-                created_at: obj.created_at
+                createdAt: obj.createdAt
             }
             return newObj;
         });
