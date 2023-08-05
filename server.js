@@ -9,7 +9,7 @@ const { getAllSubscribers, creditDailyDirectIncome } = require('./admin/contolle
 const { calculateBoostingIncome } = require('./controller/subscription/boost_income/boost_income.service');
 const { levelIncome } = require('./controller/user/user.service');
 // const scheduler = require('node-schedule-tz');
-const { logSchedularActivity } = require('./admin/contoller/schedular/schedular.service');
+const { checkSchedulerTrigger } = require('./admin/contoller/schedular/schedular.service');
 
 // defining port, if one is not available then port will be 3000
 const port = process.env.NODE_PORT || 5000;
@@ -61,18 +61,19 @@ console.log(`Server has been started on port : ${port}`);
 //
 const nodeCron = require('node-cron');
 
-const job = nodeCron.schedule("30 30 6 * * *", async () => {
-  console.log(`This has been triggred at ${new Date().toLocaleString()}`);
+const job = nodeCron.schedule("0 1 * * *", async () => {
+  console.log(`Scheduler has been triggred at ${new Date().toLocaleString()}`);
   try {
-    const run = await logSchedularActivity();
+
+    const run = await checkSchedulerTrigger();
     if (run) {
-      console.log('SCHEDULAR IS RUNNING AT 1:01 AM');
+      console.log('SCHEDULAR IS RUNNING AT 1:00 AM');
       await getAllSubscribers();
       await creditDailyDirectIncome();
       await calculateBoostingIncome();
       await levelIncome();
     } else {
-      console.log('SCHEDULAR IS RUNNING AT 1:01 AM ELSE');
+      console.log('SCHEDULAR RE-RUN CAUGHT.....');
     }
   } catch (error) {
     console.log('SCHEDULAR_ERROR : ', error);
