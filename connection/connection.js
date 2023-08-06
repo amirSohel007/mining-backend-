@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 const connect = mongoose.connect;
+const config = require('../config').config();
 
 //Connect databse
 async function connectDB() {
   await connect(
-    "mongodb+srv://admin:admin@cluster0.lhwqg4z.mongodb.net/?retryWrites=true&w=majority"
+    config.db.mongo
   );
 
  
