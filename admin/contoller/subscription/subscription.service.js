@@ -113,11 +113,11 @@ async function getAllSubscribers () {
             for (let i = 0; i < userSubscriptions.length; i++) {
                 const plan = subscriptionPlan.find(p => p._id.toString() == userSubscriptions[i].plan.toString());
                 console.log('PLAN : ', plan);
-                const subscriptionStart = moment(userSubscriptions[i].createdAt, 'h:mm:ss a').tz('Asia/Kolkata');
+                const subscriptionStart = userSubscriptions[i].createdAt ? moment(userSubscriptions[i].createdAt).format('DD-MM-YYYY h:mm:ss a') : moment(userSubscriptions[i].created_at).format('DD-MM-YYYY h:mm:ss a');
                 const subscriptionTime = moment(userSubscriptions[i].next_daily_income, 'h:mm:ss a').tz('Asia/Kolkata');
-                const currentTime = moment(moment().tz('Asia/Kolkata'), 'h:mm:ss a').tz('Asia/Kolkata');
-                const purchaseDaysElapsed = currentTime.diff(subscriptionStart, 'days');
-                console.log('IS_24_HOURS_COMPLETED : ', getHours(subscriptionTime, currentTime));
+                const currentTime = moment(moment(), 'DD-MM-YYYY h:mm:ss a');
+                const purchaseDaysElapsed = currentTime.diff(moment(subscriptionStart), 'days');
+                // console.log('IS_24_HOURS_COMPLETED : ', getHours(subscriptionTime, currentTime));
                 console.log('IS_30_DAYS_COMPLETED : ', purchaseDaysElapsed);
                 
                 // check subscription is active

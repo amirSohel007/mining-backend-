@@ -81,7 +81,7 @@ async function getUserInfo (user_id) {
             user['direct_user_count'] = user.downline_team.length;
             user['down_user_count'] = getTeamMemberCount(user.downline_team, 0);
             user['total_daily_income'] = totalDailyIncome;
-            user['reward_time_end'] = getHours(user.createdAt, moment().tz('Asia/Kolkata'));
+            user['reward_time_end'] = user.createdAt ? getHours(user.createdAt, moment().tz('Asia/Kolkata')) : getHours(user.created_at, moment().tz('Asia/Kolkata'));
             user['direct_income'] = directIncome;
             user['total_withdrawal'] = withdrawal;
             user['total_income'] = userIncome ? userIncome.balance : 0;
