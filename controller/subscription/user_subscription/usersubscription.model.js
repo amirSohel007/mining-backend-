@@ -11,9 +11,9 @@ const UserSubscriptionSchema = new Schema({
     plan: { type: Schema.Types.ObjectId, ref: 'subscription_plan' },
     next_daily_income: { type: Date, require: true },
     active: { type: Boolean, default: true },
-    created_at: { type: Date, require: true, default: new moment().utc() },
-    updated_at: { type: Date, require: true, default: new moment().utc() }
-});
+    // created_at: { type: Date, require: true, default: new moment().utc() },
+    // updated_at: { type: Date, require: true, default: new moment().utc() }
+}, {timestamps: true});
 
 UserSubscriptionSchema.index({ _id: 1, user: 1, plan: 1 }, { unique: true });
 

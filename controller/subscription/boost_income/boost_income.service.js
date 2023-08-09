@@ -30,7 +30,7 @@ async function calculateBoostingIncome () {
 
         for (let i = 0; i < users.length; i++) {
 
-            const elapsedHours = getHours(moment(users[i].created_at, 'h:mm:ss a').tz('Asia/Kolkata'),  moment(moment().tz('Asia/Kolkata'), 'h:mm:ss a').tz('Asia/Kolkata'));
+            const elapsedHours = getHours(moment(users[i].createdAt, 'h:mm:ss a').tz('Asia/Kolkata'),  moment(moment().tz('Asia/Kolkata'), 'h:mm:ss a').tz('Asia/Kolkata'));
             const allowedHours = boostingIncomeDetails[boostingIncomeDetails.length - 1].duration_hours;
             console.log('HOURS : ', elapsedHours, 'MAX_ALLOWED_HOURS', allowedHours);
 

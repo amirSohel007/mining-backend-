@@ -8,7 +8,7 @@ async function addBoostIncomeDetails (userId, boostIncomeId, data) {
             boostIncomeDetails.duration_hours = data.duration_hours;
             boostIncomeDetails.direct_team_count = data.direct_team_count;
             boostIncomeDetails.extra_income_percentage = data.extra_income_percentage;
-            boostIncomeDetails.updated_at = moment();
+            // boostIncomeDetails.updated_at = moment();
             boostIncomeDetails.updated_by = userId;
             await boostIncomeDetails.save();
         } else {

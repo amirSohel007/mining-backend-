@@ -51,7 +51,7 @@ async function addFund (user_id, data, transaction_type, imageData) {
             userFund.fund_balance += transaction.amount;
         }
         userFund.fund_transaction.push(transaction._id);
-        userFund.updated_at = new moment().utc();
+        // userFund.updated_at = new moment().utc();
         await userFund.save();
         return userFund;
     } catch(error) {

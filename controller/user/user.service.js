@@ -25,7 +25,7 @@ async function getUserDetailsWithPopulatedData (user_id, table_name) {
 
 async function updateUserDetails (query, data) {
     try {
-        data['updated_at'] = new moment().utc();
+        // data['updated_at'] = new moment().utc();
         const res = await userSchema.findOneAndUpdate(query, data, { returnOriginal: false });
         return res;
     } catch(error) {
@@ -81,7 +81,7 @@ async function getUserInfo (user_id) {
             user['direct_user_count'] = user.downline_team.length;
             user['down_user_count'] = getTeamMemberCount(user.downline_team, 0);
             user['total_daily_income'] = totalDailyIncome;
-            user['reward_time_end'] = getHours(user.created_at, moment().tz('Asia/Kolkata'));
+            user['reward_time_end'] = user.createdAt ? getHours(user.createdAt, moment().tz('Asia/Kolkata')) : getHours(user.created_at, moment().tz('Asia/Kolkata'));
             user['direct_income'] = directIncome;
             user['total_withdrawal'] = withdrawal;
             user['total_income'] = userIncome ? userIncome.balance : 0;
@@ -250,11 +250,11 @@ async function levelIncome () {
                     { income_type: IncomeType.LEVEL_INCOME[5].text },
                     { income_type: IncomeType.LEVEL_INCOME[6].text },
                 ]
-            }).sort({ created_at: -1 }).exec();
+            }).sort({ createdAt: -1 }).exec();
             
             let hours = 0;
             if (lastTransaction && lastTransaction.length) {
-                const lastTransactionTime = moment(lastTransaction[0].created_at, 'h:mm:ss a');
+                const lastTransactionTime = moment(lastTransaction[0].createdAt, 'h:mm:ss a');
                 const currentTime = moment(moment(), 'h:mm:ss a');
                 hours = getHours(lastTransactionTime, currentTime);
             }

@@ -15,10 +15,10 @@ const IncomeTransactionSchema = new Schema({
     paid_amount:{type:Number},
     status: { type: String, require: true , default: UserFundStatus.PENDING},
     user_id: { type: Schema.Types.ObjectId, ref: 'user', require: true },
-    created_at: { type: Date, require: true, default: new moment().utc() },
-    updated_at: { type: Date, require: true, default: new moment().utc() }
+    // created_at: { type: Date, require: true, default: new moment().utc() },
+    // updated_at: { type: Date, require: true, default: new moment().utc() }
     
-});
+}, {timestamps: true});
 
 IncomeTransactionSchema.index({ user_id: 1, _id: 1 }, { unique: true });
 

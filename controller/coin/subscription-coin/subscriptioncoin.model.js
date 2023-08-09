@@ -11,9 +11,9 @@ const SubscriptionCoinSchema = new Schema({
     subscription: { type: Schema.Types.ObjectId, ref: 'subscription_plan' },
     coin_transaction: [{ type: Schema.Types.ObjectId, ref: 'coin_transaction' }],
     next_mining: { type: Date },
-    created_at: { type: Date, require: true, default: new moment().utc() },
-    updated_at: { type: Date, require: true, default: new moment().utc() }
-});
+    // created_at: { type: Date, require: true, default: new moment().utc() },
+    // updated_at: { type: Date, require: true, default: new moment().utc() }
+}, {timestamps: true});
 
 SubscriptionCoinSchema.index({ user_id: 1, _id: 1 }, { unique: true })
 

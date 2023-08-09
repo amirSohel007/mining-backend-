@@ -51,7 +51,7 @@ async function generateCoin (userId, subscriptionId) {
             await subscriptionCoin.save();
 
             wallet.coin_balance = parseFloat(wallet.coin_balance) + parseFloat(plan.daily_mining_coin);
-            wallet.updated_at = moment().utc();
+            // wallet.updated_at = moment().utc();
             console.log('MINING : ', parseFloat(plan.daily_mining_coin));
             console.log('WALLET_BALANCE : ', wallet.coin_balance);
             await wallet.save();
