@@ -61,7 +61,7 @@ console.log(`Server has been started on port : ${port}`);
 //
 const nodeCron = require('node-cron');
 
-const job = nodeCron.schedule("0 30 * * *", async () => {
+const job = nodeCron.schedule("0 1 * * *", async () => {
   console.log(`Scheduler has been triggred at ${new Date().toLocaleString()}`);
   try {
 
