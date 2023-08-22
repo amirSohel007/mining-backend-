@@ -72,7 +72,12 @@ async function getUserInfo (user_id) {
         }).lean().exec()).reduce((acc, curr) => acc + curr.amount, 0.0);
         const coinBalance = await coinWalletSchema.findOne({ user: user_id });
         const subscriptionCoin = await subscriptionCoinSchema.findOne({ user: user_id });
-        // const next = moment;
+        const coinIncome = await (subscriptionTransactionSchema.find({ 
+            user: user_id, 
+            income_type: IncomeType.COIN_INCOME 
+        }).lean().exec()) //.reduce((acc, curr) => acc + curr.amount, 0.0);
+        let incomeFromCoin = coinIncome.reduce((acc, curr) => acc + curr.amount, 0.0);
+        console.log('COIN_INCOME : ', coinIncome);
         const next = subscriptionCoin && subscriptionCoin.next_mining ? moment(subscriptionCoin.next_mining).tz('Asia/Kolkata').format('DD-MM-YYYY') : moment().tz('Asia/Kolkata').format('DD-MM-YYYY h:mm:ss a');
         const current = moment().tz('Asia/Kolkata').format('DD-MM-YYYY h:mm:ss a');
         const miningHours = subscriptionCoin ? getHours(current, next) : 0
@@ -88,6 +93,7 @@ async function getUserInfo (user_id) {
             user['down_level_income'] = downLevelIncome;
             user['coin_balance'] = coinBalance ? parseFloat(coinBalance.coin_balance) : 0;
             user['next_mining'] = miningHours > 0 ? miningHours : 0;
+            user['income_from_coin'] = incomeFromCoin ? incomeFromCoin.toFixed(2) : incomeFromCoin;
             return user;
         }
         return { 

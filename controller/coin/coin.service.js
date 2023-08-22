@@ -3,8 +3,10 @@ const coinTransactionSchema = require('./transaction/cointransaction.model');
 const subscriptionPlanSchema = require('../subscription/subscription_plan/subscriptionplan.model');
 const userSubscriptionSchema = require('../subscription/user_subscription/usersubscription.model');
 const subscriptionCoinSchema = require('./subscription-coin/subscriptioncoin.model');
-const { Coin, getHours } = require('../../commonHelper');
-const moment = require('moment-timezone')
+const { Coin, getHours, IncomeType } = require('../../commonHelper');
+const moment = require('moment-timezone');
+const incomeTransactionSchema = require('../income/transaction/incometransaction.model');
+const { creditIncome } = require('../income/income.service');
 
 async function generateCoin (userId, subscriptionId) {
     try {
@@ -96,4 +98,60 @@ async function getUserSubscription (userId) {
     }    
 }
 
-module.exports = { generateCoin, getMining, getUserSubscription }
+async function withdrawCoin (userId, amount) {
+    try {
+        if (amount < 10) {
+            console.log('MINIMUM_AMOUNT : ', amount);
+            throw {
+                status: 400,
+                message: "Amount must be greater then or equal to 10"
+            };
+        }
+        const wallet = await coinWalletSchema.findOne({ user: userId});
+        console.log('WALLET : ', wallet);
+        if (!wallet) {
+            console.log('WALLET_NOT FOUND : ', wallet);
+            throw {
+                status: 400,
+                message: "User wallet not found, Please generate coin first."
+            };
+        }
+        if (wallet.coin_balance < amount) {
+            console.log('LOW_BALANCE : ', wallet.coin_balance);
+            throw {
+                status: 400,
+                message: "Insufficient balance"
+            };
+        }
+        let convertedCoinIncome = wallet.coin_balance * 10 / 100;
+        console.log('CONVERTED_INCOME : ', convertedCoinIncome);
+        let gst = convertedCoinIncome * 20 / 100;
+        console.log('GST_AMOUNT : ', gst);
+        let incomeAfterGST = convertedCoinIncome - gst;
+        console.log('INCOME_AFTER_GST : ', incomeAfterGST);
+
+        const income = await creditIncome(userId, null, incomeAfterGST, IncomeType.COIN_INCOME);
+        console.log('INCOME_CREDITED : ', income);
+        const coinTransaction = await coinTransactionSchema.create({
+            user: userId,
+            coin_wallet: wallet._id,
+            subscription: null,
+            coin: amount,
+            transaction_type: Coin.WITHDRAWAL,
+            gst: gst
+        });
+
+        wallet.coin_balance -= amount;
+        console.log('UPDATED_WALLET_BALANCAE : ', wallet.coin_balance);
+        await wallet.save();
+        return coinTransaction;
+    } catch (error) {
+        console.log('WITHDRAW_COIN_ERROR : ', error);
+        throw {
+            status: error.status || 500,
+            message: error
+        };
+    }
+}
+
+module.exports = { generateCoin, getMining, getUserSubscription, withdrawCoin }

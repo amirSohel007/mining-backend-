@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const responseService = require('../../response/response.handler');
-const { generateCoin, getMining, getUserSubscription } = require('./coin.service');
+const { generateCoin, getMining, getUserSubscription, withdrawCoin } = require('./coin.service');
 
 
 app.post('/', async (req, res) => {
@@ -32,6 +32,19 @@ app.get('/', async (req, res) => {
         }
     } catch (error) {
         console.log('GET_FUND_ERROR : ', error);
+        responseService.response(req, error, null, res);
+    }
+});
+
+app.post('/withdraw', async (req, res) => {
+    console.log(`url : ${req.protocol}://${req.hostname}:${process.env.NODE_PORT}${req.baseUrl}${req.path}, method: ${req.method}`);
+    try {
+        const { user_id } = req.user;
+        const { amount } = req.body;
+        const transaction = await withdrawCoin(user_id, amount);
+        responseService.response(req, null, transaction, res);
+    } catch (error) {
+        console.log('WITHDRAW_COIN_ERROR : ', error);
         responseService.response(req, error, null, res);
     }
 });

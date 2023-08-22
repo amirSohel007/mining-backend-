@@ -50,11 +50,13 @@ const IncomeType = {
         { level: 5, text: 'LEVEL_5_INCOME' },
         { level: 6, text: 'LEVEL_6_INCOME' },
         { level: 7, text: 'LEVEL_7_INCOME' }
-    ] 
+    ],
+    COIN_INCOME: 'COIN_INCOME' 
 }   
 
 const Coin = {
-    DAILY: 'DAILY_COIN_MINING'
+    DAILY: 'DAILY_COIN_MINING',
+    WITHDRAWAL: 'COIN_WITHDRAWAL' 
 }
 
 const getUserIdFromToken = (token) => {
