@@ -154,4 +154,17 @@ async function withdrawCoin (userId, amount) {
     }
 }
 
-module.exports = { generateCoin, getMining, getUserSubscription, withdrawCoin }
+async function coinWithdrawlTransaction (userId) {
+    try {
+        const coinTransaction = await coinTransactionSchema.find({ user: userId, transaction_type: Coin.WITHDRAWAL }).lean().exec();
+        return coinTransaction;
+    } catch (error) {
+        console.log('COIN_WITHDRAWAL_TRANSACTION : ', error);
+        throw {
+            status: error.status || 500,
+            message: error
+        };
+    }
+}
+
+module.exports = { generateCoin, getMining, getUserSubscription, withdrawCoin, coinWithdrawlTransaction }
