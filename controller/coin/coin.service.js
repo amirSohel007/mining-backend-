@@ -123,7 +123,7 @@ async function withdrawCoin (userId, amount) {
                 message: "Insufficient balance"
             };
         }
-        let convertedCoinIncome = wallet.coin_balance * 10 / 100;
+        let convertedCoinIncome = wallet.coin_balance * 5;
         console.log('CONVERTED_INCOME : ', convertedCoinIncome);
         let gst = convertedCoinIncome * 20 / 100;
         console.log('GST_AMOUNT : ', gst);
