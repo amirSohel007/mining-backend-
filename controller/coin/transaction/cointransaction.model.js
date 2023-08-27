@@ -11,7 +11,8 @@ const CoinTransactionSchema = new Schema({
     subscription: { type: Schema.Types.ObjectId, ref: 'subscription_plan' },
     transaction_type: { type: String, require: true },
     coin: { type: Number, default: 0.0 },
-    gst: { type: Number }
+    gst: { type: Number },
+    final_amount: { type: Number }
     // created_at: { type: Date, require: true, default: new moment().utc() },
     // updated_at: { type: Date, require: true, default: new moment().utc() }
 }, {timestamps: true});

@@ -138,7 +138,8 @@ async function withdrawCoin (userId, amount) {
             subscription: null,
             coin: amount,
             transaction_type: Coin.WITHDRAWAL,
-            gst: gst
+            gst: gst,
+            final_amount: incomeAfterGST
         });
 
         wallet.coin_balance -= amount;
