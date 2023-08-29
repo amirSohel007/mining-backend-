@@ -20,7 +20,8 @@ async function createUser (data) {
             if (data.full_name) {
                 let randomNumber = crypto.randomInt(0, 1000000);
                 randomNumber = randomNumber.toString().padStart(4, "0");
-                let name = data.full_name.length > 3 ? data.full_name.slice(0, 3) : data.full_name.slice(data.full_name.length);
+                // let name = data.full_name.length > 3 ? data.full_name.slice(0, 3) : data.full_name.slice(data.full_name.length);
+                let name = 'MDEX'
                 name = name.toUpperCase();
                 myRefferCode = `${name}${randomNumber}`;
                 data['my_reffer_code'] = myRefferCode;
