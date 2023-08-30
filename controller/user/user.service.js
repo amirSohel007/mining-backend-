@@ -258,24 +258,33 @@ async function levelIncome () {
                 ]
             }).sort({ createdAt: -1 }).exec();
             
-            let hours = 0;
-            if (lastTransaction && lastTransaction.length) {
-                const lastTransactionTime = moment(lastTransaction[0].createdAt, 'h:mm:ss a');
-                const currentTime = moment(moment(), 'h:mm:ss a');
-                hours = getHours(lastTransactionTime, currentTime);
-            }
+            // let hours = 0;
+            // if (lastTransaction && lastTransaction.length) {
+            //     const lastTransactionTime = moment(lastTransaction[0].createdAt, 'h:mm:ss a');
+            //     const currentTime = moment(moment(), 'h:mm:ss a');
+            //     hours = getHours(lastTransactionTime, currentTime);
+            // }
 
-            // eighter it is users first record or 24 hours completed then only we will credit
-            if ((lastTransaction && lastTransaction.length == 0) || hours > 24) {
-                const user = await getUserAndDownTeam(users[i]._id);
-                const team = getDownTeamLevelForIncome(user.downline_team, 1);
-                const convertedArray = convertNestedArrayToLinearArray(team); 
-                const sortedArray = await filterLevelForIncome(users[i]._id, convertedArray);
-                console.log('USER : ', user);
-                console.log('TEAM : ', team);
-                console.log('CONVERTED : ', convertedArray);
-                console.log('SORTED_DATA : ', sortedArray);
-            }
+            // // eighter it is users first record or 24 hours completed then only we will credit
+            // if ((lastTransaction && lastTransaction.length == 0) || hours > 24) {
+            //     const user = await getUserAndDownTeam(users[i]._id);
+            //     const team = getDownTeamLevelForIncome(user.downline_team, 1);
+            //     const convertedArray = convertNestedArrayToLinearArray(team); 
+            //     const sortedArray = await filterLevelForIncome(users[i]._id, convertedArray);
+            //     console.log('USER : ', user);
+            //     console.log('TEAM : ', team);
+            //     console.log('CONVERTED : ', convertedArray);
+            //     console.log('SORTED_DATA : ', sortedArray);
+            // }
+
+            const user = await getUserAndDownTeam(users[i]._id);
+            const team = getDownTeamLevelForIncome(user.downline_team, 1);
+            const convertedArray = convertNestedArrayToLinearArray(team); 
+            const sortedArray = await filterLevelForIncome(users[i]._id, convertedArray);
+            console.log('USER : ', user);
+            console.log('TEAM : ', team);
+            console.log('CONVERTED : ', convertedArray);
+            console.log('SORTED_DATA : ', sortedArray);
         }
     } catch (error) {
         console.log('LEVEL_INCOME_ERROR : ', error);
