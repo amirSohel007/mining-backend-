@@ -72,7 +72,12 @@ async function generateCoin (userId, subscriptionId) {
 
 async function getMining (userId) {
     try {
-        const transaction = await coinTransactionSchema.find({ user: userId })
+        const transaction = await coinTransactionSchema.find({
+            user: userId,
+            $or: [
+                { transaction_type: Coin.DAILY }
+            ]
+        })
         // .populate({ path: 'user', ref: 'user' })
         .populate({ path: 'subscription', ref: 'subscription_plan' });
         return transaction;
@@ -123,7 +128,7 @@ async function withdrawCoin (userId, amount) {
                 message: "Insufficient balance"
             };
         }
-        let convertedCoinIncome = wallet.coin_balance * 5;
+        let convertedCoinIncome = amount * 5;
         console.log('CONVERTED_INCOME : ', convertedCoinIncome);
         let gst = convertedCoinIncome * 20 / 100;
         console.log('GST_AMOUNT : ', gst);
