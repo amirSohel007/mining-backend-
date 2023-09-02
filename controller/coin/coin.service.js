@@ -105,11 +105,11 @@ async function getUserSubscription (userId) {
 
 async function withdrawCoin (userId, amount) {
     try {
-        if (amount < 10) {
+        if (amount < 20) {
             console.log('MINIMUM_AMOUNT : ', amount);
             throw {
                 status: 400,
-                message: "Amount must be greater then or equal to 10"
+                message: "Amount must be greater then or equal to 20"
             };
         }
         const wallet = await coinWalletSchema.findOne({ user: userId});
