@@ -216,16 +216,18 @@ function getLevel (arr, level = 1, team) {
 
 function convertNestedArrayToLinearArray (arr = [], linearArray = []) {
     for (let i = 0; i < arr.length; i++) {
-        linearArray.push({
-            _id: arr[i]._id,
-            full_name: arr[i].full_name,
-            my_reffer_code: arr[i].my_reffer_code,
-            sponser_id: arr[i].sponser_id,
-            level: arr[i].level,
-            is_level_unlocked: arr[i].is_level_unlocked,
-            joining_date: arr[i].joining_date, 
-            status: arr[i].status ? arr[i].status : 'INACTIVE'
-        });
+        if (arr[i].level > 1) {
+            linearArray.push({
+                _id: arr[i]._id,
+                full_name: arr[i].full_name,
+                my_reffer_code: arr[i].my_reffer_code,
+                sponser_id: arr[i].sponser_id,
+                level: arr[i].level,
+                is_level_unlocked: arr[i].is_level_unlocked,
+                joining_date: arr[i].joining_date, 
+                status: arr[i].status ? arr[i].status : 'INACTIVE'
+            });
+        }
         convertNestedArrayToLinearArray(arr[i].downline_team, linearArray);
     }
     return linearArray;
