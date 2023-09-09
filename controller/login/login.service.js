@@ -13,12 +13,12 @@ async function loginUser(userEmail, myRefferCode, password) {
           };
         }
         const user = await userSchema.findOne({
-          my_reffer_code: myRefferCode,
-          password: password,
+          my_reffer_code: myRefferCode.trim(),
+          password: password.trim(),
         });
         const adminUser = await adminUserSchema.findOne({
-          email: userEmail,
-          password: password,
+          email: userEmail.trim(),
+          password: password.trim(),
         });
         if (user && user.password === password) {
             const token = jwt.sign({ user_id: user._id, my_reffer_code: user.my_reffer_code }, config.jwtSecretKey, { expiresIn: config.jwtExpiresIn });
