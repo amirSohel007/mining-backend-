@@ -19,7 +19,7 @@ async function loginUser(userEmail, myRefferCode, password) {
         });
       } if (userEmail === "PMADMIN@GMAIL.COM") {
         adminUser = await adminUserSchema.findOne({
-          email: userEmail,
+          email: userEmail?.toUpperCase(),
           password: password,
         });
       }
