@@ -17,7 +17,7 @@ async function loginUser(userEmail, myRefferCode, password) {
           my_reffer_code: myRefferCode?.trim(),
           password: password?.trim(),
         });
-      } else {
+      } if (userEmail) {
         adminUser = await adminUserSchema.findOne({
           email: userEmail?.trim().toLowerCase(),
           password: password?.trim(),
