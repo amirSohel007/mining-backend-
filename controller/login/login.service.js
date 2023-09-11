@@ -12,15 +12,15 @@ async function loginUser(userEmail, myRefferCode, password) {
           };
       }   
       let user, adminUser;
-      if (myRefferCode) {
+      if (userEmail !== "PMADMIN@GMAIL.COM") {
         user = await userSchema.findOne({
-          my_reffer_code: myRefferCode?.trim(),
-          password: password?.trim(),
+          my_reffer_code: myRefferCode,
+          password: password,
         });
-      } if (userEmail) {
+      } if (userEmail === "PMADMIN@GMAIL.COM") {
         adminUser = await adminUserSchema.findOne({
-          email: userEmail?.trim().toLowerCase(),
-          password: password?.trim(),
+          email: userEmail,
+          password: password,
         });
       }
                
