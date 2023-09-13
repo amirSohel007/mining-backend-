@@ -214,9 +214,9 @@ function getLevel (arr, level = 1, team) {
     return arr;
 }
 
-function convertNestedArrayToLinearArray (arr = [], linearArray = []) {
+function convertNestedArrayToLinearArray (arr = [], linearArray = [], includeLevelOne = false) {
     for (let i = 0; i < arr.length; i++) {
-        if (arr[i].level > 1) {
+        if (includeLevelOne === true || arr[i].level > 1) {
             linearArray.push({
                 _id: arr[i]._id,
                 full_name: arr[i].full_name,
@@ -281,7 +281,7 @@ async function levelIncome () {
 
             const user = await getUserAndDownTeam(users[i]._id);
             const team = getDownTeamLevelForIncome(user.downline_team, 1);
-            const convertedArray = convertNestedArrayToLinearArray(team); 
+            const convertedArray = convertNestedArrayToLinearArray(team, [], true); 
             const sortedArray = await filterLevelForIncome(users[i]._id, convertedArray);
             console.log('USER : ', user);
             console.log('TEAM : ', team);
