@@ -1,7 +1,7 @@
 const userFundSchema = require('./userfund/userfund.model');
 const fundTransactionSchema = require('./transaction/fundtransaction.model');
 const { getUserInfo } = require('../user/user.service');
-const { upload_file_to_s3, get_s3_file } = require('../../s3_confif');
+// const { upload_file_to_s3, get_s3_file } = require('../../s3_confif');
 const { FundTransactionType, getBaseUrl, UserFundStatus } = require('../../commonHelper');
 const config = require('../../config').config();
 const moment = require('moment-timezone');
@@ -29,12 +29,6 @@ async function addFund (user_id, data, transaction_type, imageData) {
         }
 
         let s3_file = imageData;
-        if (transaction_type === FundTransactionType.ADD) {
-            if (config.useS3) {
-                s3_file = await upload_file_to_s3(imageData);
-                console.log('S3_FILE_DATA : ', s3_file);
-            }
-        }
         // create transaction history
         let transaction = await fundTransactionSchema.create({
             user_id: user_id,
@@ -104,10 +98,6 @@ async function getUserFundTransaction (user_id, fund_request_type, req) {
             if (fund_request_type = FundTransactionType.ADD && transaction.length) {
                 for (let i = 0; i < transaction.length; i++) {
                     let obj = { ...transaction[i] };
-                    if (config.useS3 && obj.fund_receipt && obj.fund_receipt.indexOf('receipts/') != -1) {
-                        obj.fund_receipt = await get_s3_file(obj.fund_receipt);
-                        console.log('OBJ : ', obj);
-                    }
                     if (obj.fund_receipt) {
                         obj.fund_receipt = `${getBaseUrl(req)}/${obj.fund_receipt}`;
                     }
