@@ -3,7 +3,6 @@ const { Status, getBaseUrl } = require('../../../commonHelper');
 const jwt = require('jsonwebtoken');
 const config = require('../../../config').config();
 const adminUserSchema = require('../admin_user/admin_user.model');
-const { upload_file_to_s3, get_s3_file } = require('../../../s3_confif');
 const qrCodeSchema = require('../qr/qr.model');
 
 const allUsers = (status) => {
@@ -101,9 +100,6 @@ const saveAdminQr = (admin_id, qrCodeFilePath) => {
     return new Promise(async (resolve,reject) => {
         try {
             let file = qrCodeFilePath;
-            if (config.useS3) {
-                file = await upload_file_to_s3(qrCodeFilePath);
-            }
             const user = await adminUserSchema.findById({_id: admin_id});
             const qrCode = await qrCodeSchema.findOne({});
             if (qrCode) {
@@ -138,12 +134,7 @@ const getAdminQr = (req) => {
             console.log('QR_CODE : ', qrCode);
             if(qrCode != null || qrCode != undefined) {
                 let qr = '';
-                console.log('USE_S3 : ', config.useS3);
-                if (config.useS3) {
-                    qr = await get_s3_file(user.qr);
-                } else {
-                    qr = `${getBaseUrl(req)}/${qrCode._doc.qr}`
-                }
+                qr = `${getBaseUrl(req)}/${qrCode._doc.qr}`
                 console.log('USE_S3 : ', qr);
                 resolve(qr);
             }else{

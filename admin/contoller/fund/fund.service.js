@@ -2,7 +2,6 @@ const fundTransactionSchema = require('../../../controller/fund/transaction/fund
 const { UserFundStatus, getBaseUrl } = require('../../../commonHelper');
 const adminUserSchema = require('../admin_user/admin_user.model');
 const userFundSchema = require('../../../controller/fund/userfund/userfund.model');
-const { get_s3_file } = require('../../../s3_confif');
 const config = require('../../../config').config();
 
 const changeFundStatus = (admin_id,transactionId,status) =>{
@@ -69,9 +68,6 @@ const getAllFunds = (status, req) => {
                 const result = [];
                 for (i = 0; i < fund.length; i++) {
                     let obj = { ...fund[i] };
-                    if (config.useS3 && obj.fund_receipt && obj.fund_receipt.indexOf('receipts/') != -1) {
-                        obj.fund_receipt = await get_s3_file(obj.fund_receipt);
-                    }
                     console.log('OBJ : ', obj.fund_receipt);
                     if (obj.fund_receipt) {
                         obj.fund_receipt = `${getBaseUrl(req)}/${obj.fund_receipt}`;
