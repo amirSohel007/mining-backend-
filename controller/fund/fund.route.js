@@ -4,6 +4,7 @@ const { addFund, getUserFund, sendFund, getUserFundTransaction } = require('./fu
 const { getUserInfo, getUser } = require('../user/user.service');
 const responseService = require('../../response/response.handler');
 const multer = require('multer');
+const fetch = require("node-fetch");
 const uuid  = require('uuid');
 const moment = require('moment-timezone');
 
@@ -117,7 +118,7 @@ app.post('/send', async (req, res) => {
 app.post("/payout", async (req, res) => {
   try {
     const { payout_details } = req.body || {};
-    const response = await fetch(url, {
+    const response = await fetch("https://ignwallet.com/API/Payout", {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       headers: {
         "Content-Type": "application/json",
@@ -125,9 +126,12 @@ app.post("/payout", async (req, res) => {
       },
       body: JSON.stringify(payout_details), // body data type must match "Content-Type" header
     });
+    res.send(response);
     const data = response.json();
-    req.send(data);
-  } catch (error) {}
+    res.send(data);
+  } catch (error) {
+      console.log(error)
+  }
 });
 
 module.exports.fund = app; 
