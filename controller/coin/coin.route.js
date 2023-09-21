@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const responseService = require('../../response/response.handler');
-const { generateCoin, getMining, getUserSubscription, withdrawCoin, coinWithdrawlTransaction } = require('./coin.service');
+const { generateCoin, getMining, getUserSubscription, withdrawCoin, coinWithdrawlTransaction, getCoinWallet } = require('./coin.service');
 
 
 app.post('/', async (req, res) => {
@@ -9,11 +9,18 @@ app.post('/', async (req, res) => {
     try {
         const { user_id } = req.user;
         const userSubscription = await getUserSubscription(user_id);
-        let result;
-        for (let i = 0; i < userSubscription.length; i++) {
-            result = await generateCoin(user_id, userSubscription[i].plan);
+        const coinWallet = await getCoinWallet(user_id);
+        if (coinWallet && coinWallet.mining_open === false) {
+            responseService.response(req, { status: 400, message: { status: 400, message: 'User is allowed to mine coin once in a day, Please try later.' } }, null, res);
+        } else {
+            let result;
+            for (let i = 0; i < userSubscription.length; i++) {
+                result = await generateCoin(user_id, userSubscription[i].plan);
+            }
+            coinWallet.mining_open = false;
+            await coinWallet.save();
+            responseService.response(req, null, result, res);
         }
-        responseService.response(req, null, result, res);
     } catch (error) {
         console.log('ADD_FUND_ERROR : ', error);
         responseService.response(req, error, null, res);

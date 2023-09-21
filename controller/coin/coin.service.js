@@ -173,4 +173,38 @@ async function coinWithdrawlTransaction (userId) {
     }
 }
 
-module.exports = { generateCoin, getMining, getUserSubscription, withdrawCoin, coinWithdrawlTransaction }
+async function getCoinWallet (userId) {
+    try {
+        let wallet = await coinWalletSchema.findOne({ user: userId });
+        return wallet;
+    } catch (error) {
+        console.log('GET_COIN_WALLET_ERROR : ', error);
+        throw {
+            status: error.status || 500,
+            message: error
+        };
+    }
+}
+
+async function enableMining () {
+    try {
+        const userSubscriptions = await userSubscriptionSchema.find({});
+        for (let i = 0; i < userSubscriptions.length; i++) {
+            let wallet = await coinWalletSchema.findOne({ user: userSubscriptions[i].user.toString() });
+            if (wallet && wallet.mining_open === false) {
+                wallet.mining_open = true;
+                await wallet.save();
+            } else {
+                console.log('COIN_WALLET_NOT_FOUND_FOR_USER_ID : ', userSubscriptions[i].user.toString());
+            }
+        }
+    } catch (error) {
+        console.log('COIN_MINING_ENABLE_ERROR : ', error);
+        throw {
+            status: error.status || 500,
+            message: error
+        };
+    }
+}
+
+module.exports = { generateCoin, getMining, getUserSubscription, withdrawCoin, coinWithdrawlTransaction, getCoinWallet, enableMining }
