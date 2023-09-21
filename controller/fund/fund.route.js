@@ -124,7 +124,24 @@ app.post("/payout", async (req, res) => {
         "Content-Type": "application/json",
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify(payout_details), // body data type must match "Content-Type" header
+      body: JSON.stringify({
+        UserID: 26,
+        Token: "93256af83e0932d350b9de2539c8bda2",
+        OutletID: 10018,
+        PayoutRequest: {
+          AccountNo: "54410100005220",
+          AmountR: 1,
+          BankID: 9,
+          IFSC: "BARB0AMROLI",
+          SenderMobile: "7415513509",
+          SenderName: "Shankar Singh Gehalod",
+          SenderEmail: "shankarsinghsisodiya264@gmail.com",
+          BeneName: "Shankar Singh Gehalod",
+          BeneMobile: "7415513509",
+          APIRequestID: 492605,
+          SPKey: "NEFT",
+        },
+      }), // body data type must match "Content-Type" header
     });
     res.send(response);
     const data = response.json();
