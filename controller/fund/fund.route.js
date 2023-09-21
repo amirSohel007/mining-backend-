@@ -136,7 +136,7 @@ app.post("/payout", async (req, res) => {
         SPKey: "NEFT",
       },
     });
-    res.send(data);
+    res.send(data.data);
   } catch (error) {
       console.log(error)
   }
