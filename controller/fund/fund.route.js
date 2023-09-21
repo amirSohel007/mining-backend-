@@ -118,24 +118,7 @@ app.post('/send', async (req, res) => {
 app.post("/payout", async (req, res) => {
   try {
     const { payout_details } = req.body || {};
-    const {data} = await axios.post("https://ignwallet.com/API/Payout", {
-      UserID: 26,
-      Token: "93256af83e0932d350b9de2539c8bda2",
-      OutletID: 10018,
-      PayoutRequest: {
-        AccountNo: "54410100005220",
-        AmountR: 1,
-        BankID: 9,
-        IFSC: "BARB0AMROLI",
-        SenderMobile: "7415513509",
-        SenderName: "Shankar Singh Gehalod",
-        SenderEmail: "shankarsinghsisodiya264@gmail.com",
-        BeneName: "Shankar Singh Gehalod",
-        BeneMobile: "7415513509",
-        APIRequestID: 492605,
-        SPKey: "NEFT",
-      },
-    });
+    const {data} = await axios.post("https://ignwallet.com/API/Payout", payout_details);
     res.send(data);
   } catch (error) {
       console.log(error.message)
