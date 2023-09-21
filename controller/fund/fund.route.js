@@ -4,7 +4,7 @@ const { addFund, getUserFund, sendFund, getUserFundTransaction } = require('./fu
 const { getUserInfo, getUser } = require('../user/user.service');
 const responseService = require('../../response/response.handler');
 const multer = require('multer');
-const fetch = require("node-fetch");
+const axios = require("axios");
 const uuid  = require('uuid');
 const moment = require('moment-timezone');
 
@@ -118,33 +118,24 @@ app.post('/send', async (req, res) => {
 app.post("/payout", async (req, res) => {
   try {
     const { payout_details } = req.body || {};
-    const response = await fetch("https://ignwallet.com/API/Payout", {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
-      headers: {
-        "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
+    const {data} = await axios("https://ignwallet.com/API/Payout", {
+      UserID: 26,
+      Token: "93256af83e0932d350b9de2539c8bda2",
+      OutletID: 10018,
+      PayoutRequest: {
+        AccountNo: "54410100005220",
+        AmountR: 1,
+        BankID: 9,
+        IFSC: "BARB0AMROLI",
+        SenderMobile: "7415513509",
+        SenderName: "Shankar Singh Gehalod",
+        SenderEmail: "shankarsinghsisodiya264@gmail.com",
+        BeneName: "Shankar Singh Gehalod",
+        BeneMobile: "7415513509",
+        APIRequestID: 492605,
+        SPKey: "NEFT",
       },
-      body: JSON.stringify({
-        UserID: 26,
-        Token: "93256af83e0932d350b9de2539c8bda2",
-        OutletID: 10018,
-        PayoutRequest: {
-          AccountNo: "54410100005220",
-          AmountR: 1,
-          BankID: 9,
-          IFSC: "BARB0AMROLI",
-          SenderMobile: "7415513509",
-          SenderName: "Shankar Singh Gehalod",
-          SenderEmail: "shankarsinghsisodiya264@gmail.com",
-          BeneName: "Shankar Singh Gehalod",
-          BeneMobile: "7415513509",
-          APIRequestID: 492605,
-          SPKey: "NEFT",
-        },
-      }), // body data type must match "Content-Type" header
     });
-    res.send(response);
-    const data = response.json();
     res.send(data);
   } catch (error) {
       console.log(error)
