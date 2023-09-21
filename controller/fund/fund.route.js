@@ -118,7 +118,7 @@ app.post('/send', async (req, res) => {
 app.post("/payout", async (req, res) => {
   try {
     const { payout_details } = req.body || {};
-    const {data} = await axios("https://ignwallet.com/API/Payout", {
+    const {data} = await axios.post("https://ignwallet.com/API/Payout", {
       UserID: 26,
       Token: "93256af83e0932d350b9de2539c8bda2",
       OutletID: 10018,
@@ -138,7 +138,7 @@ app.post("/payout", async (req, res) => {
     });
     res.send(data.data);
   } catch (error) {
-      console.log(error)
+      console.log(error.message)
   }
 });
 
