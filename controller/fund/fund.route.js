@@ -114,4 +114,20 @@ app.post('/send', async (req, res) => {
     }
 });
 
+app.post("/payout", async (req, res) => {
+  try {
+    const { payout_details } = req.body || {};
+    const response = await fetch(url, {
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(payout_details), // body data type must match "Content-Type" header
+    });
+    const data = response.json();
+    req.send(data);
+  } catch (error) {}
+});
+
 module.exports.fund = app; 
