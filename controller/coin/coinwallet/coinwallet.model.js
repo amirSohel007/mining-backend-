@@ -9,6 +9,7 @@ const CoinWalletSchema = new Schema({
     user: { type: Schema.Types.ObjectId, require: true, ref: 'user' },
     coin_balance: { type: String, require: true, default: "0.0" },
     coin_subscription: [{ type: Schema.Types.ObjectId, ref: 'subscription_coin' }],
+    mining_open: { type: Boolean, default: false }
     // created_at: { type: Date, require: true, default: new moment().utc() },
     // updated_at: { type: Date, require: true, default: new moment().utc() }
 }, {timestamps: true});
