@@ -70,25 +70,30 @@ console.log(`Server has been started on port : ${port}`);
 //
 const nodeCron = require('node-cron');
 
-const job = nodeCron.schedule("* */1 * * *", async () => {
-  console.log(`Scheduler has been triggred at ${new Date().toLocaleString()}`);
-  try {
-
-    const run = await checkSchedulerTrigger();
-    if (run) {
-      console.log('SCHEDULAR IS RUNNING AT 1:00 AM');
-      await getAllSubscribers();
-      await creditDailyDirectIncome();
-      await calculateBoostingIncome();
-      await levelIncome();
-      await enableMining();
-    } else {
-      console.log('SCHEDULAR RE-RUN CAUGHT.....');
+const job = nodeCron.schedule(
+  "0 1 * * *",
+  async () => {
+    console.log(
+      `Scheduler has been triggred at ${new Date().toLocaleString()}`
+    );
+    try {
+      const run = await checkSchedulerTrigger();
+      if (run) {
+        console.log("SCHEDULAR IS RUNNING AT 1:00 AM");
+        await getAllSubscribers();
+        await creditDailyDirectIncome();
+        await calculateBoostingIncome();
+        await levelIncome();
+        await enableMining();
+      } else {
+        console.log("SCHEDULAR RE-RUN CAUGHT.....");
+      }
+    } catch (error) {
+      console.log("SCHEDULAR_ERROR : ", error);
     }
-  } catch (error) {
-    console.log('SCHEDULAR_ERROR : ', error);
-  }
-}, { timezone: 'Asia/Kolkata' });
+  },
+  { timezone: "Asia/Kolkata" }
+);
 
 
 
