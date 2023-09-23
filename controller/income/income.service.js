@@ -77,7 +77,7 @@ async function withdrawlIncome (user_id, amount) {
             } 
 
             else if (
-              getHours(lastTransaction[lastTransaction.length - 1]?.createdAt, moment().tz('Asia/Kolkata')) < 24
+              getHours(lastTransaction[lastTransaction.length - 1]?.createdAt, moment().tz('Asia/Kolkata')) < 22
             ) {
               throw {
                 status: 400,
