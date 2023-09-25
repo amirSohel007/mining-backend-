@@ -118,10 +118,15 @@ app.post('/send', async (req, res) => {
 app.post("/payout", async (req, res) => {
   try {
     const { payout_details } = req.body || {};
-    const {data} = await axios.post("https://ignwallet.com/API/Payout", payout_details);
+    console.log("PAYOUT USER DEATILS OBJECT =======>", payout_details);
+    const { data } = await axios.post(
+      "https://ignwallet.com/API/Payout",
+      payout_details
+    );
+    console.log("GETTING THE DATA FROM PAYOUT API SERVICE =====>", data);
     res.send(data);
   } catch (error) {
-      console.log(error.message)
+    console.log("PRINTING ERROR MESSAGE FROM PAYMENT API====>", error.message);
   }
 });
 
