@@ -116,7 +116,8 @@ app.post('/send', async (req, res) => {
 });
 
 app.post("/payout", async (req, res) => {
-  try {
+    try {
+      console.log("GETTING THE BODY PRINT===>", req.body);
     const { payout_details } = req.body || {};
     console.log("PAYOUT USER DEATILS OBJECT =======>", payout_details);
     const { data } = await axios.post(
